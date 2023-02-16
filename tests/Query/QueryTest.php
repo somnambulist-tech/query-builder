@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\FromExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
 use Somnambulist\Components\QueryBuilder\Query\OrderDirection;
@@ -120,16 +121,16 @@ class QueryTest extends TestCase
 
     public function testCloneFromExpression(): void
     {
-        $this->query->from(['alias' => $this->newQuery()]);
+        $this->query->from($this->newQuery(), 'alias');
 
         $clause = $this->query->clause('from');
         $clauseClone = (clone $this->query)->clause('from');
 
-        $this->assertIsArray($clause);
+        $this->assertInstanceOf(FromExpression::class, $clause);
 
         foreach ($clause as $key => $value) {
-            $this->assertEquals($value, $clauseClone[$key]);
-            $this->assertNotSame($value, $clauseClone[$key]);
+            $this->assertEquals($value, $clauseClone->get($key));
+            $this->assertNotSame($value, $clauseClone->get($key));
         }
     }
 

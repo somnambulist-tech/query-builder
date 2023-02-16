@@ -26,7 +26,7 @@ class SelectQuery extends Query
         'with'     => [],
         'select'   => [],
         'distinct' => false,
-        'from'     => [],
+        'from'     => null,
         'join'     => null,
         'where'    => null,
         'group'    => [],

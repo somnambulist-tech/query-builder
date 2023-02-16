@@ -28,6 +28,7 @@ class QueryCompiler implements CompilerInterface
      */
     protected array $templates = [
         'delete'  => 'DELETE',
+        'from'    => ' %s',
         'join'    => '%s',
         'where'   => ' WHERE %s',
         'group'   => ' GROUP BY %s',
@@ -233,22 +234,22 @@ class QueryCompiler implements CompilerInterface
      *
      * @return string
      */
-    protected function buildFromPart(array $parts, Query $query, ValueBinder $binder): string
-    {
-        $select = ' FROM %s';
-        $normalized = [];
-        $parts = $this->stringifyExpressions($parts, $binder);
-
-        foreach ($parts as $k => $p) {
-            if (!is_numeric($k)) {
-                $p = trim($p . ' ' . $k);
-            }
-
-            $normalized[] = $p;
-        }
-
-        return sprintf($select, implode(', ', $normalized));
-    }
+//    protected function buildFromPart(array $parts, Query $query, ValueBinder $binder): string
+//    {
+//        $select = ' FROM %s';
+//        $normalized = [];
+//        $parts = $this->stringifyExpressions($parts, $binder);
+//
+//        foreach ($parts as $k => $p) {
+//            if (!is_numeric($k)) {
+//                $p = trim($p . ' ' . $k);
+//            }
+//
+//            $normalized[] = $p;
+//        }
+//
+//        return sprintf($select, implode(', ', $normalized));
+//    }
 
     /**
      * Helper function used to build the string representation of multiple JOIN clauses,

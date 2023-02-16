@@ -185,7 +185,7 @@ class CommonTableExpressionQueryTest extends TestCase
                     ->name('cte')
                     ->query($query);
             })
-            ->from(['a' => 'articles'])
+            ->from('articles', 'a')
             ->where(function (QueryExpression $exp, Query $query) {
                 return $exp->in(
                     'a.id',

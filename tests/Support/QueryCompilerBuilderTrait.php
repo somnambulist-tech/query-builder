@@ -10,6 +10,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\Expressions\BetweenCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\CaseStatementCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\CommonTableExpressionCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\ComparisonCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Expressions\FromCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\FunctionCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\IdentifierCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\JoinClauseCompiler;
@@ -77,6 +78,7 @@ trait QueryCompilerBuilderTrait
                 new CaseStatementCompiler(),
                 new CommonTableExpressionCompiler(),
                 new ComparisonCompiler(),
+                new FromCompiler(),
                 new FunctionCompiler(),
                 new IdentifierCompiler(),
                 new JoinCompiler(),

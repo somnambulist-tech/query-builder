@@ -116,7 +116,7 @@ class UpdateQueryTest extends TestCase
         $subquery = new SelectQuery();
         $subquery
             ->select('created')
-            ->from(['c' => 'comments'])
+            ->from('comments', 'c')
             ->where(['c.id' => new IdentifierExpression('comments.id')]);
 
         $query = new UpdateQuery();

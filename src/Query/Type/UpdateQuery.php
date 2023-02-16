@@ -24,6 +24,7 @@ class UpdateQuery extends Query
         'modifier' => [],
         'join'     => null,
         'set'      => [],
+        'from'     => null,
         'where'    => null,
         'order'    => null,
         'limit'    => null,

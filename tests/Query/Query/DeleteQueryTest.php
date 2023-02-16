@@ -56,7 +56,7 @@ class DeleteQueryTest extends TestCase
         $query = new DeleteQuery();
 
         $query->delete()
-            ->from(['a ' => 'authors'])
+            ->from('authors', 'a')
             ->where(['a.id !=' => 99]);
 
         $result = $this->compiler->compile($query, new ValueBinder());
@@ -90,7 +90,7 @@ class DeleteQueryTest extends TestCase
 
         $query
             ->delete('authors')
-            ->from(['a ' => 'authors'])
+            ->from('authors', 'a')
             ->innerJoin('', 'articles')
             ->where(['a.id' => 1]);
 
@@ -106,7 +106,7 @@ class DeleteQueryTest extends TestCase
 
         $query
             ->delete()
-            ->from(['a' => 'authors'])
+            ->from('authors', 'a')
             ->where([
                 'OR' => [
                     'a.id' => 1,

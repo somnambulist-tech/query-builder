@@ -38,9 +38,9 @@ class TupleComparisonQueryTest extends TestCase
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
                     select(
-                        ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        ['ArticlesAlias' => 'articles']
+                        ['ArticlesAlias.id', 'ArticlesAlias.author_id']
                     )
+                    ->from('articles', 'ArticlesAlias')
                     ->where(['ArticlesAlias.author_id' => 1]),
                     [],
                     'NOT IN'
@@ -68,8 +68,8 @@ class TupleComparisonQueryTest extends TestCase
                     ['articles.id', 'articles.author_id'],
                     select(
                         ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        ['ArticlesAlias' => 'articles']
                     )
+                    ->from('articles', 'ArticlesAlias')
                     ->where(['ArticlesAlias.author_id' => 1]),
                     [],
                     'IN'
@@ -97,8 +97,8 @@ class TupleComparisonQueryTest extends TestCase
                     ['articles.id', 'articles.author_id'],
                     select(
                         ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        ['ArticlesAlias' => 'articles']
                     )
+                    ->from('articles', 'ArticlesAlias')
                     ->where(['ArticlesAlias.id' => 1]),
                     [],
                     'IN'
@@ -148,9 +148,9 @@ class TupleComparisonQueryTest extends TestCase
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
                     select(
-                        ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        ['ArticlesAlias' => 'articles']
+                        ['ArticlesAlias.id', 'ArticlesAlias.author_id']
                     )
+                    ->from('articles', 'ArticlesAlias')
                     ->where(['ArticlesAlias.author_id' => 1]),
                     [],
                     '='
@@ -178,8 +178,8 @@ class TupleComparisonQueryTest extends TestCase
                     ['articles.id', 'articles.author_id'],
                     select(
                         fields: ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        from: ['ArticlesAlias' => 'articles']
                     )
+                    ->from('articles', 'ArticlesAlias')
                     ->where(['ArticlesAlias.id' => 1]),
                     [],
                     '='

@@ -26,7 +26,10 @@ class StripAliasesFromDeleteFrom
 
         if ($hadAlias) {
             $event->query->reset('from');
-            $event->query->from($tables);
+
+            foreach ($tables as $t) {
+                $event->query->from($t);
+            }
         }
 
         return $event;

@@ -9,6 +9,7 @@ use Somnambulist\Components\Models\Types\DateTime\DateTime;
 use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\FromExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
@@ -85,7 +86,7 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT body, author_id FROM articles', $sql);
 
         //Append more tables to next execution
-        $query->select('name')->from(['authors'])->orderBy(['name' => 'DESC', 'articles.id' => 'ASC']);
+        $query->select('name')->from('authors')->orderBy(['name' => 'DESC', 'articles.id' => 'ASC']);
 
         $sql = $this->compiler->compile($query, new ValueBinder());
 
@@ -141,7 +142,7 @@ class SelectQueryTest extends TestCase
     public function testSelectAliasedTables(): void
     {
         $query = new SelectQuery();
-        $query->select(['text' => 'a.body', 'a.author_id'])->from(['a' => 'articles']);
+        $query->select(['text' => 'a.body', 'a.author_id'])->from('articles', 'a');
 
         $sql = $this->compiler->compile($query, new ValueBinder());
 
@@ -1505,7 +1506,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery();
         $query
             ->select(['author_id'])
-            ->from(['a' => 'articles'])
+            ->from('articles', 'a')
             ->distinct()
         ;
 
@@ -1523,7 +1524,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select(['author_id'])
             ->distinct(['author_id'])
-            ->from(['a' => 'articles'])
+            ->from('articles', 'a')
             ->orderBy(['author_id' => 'ASC'])
         ;
 
@@ -1540,7 +1541,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery();
         $query
             ->select(['city', 'state', 'country'])
-            ->from(['addresses'])
+            ->from('addresses')
             ->modifier('DISTINCTROW')
         ;
 
@@ -1552,7 +1553,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery();
         $query
             ->select(['city', 'state', 'country'])
-            ->from(['addresses'])
+            ->from('addresses')
             ->modifier(['DISTINCTROW', 'SQL_NO_CACHE'])
         ;
 
@@ -1564,7 +1565,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery();
         $query
             ->select(['city', 'state', 'country'])
-            ->from(['addresses'])
+            ->from('addresses')
             ->modifier('DISTINCTROW')
             ->modifier('SQL_NO_CACHE')
         ;
@@ -1577,7 +1578,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery();
         $query
             ->select(['city', 'state', 'country'])
-            ->from(['addresses'])
+            ->from('addresses')
             ->modifier(['TOP 10'])
         ;
 
@@ -1589,7 +1590,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery();
         $query
             ->select(['city', 'state', 'country'])
-            ->from(['addresses'])
+            ->from('addresses')
             ->modifier($query->newExpr('EXPRESSION'))
         ;
 
@@ -1669,7 +1670,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery();
         $query
             ->select(['id'])
-            ->from(['Authors' => 'authors'])
+            ->from('authors', 'Authors')
             ->where([
                 'FUNC( Authors.id) ='      => 1,
                 'FUNC( Authors.id) IS NOT' => null,
@@ -1758,12 +1759,12 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery();
         $subquery = (new SelectQuery())
             ->select('name')
-            ->from(['b' => 'authors'])
+            ->from('authors', 'b')
             ->where([$query->newExpr()->equalFields('b.id', 'a.id')])
         ;
         $query
             ->select(['id', 'name' => $subquery])
-            ->from(['a' => 'comments'])
+            ->from('comments', 'a')
         ;
 
         $sql = $this->compiler->compile($query, new ValueBinder());
@@ -1784,7 +1785,7 @@ class SelectQueryTest extends TestCase
         ;
         $query
             ->select(['say' => 'comment'])
-            ->from(['b' => $subquery])
+            ->from($subquery, 'b')
             ->where(['id !=' => 3])
         ;
 
@@ -1807,7 +1808,7 @@ class SelectQueryTest extends TestCase
         ;
         $query
             ->select(['name'])
-            ->from(['authors'])
+            ->from('authors')
             ->where(['id !=' => $subquery])
         ;
 
@@ -1823,7 +1824,7 @@ class SelectQueryTest extends TestCase
         ;
         $query
             ->select(['name'])
-            ->from(['authors'])
+            ->from('authors')
             ->where(['id not in' => $subquery])
         ;
 
@@ -1906,10 +1907,10 @@ class SelectQueryTest extends TestCase
      */
     public function testUnion(): void
     {
-        $union = (new SelectQuery())->select(['id', 'title'])->from(['a' => 'articles']);
+        $union = (new SelectQuery())->select(['id', 'title'])->from('articles', 'a');
         $query = new SelectQuery();
         $query->select(['id', 'comment'])
-              ->from(['c' => 'comments'])
+              ->from('comments', 'c')
               ->union($union)
         ;
         $sql = $this->compiler->compile($query, $b = new ValueBinder());
@@ -1918,7 +1919,7 @@ class SelectQueryTest extends TestCase
         $union->select(['foo' => 'id', 'bar' => 'title']);
         $union = (new SelectQuery())
             ->select(['id', 'name', 'other' => 'id', 'nameish' => 'name'])
-            ->from(['b' => 'authors'])
+            ->from('authors', 'b')
             ->where(['id ' => 1])
             ->orderBy(['id' => 'desc'])
         ;
@@ -1934,7 +1935,7 @@ class SelectQueryTest extends TestCase
 
         $union = (new SelectQuery())
             ->select(['id', 'title'])
-            ->from(['c' => 'articles'])
+            ->from('articles', 'c')
         ;
         $query
             ->reset('select', 'union')
@@ -1952,14 +1953,14 @@ class SelectQueryTest extends TestCase
     {
         $union = (new SelectQuery())
             ->select(['id', 'title'])
-            ->from(['a' => 'articles'])
+            ->from('articles', 'a')
             ->orderBy(['a.id' => 'asc'])
         ;
 
         $query = new SelectQuery();
         $query
             ->select(['id', 'comment'])
-            ->from(['c' => 'comments'])
+            ->from('comments', 'c')
             ->orderBy(['c.id' => 'asc'])
             ->union($union)
         ;
@@ -1972,18 +1973,18 @@ class SelectQueryTest extends TestCase
      */
     public function testUnionAll(): void
     {
-        $union = (new SelectQuery())->select(['id', 'title'])->from(['a' => 'articles']);
+        $union = (new SelectQuery())->select(['id', 'title'])->from('articles', 'a');
         $query = new SelectQuery();
         $query
             ->select(['id', 'comment'])
-            ->from(['c' => 'comments'])
+            ->from('comments', 'c')
             ->union($union)
         ;
 
         $union->select(['foo' => 'id', 'bar' => 'title']);
         $union = (new SelectQuery())
             ->select(['id', 'name', 'other' => 'id', 'nameish' => 'name'])
-            ->from(['b' => 'authors'])
+            ->from('authors', 'b')
             ->where(['id ' => 1])
             ->orderBy(['id' => 'desc'])
         ;
@@ -2127,7 +2128,7 @@ class SelectQueryTest extends TestCase
 
         $query
             ->select(['name'])
-            ->from(['authors'])
+            ->from('authors')
             ->where(function ($exp) use ($subquery) {
                 return $exp->isNotNull($subquery);
             })
@@ -2137,7 +2138,7 @@ class SelectQueryTest extends TestCase
 
         $query = (new SelectQuery())
             ->select(['name'])
-            ->from(['authors'])
+            ->from('authors')
             ->where(function ($exp) use ($subquery) {
                 return $exp->isNull($subquery);
             })
@@ -2154,7 +2155,7 @@ class SelectQueryTest extends TestCase
     {
         $query = (new SelectQuery())
             ->select(['name'])
-            ->from(['authors'])
+            ->from('authors')
             ->where(['name IS' => null])
         ;
         $sql = $this->compiler->compile($query, new ValueBinder());
@@ -2163,7 +2164,7 @@ class SelectQueryTest extends TestCase
 
         $query = (new SelectQuery())
             ->select(['name'])
-            ->from(['authors'])
+            ->from('authors')
             ->where(['name IS' => 'larry'])
         ;
         $sql = $this->compiler->compile($query, new ValueBinder());
@@ -2181,7 +2182,7 @@ class SelectQueryTest extends TestCase
 
         $query = (new SelectQuery())
             ->select(['name'])
-            ->from(['authors'])
+            ->from('authors')
             ->where(['name' => null])
         ;
         $this->compiler->compile($query, new ValueBinder());
@@ -2197,7 +2198,7 @@ class SelectQueryTest extends TestCase
 
         (new SelectQuery())
             ->select(['name'])
-            ->from(['authors'])
+            ->from('authors')
             ->where(['name !=' => null])
         ;
     }
@@ -2210,7 +2211,7 @@ class SelectQueryTest extends TestCase
     {
         $query = (new SelectQuery())
             ->select(['name'])
-            ->from(['authors'])
+            ->from('authors')
             ->where(['name IS NOT' => null])
         ;
         $sql = $this->compiler->compile($query, new ValueBinder());
@@ -2298,16 +2299,16 @@ class SelectQueryTest extends TestCase
     public function testCloneFromExpression(): void
     {
         $query = new SelectQuery();
-        $query->from(['alias' => new SelectQuery()]);
+        $query->from(new SelectQuery(), 'alias');
 
         $clause = $query->clause('from');
         $clauseClone = (clone $query)->clause('from');
 
-        $this->assertIsArray($clause);
+        $this->assertInstanceOf(FromExpression::class, $clause);
 
         foreach ($clause as $key => $value) {
-            $this->assertEquals($value, $clauseClone[$key]);
-            $this->assertNotSame($value, $clauseClone[$key]);
+            $this->assertEquals($value, $clauseClone->get($key));
+            $this->assertNotSame($value, $clauseClone->get($key));
         }
     }
 
@@ -2544,7 +2545,7 @@ class SelectQueryTest extends TestCase
             ->select(
                 $subquery->newExpr()->case()->when(['a.published' => 'N'])->then(1)->else(0)
             )
-            ->from(['a' => 'articles'])
+            ->from('articles', 'a')
             ->where([
                 'a.id = articles.id',
             ])
@@ -2577,7 +2578,7 @@ class SelectQueryTest extends TestCase
         $subqueryA = new SelectQuery();
         $subqueryA
             ->select('count(*)')
-            ->from(['a' => 'articles'])
+            ->from('articles', 'a')
             ->where([
                 'a.id = articles.id',
                 'a.published' => 'Y',
@@ -2587,7 +2588,7 @@ class SelectQueryTest extends TestCase
         $subqueryB = new SelectQuery();
         $subqueryB
             ->select('count(*)')
-            ->from(['b' => 'articles'])
+            ->from('articles', 'b')
             ->where([
                 'b.id = articles.id',
                 'b.published' => 'N',

@@ -6,6 +6,7 @@ use Closure;
 use InvalidArgumentException;
 use Somnambulist\Components\QueryBuilder\Exceptions\ExpectedCommonTableExpressionFromClosure;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\FromExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
@@ -20,6 +21,7 @@ use Somnambulist\Components\QueryBuilder\TypeMap;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function array_key_exists;
 use function array_keys;
+use function is_null;
 use function is_string;
 
 /**
@@ -45,7 +47,7 @@ abstract class Query implements ExpressionInterface
         'select' => [],
         'distinct' => false,
         'modifier' => [],
-        'from' => [],
+        'from' => null,
         'join' => null,
         'where' => null,
         'group' => [],
@@ -277,36 +279,34 @@ abstract class Query implements ExpressionInterface
     }
 
     /**
-     * Adds a single or multiple tables to be used in the FROM clause for this query.
+     * Adds a table or expression for a table to the FROM clause of the query
      *
-     * Tables can be passed as an array of strings, array of expression objects, a single expression
-     * or a single string.
-     *
-     * If an array is passed, keys will be used to alias tables using the value as the
-     * real field to be aliased. It is possible to alias strings, ExpressionInterface objects or
-     * even other Query objects.
+     * When using expression objects (especially queries) an alias is required.
      *
      * This method can be used for select, update and delete statements.
      *
      * ### Examples:
      *
      * ```
-     * $query->from(['p' => 'posts']); // Produces FROM posts p
+     * $query->from('posts', 'p'); // Produces FROM posts p
      * $query->from('authors'); // Appends authors: FROM posts p, authors
-     * $query->from(['sub' => $countQuery]); // FROM (SELECT ...) sub
+     * $query->from($countQuery, 'sub'); // FROM (SELECT ...) sub
      * ```
      *
-     * @param array|string $tables
+     * @param ExpressionInterface|string $table
      *
      * @return $this
      */
-    public function from(array|string $tables = []): self
+    public function from(ExpressionInterface|string $table, string $as = null): self
     {
-        $tables = (array)$tables;
-
-        $this->parts['from'] = array_merge($this->parts['from'], $tables);
+        $this->tables()->add($table, $as);
 
         return $this;
+    }
+
+    public function tables(): FromExpression
+    {
+        return $this->parts['from'] ??= new FromExpression();
     }
 
     public function joins(): JoinExpression
@@ -1138,10 +1138,10 @@ abstract class Query implements ExpressionInterface
     public function reset(string ...$name): self
     {
         foreach ($name as $n) {
-            if (in_array($n, ['comment', 'join', 'where', 'having', 'order', 'limit', 'offset', 'epilog'])) {
+            if (in_array($n, ['comment', 'from', 'join', 'where', 'having', 'order', 'limit', 'offset', 'epilog'])) {
                 $this->parts[$n] = null;
             }
-            if (in_array($n, ['modifier', 'with', 'select', 'from', 'group', 'window', 'union'])) {
+            if (in_array($n, ['modifier', 'with', 'select', 'group', 'window', 'union'])) {
                 $this->parts[$n] = [];
             }
             if ('distinct' === $n) {

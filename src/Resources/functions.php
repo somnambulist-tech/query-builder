@@ -5,34 +5,78 @@ namespace Somnambulist\Components\QueryBuilder\Resources;
 use Closure;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
-use Somnambulist\Components\QueryBuilder\Query\QueryFactory;
 use Somnambulist\Components\QueryBuilder\Query\Type\DeleteQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\InsertQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\UpdateQuery;
+use function array_keys;
 
 /**
- * See {@link QueryFactory::select()} for definition
+ * Create a new SELECT query
+ *
+ * @param ExpressionInterface|Closure|array|string|float|int $fields
+ * @param ExpressionInterface|string|null $from
+ * @param array $types
+ *
+ * @return SelectQuery
  */
 function select(
     ExpressionInterface|Closure|array|string|float|int $fields = [],
-    array|string $from = [],
+    ExpressionInterface|string $from = null,
     array $types = []
 ): SelectQuery
 {
-    return QueryFactory::select($fields, $from, $types);
+    $query = new SelectQuery();
+
+    $query
+        ->select($fields)
+        ->getTypes()->setDefaults($types)
+    ;
+
+    if ($from) {
+        $query->from($from);
+    }
+
+    return $query;
 }
 
 /**
- * See {@link QueryFactory::insert()} for definition
+ * Create a new INSERT query
+ *
+ * @param string|null $into
+ * @param array $values
+ * @param array $types
+ *
+ * @return InsertQuery
  */
 function insert(?string $into = null, array $values = [], array $types = []): InsertQuery
 {
-    return QueryFactory::insert($into, $values, $types);
+    $query = new InsertQuery();
+
+    if ($into) {
+        $query->into($into);
+    }
+
+    if ($values) {
+        $columns = array_keys($values);
+        $query
+            ->insert($columns, $types)
+            ->values($values)
+        ;
+    }
+
+    return $query;
 }
 
 /**
- * See {@link QueryFactory::update()} for definition
+ * Create a new UPDATE query
+ *
+ * @param ExpressionInterface|string|null $table
+ * @param array $values
+ * @param array $where
+ * @param array<string, string> $types
+ *
+ * @return UpdateQuery
  */
 function update(
     ExpressionInterface|string|null $table = null,
@@ -41,18 +85,49 @@ function update(
     array $types = []
 ): UpdateQuery
 {
-    return QueryFactory::update($table, $values, $where, $types);
+    $query = new UpdateQuery();
+
+    if ($table) {
+        $query->update($table);
+    }
+    if ($values) {
+        $query->set($values, $types);
+    }
+    if ($where) {
+        $query->where($where, $types);
+    }
+
+    return $query;
 }
 
 /**
- * See {@link QueryFactory::delete()} for definition
+ * Create a new DELETE query
+ *
+ * @param string|null $from
+ * @param array $where
+ * @param array<string, string> $types
+ *
+ * @return DeleteQuery
  */
 function delete(?string $from = null, array $where = [], array $types = []): DeleteQuery
 {
-    return QueryFactory::delete($from, $where, $types);
+    $query = (new DeleteQuery())->delete($from);
+
+    if ($where) {
+        $query->where($where, $types);
+    }
+
+    return $query;
 }
 
-function with(): CommonTableExpression
+/**
+ * Create a new CTE expression
+ *
+ * @param string $name
+ *
+ * @return CommonTableExpression
+ */
+function with(string $name = ''): CommonTableExpression
 {
-    return new CommonTableExpression();
+    return new CommonTableExpression($name);
 }
