@@ -10,6 +10,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\StringExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
@@ -2322,14 +2323,14 @@ class SelectQueryTest extends TestCase
         $clause = $query->clause('join');
         $clauseClone = (clone $query)->clause('join');
 
-        $this->assertIsArray($clause);
+        $this->assertInstanceOf(JoinExpression::class, $clause);
 
         foreach ($clause as $key => $value) {
-            $this->assertEquals($value->getTable(), $clauseClone[$key]->getTable());
-            $this->assertNotSame($value->getTable(), $clauseClone[$key]->getTable());
+            $this->assertEquals($value->getTable(), $clauseClone->get($key)->getTable());
+            $this->assertNotSame($value->getTable(), $clauseClone->get($key)->getTable());
 
-            $this->assertEquals($value->getConditions(), $clauseClone[$key]->getConditions());
-            $this->assertNotSame($value->getConditions(), $clauseClone[$key]->getConditions());
+            $this->assertEquals($value->getConditions(), $clauseClone->get($key)->getConditions());
+            $this->assertNotSame($value->getConditions(), $clauseClone->get($key)->getConditions());
         }
     }
 
@@ -2527,10 +2528,10 @@ class SelectQueryTest extends TestCase
             ->from('articles')
             ->join('authors', 'authors', on: ['articles.author_id = authors.id'])
         ;
-        $this->assertArrayHasKey('authors', $query->clause('join'));
+        $this->assertTrue($query->joins()->has('authors'));
 
         $this->assertSame($query, $query->removeJoin('authors'));
-        $this->assertArrayNotHasKey('authors', $query->clause('join'));
+        $this->assertFalse($query->joins()->has('authors'));
     }
 
     /**

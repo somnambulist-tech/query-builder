@@ -22,7 +22,7 @@ class UpdateQuery extends Query
         'with'     => [],
         'update'   => [],
         'modifier' => [],
-        'join'     => [],
+        'join'     => null,
         'set'      => [],
         'where'    => null,
         'order'    => null,

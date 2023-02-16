@@ -12,6 +12,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\Expressions\CommonTableExpress
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\ComparisonCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\FunctionCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\IdentifierCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Expressions\JoinClauseCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\JoinCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\OrderByCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\OrderClauseCompiler;
@@ -79,6 +80,7 @@ trait QueryCompilerBuilderTrait
                 new FunctionCompiler(),
                 new IdentifierCompiler(),
                 new JoinCompiler(),
+                new JoinClauseCompiler(),
                 new OrderByCompiler(),
                 new OrderClauseCompiler(),
                 new QueryExpressionCompiler(),

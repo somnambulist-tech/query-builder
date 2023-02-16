@@ -2,82 +2,79 @@
 
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
+use ArrayIterator;
 use Closure;
+use Countable;
+use IteratorAggregate;
+use Somnambulist\Components\QueryBuilder\Exceptions\QueryException;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Query\JoinType;
+use Traversable;
+use function array_key_exists;
+use function count;
 
-class JoinExpression implements ExpressionInterface
+class JoinExpression implements Countable, ExpressionInterface, IteratorAggregate
 {
-    public function __construct(
-        protected string $alias,
-        protected ExpressionInterface $table,
-        protected ExpressionInterface $conditions,
-        protected JoinType $type,
-    ) {
+    /**
+     * @var array<string, JoinClauseExpression>
+     */
+    private array $joins;
+
+    public function __construct(array $joins = [])
+    {
+        $this->joins = $joins;
     }
 
-    public function getAlias(): string
+    public function getIterator(): Traversable
     {
-        return $this->alias;
+        return new ArrayIterator($this->joins);
     }
 
-    public function setAlias(string $alias): self
+    public function count(): int
     {
-        $this->alias = $alias;
+        return count($this->joins);
+    }
+
+    public function add(JoinClauseExpression $join): self
+    {
+        $i = $this->count();
+        $key = $join->getAlias() ?: $i++;
+
+        $this->joins[$key] = $join;
 
         return $this;
     }
 
-    public function getTable(): ExpressionInterface
+    public function has(string $alias): bool
     {
-        return $this->table;
+        return array_key_exists($alias, $this->joins);
     }
 
-    public function setTable(ExpressionInterface $table): self
+    public function get(string $alias): JoinClauseExpression
     {
-        $this->table = $table;
+        return $this->joins[$alias] ?? throw QueryException::noJoinNamed($alias);
+    }
+
+    public function remove(string $alias): self
+    {
+        unset($this->joins[$alias]);
 
         return $this;
     }
 
-    public function getConditions(): ExpressionInterface
+    public function traverse(Closure $callback): ExpressionInterface
     {
-        return $this->conditions;
-    }
-
-    public function setConditions(ExpressionInterface $conditions): self
-    {
-        $this->conditions = $conditions;
-
-        return $this;
-    }
-
-    public function getType(): JoinType
-    {
-        return $this->type;
-    }
-
-    public function setType(JoinType $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    public function traverse(Closure $callback): self
-    {
-        $callback($this->table);
-        $this->table->traverse($callback);
-
-        $callback($this->conditions);
-        $this->conditions->traverse($callback);
+        foreach ($this->joins as $join) {
+            $callback($join);
+            $join->traverse($callback);
+        }
 
         return $this;
     }
 
     public function __clone(): void
     {
-        $this->table = clone $this->table;
-        $this->conditions = clone $this->conditions;
+        foreach ($this->joins as $key => $join) {
+            $this->joins[$key] = clone $join;
+        }
     }
 }

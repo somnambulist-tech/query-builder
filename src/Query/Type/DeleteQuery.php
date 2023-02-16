@@ -20,7 +20,7 @@ class DeleteQuery extends Query
         'delete'   => true,
         'modifier' => [],
         'from'     => [],
-        'join'     => [],
+        'join'     => null,
         'where'    => null,
         'order'    => null,
         'limit'    => null,

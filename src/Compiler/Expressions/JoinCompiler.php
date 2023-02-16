@@ -2,11 +2,8 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Expressions;
 
-use Somnambulist\Components\QueryBuilder\Exceptions\InvalidValueDuringQueryCompilation;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
-use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
-use function sprintf;
 
 class JoinCompiler extends AbstractCompiler
 {
@@ -18,24 +15,12 @@ class JoinCompiler extends AbstractCompiler
     public function compile(mixed $expression, ValueBinder $binder): string
     {
         /** @var JoinExpression $expression */
+        $joins = '';
 
-        if (!$expression->getTable()) {
-            throw InvalidValueDuringQueryCompilation::missingTableForJoinAlias($expression->getAlias());
+        foreach ($expression as $join) {
+            $joins .= $this->expressionCompiler->compile($join, $binder);
         }
 
-        $type = $expression->getType()->value;
-        $alias = $expression->getAlias();
-        $table = $expression->getTable();
-
-        if ($table instanceof Query) {
-            $table = sprintf('(%s)', $this->expressionCompiler->compile($table, $binder));
-        } else {
-            $table = $this->expressionCompiler->compile($table, $binder);
-        }
-
-        $join = rtrim(sprintf(' %s JOIN %s %s', $type, $table, $alias));
-        $condition = $this->expressionCompiler->compile($expression->getConditions(), $binder);
-
-        return sprintf('%s ON %s', $join, $condition === '' ? '1 = 1' : $condition);
+        return $joins;
     }
 }

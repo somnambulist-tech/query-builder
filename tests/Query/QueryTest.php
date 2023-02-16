@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
 use Somnambulist\Components\QueryBuilder\Query\OrderDirection;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
@@ -142,14 +143,14 @@ class QueryTest extends TestCase
         $clause = $this->query->clause('join');
         $clauseClone = (clone $this->query)->clause('join');
 
-        $this->assertIsArray($clause);
+        $this->assertInstanceOf(JoinExpression::class, $clauseClone);
 
         foreach ($clause as $key => $value) {
-            $this->assertEquals($value->getTable(), $clauseClone[$key]->getTable());
-            $this->assertNotSame($value->getTable(), $clauseClone[$key]->getTable());
+            $this->assertEquals($value->getTable(), $clauseClone->get($key)->getTable());
+            $this->assertNotSame($value->getTable(), $clauseClone->get($key)->getTable());
 
-            $this->assertEquals($value->getConditions(), $clauseClone[$key]->getConditions());
-            $this->assertNotSame($value->getConditions(), $clauseClone[$key]->getConditions());
+            $this->assertEquals($value->getConditions(), $clauseClone->get($key)->getConditions());
+            $this->assertNotSame($value->getConditions(), $clauseClone->get($key)->getConditions());
         }
     }
 

@@ -28,6 +28,7 @@ class QueryCompiler implements CompilerInterface
      */
     protected array $templates = [
         'delete'  => 'DELETE',
+        'join'    => '%s',
         'where'   => ' WHERE %s',
         'group'   => ' GROUP BY %s',
         'having'  => ' HAVING %s',
@@ -261,18 +262,18 @@ class QueryCompiler implements CompilerInterface
      *
      * @return string
      */
-    protected function buildJoinPart(array $parts, Query $query, ValueBinder $binder): string
-    {
-        return $this->dispatcher->dispatch(new CompileJoinClause($parts, $binder))->getSql();
-
-        $joins = '';
-
-        foreach ($parts as $join) {
-            $joins .= $this->expressionCompiler->compile($join, $binder);
-        }
-
-        return $joins;
-    }
+//    protected function buildJoinPart(array $parts, Query $query, ValueBinder $binder): string
+//    {
+//        return $this->expressionCompiler->compile($parts, $binder);
+//
+//        $joins = '';
+//
+//        foreach ($parts as $join) {
+//            $joins .= $this->expressionCompiler->compile($join, $binder);
+//        }
+//
+//        return $joins;
+//    }
 
     /**
      * Helper function to build the string representation of a window clause.

@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use Somnambulist\Components\QueryBuilder\Exceptions\ExpectedCommonTableExpressionFromClosure;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\OrderByExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\OrderClauseExpression;
@@ -45,7 +46,7 @@ abstract class Query implements ExpressionInterface
         'distinct' => false,
         'modifier' => [],
         'from' => [],
-        'join' => [],
+        'join' => null,
         'where' => null,
         'group' => [],
         'having' => null,
@@ -308,6 +309,11 @@ abstract class Query implements ExpressionInterface
         return $this;
     }
 
+    public function joins(): JoinExpression
+    {
+        return $this->parts['join'] ??= new JoinExpression();
+    }
+
     /**
      * Adds a table or expression to be used as a JOIN clause to this query.
      *
@@ -378,10 +384,7 @@ abstract class Query implements ExpressionInterface
             $on = $this->newExpr()->add($on, $types);
         }
 
-        $i = count($this->parts['join']);
-        $key = empty($as) ? $i++ : $as;
-
-        $this->parts['join'][$key] = new JoinExpression($as, $table, $on, $type);
+        $this->joins()->add(new JoinClauseExpression($as, $table, $on, $type));
 
         return $this;
     }
@@ -397,7 +400,7 @@ abstract class Query implements ExpressionInterface
      */
     public function removeJoin(string $name): self
     {
-        unset($this->parts['join'][$name]);
+        $this->joins()->remove($name);
 
         return $this;
     }
@@ -1135,10 +1138,10 @@ abstract class Query implements ExpressionInterface
     public function reset(string ...$name): self
     {
         foreach ($name as $n) {
-            if (in_array($n, ['comment', 'where', 'having', 'order', 'limit', 'offset', 'epilog'])) {
+            if (in_array($n, ['comment', 'join', 'where', 'having', 'order', 'limit', 'offset', 'epilog'])) {
                 $this->parts[$n] = null;
             }
-            if (in_array($n, ['modifier', 'with', 'select', 'from', 'join', 'group', 'window', 'union'])) {
+            if (in_array($n, ['modifier', 'with', 'select', 'from', 'group', 'window', 'union'])) {
                 $this->parts[$n] = [];
             }
             if ('distinct' === $n) {
