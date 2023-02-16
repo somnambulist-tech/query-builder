@@ -44,17 +44,17 @@ class JoinExpression implements Countable, ExpressionInterface, IteratorAggregat
         return $this;
     }
 
-    public function has(string $alias): bool
+    public function has(int|string $alias): bool
     {
         return array_key_exists($alias, $this->joins);
     }
 
-    public function get(string $alias): JoinClauseExpression
+    public function get(int|string $alias): JoinClauseExpression
     {
         return $this->joins[$alias] ?? throw QueryException::noJoinNamed($alias);
     }
 
-    public function remove(string $alias): self
+    public function remove(int|string $alias): self
     {
         unset($this->joins[$alias]);
 
@@ -63,9 +63,9 @@ class JoinExpression implements Countable, ExpressionInterface, IteratorAggregat
 
     public function traverse(Closure $callback): ExpressionInterface
     {
-        foreach ($this->joins as $join) {
-            $callback($join);
-            $join->traverse($callback);
+        foreach ($this->joins as $e) {
+            $callback($e);
+            $e->traverse($callback);
         }
 
         return $this;
@@ -73,8 +73,8 @@ class JoinExpression implements Countable, ExpressionInterface, IteratorAggregat
 
     public function __clone(): void
     {
-        foreach ($this->joins as $key => $join) {
-            $this->joins[$key] = clone $join;
+        foreach ($this->joins as $key => $e) {
+            $this->joins[$key] = clone $e;
         }
     }
 }

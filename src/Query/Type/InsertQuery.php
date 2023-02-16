@@ -19,7 +19,7 @@ class InsertQuery extends Query
      */
     protected array $parts = [
         'comment'  => null,
-        'with'     => [],
+        'with'     => null,
         'insert'   => [],
         'modifier' => [],
         'values'   => [],

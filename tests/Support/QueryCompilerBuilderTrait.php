@@ -24,6 +24,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\Expressions\UnaryCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\ValuesCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\WhenThenCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\WindowCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Expressions\WithCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Listeners\Common\CompileJoinClauseToSQL;
 use Somnambulist\Components\QueryBuilder\Compiler\Listeners\Common\StripAliasesFromConditions;
 use Somnambulist\Components\QueryBuilder\Compiler\Listeners\Common\StripAliasesFromDeleteFrom;
@@ -92,6 +93,7 @@ trait QueryCompilerBuilderTrait
                 new ValuesCompiler(),
                 new WhenThenCompiler(),
                 new WindowCompiler(),
+                new WithCompiler(),
             ];
         }
 

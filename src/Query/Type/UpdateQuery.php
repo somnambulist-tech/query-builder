@@ -19,7 +19,7 @@ class UpdateQuery extends Query
      */
     protected array $parts = [
         'comment'  => null,
-        'with'     => [],
+        'with'     => null,
         'update'   => [],
         'modifier' => [],
         'join'     => null,

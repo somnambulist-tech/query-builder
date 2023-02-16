@@ -9,6 +9,7 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FromExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\WithExpression;
 use Somnambulist\Components\QueryBuilder\Query\OrderDirection;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
@@ -96,11 +97,11 @@ class QueryTest extends TestCase
         $clause = $this->query->clause('with');
         $clauseClone = (clone $this->query)->clause('with');
 
-        $this->assertIsArray($clause);
+        $this->assertInstanceOf(WithExpression::class, $clause);
 
         foreach ($clause as $key => $value) {
-            $this->assertEquals($value, $clauseClone[$key]);
-            $this->assertNotSame($value, $clauseClone[$key]);
+            $this->assertEquals($value, $clauseClone->get($key));
+            $this->assertNotSame($value, $clauseClone->get($key));
         }
     }
 

@@ -28,6 +28,7 @@ class QueryCompiler implements CompilerInterface
      */
     protected array $templates = [
         'delete'  => 'DELETE',
+        'with'    => '%s',
         'from'    => ' %s',
         'join'    => '%s',
         'where'   => ' WHERE %s',
@@ -163,20 +164,20 @@ class QueryCompiler implements CompilerInterface
      *
      * @return string
      */
-    protected function buildWithPart(array $parts, Query $query, ValueBinder $binder): string
-    {
-        $recursive = false;
-        $expressions = [];
-
-        foreach ($parts as $cte) {
-            $recursive = $recursive || $cte->isRecursive();
-            $expressions[] = $this->expressionCompiler->compile($cte, $binder);
-        }
-
-        $recursive = $recursive ? 'RECURSIVE ' : '';
-
-        return sprintf('WITH %s%s ', $recursive, implode(', ', $expressions));
-    }
+//    protected function buildWithPart(array $parts, Query $query, ValueBinder $binder): string
+//    {
+//        $recursive = false;
+//        $expressions = [];
+//
+//        foreach ($parts as $cte) {
+//            $recursive = $recursive || $cte->isRecursive();
+//            $expressions[] = $this->expressionCompiler->compile($cte, $binder);
+//        }
+//
+//        $recursive = $recursive ? 'RECURSIVE ' : '';
+//
+//        return sprintf('WITH %s%s ', $recursive, implode(', ', $expressions));
+//    }
 
     /**
      * Helper function used to build the string representation of a SELECT clause,

@@ -77,17 +77,17 @@ class FromExpression implements Countable, ExpressionInterface, IteratorAggregat
         return false;
     }
 
-    public function has(string $alias): bool
+    public function has(int|string $alias): bool
     {
         return array_key_exists($alias, $this->tables);
     }
 
-    public function get(string $alias): ExpressionInterface
+    public function get(int|string $alias): ExpressionInterface
     {
         return $this->tables[$alias] ?? throw QueryException::noFromClauseFor($alias);
     }
 
-    public function remove(string $alias): self
+    public function remove(int|string $alias): self
     {
         unset($this->tables[$alias]);
 
@@ -96,9 +96,9 @@ class FromExpression implements Countable, ExpressionInterface, IteratorAggregat
 
     public function traverse(Closure $callback): ExpressionInterface
     {
-        foreach ($this->tables as $join) {
-            $callback($join);
-            $join->traverse($callback);
+        foreach ($this->tables as $e) {
+            $callback($e);
+            $e->traverse($callback);
         }
 
         return $this;
@@ -106,8 +106,8 @@ class FromExpression implements Countable, ExpressionInterface, IteratorAggregat
 
     public function __clone(): void
     {
-        foreach ($this->tables as $key => $join) {
-            $this->tables[$key] = clone $join;
+        foreach ($this->tables as $key => $e) {
+            $this->tables[$key] = clone $e;
         }
     }
 }

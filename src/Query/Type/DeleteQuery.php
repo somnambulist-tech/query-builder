@@ -16,7 +16,7 @@ class DeleteQuery extends Query
      */
     protected array $parts = [
         'comment'  => null,
-        'with'     => [],
+        'with'     => null,
         'delete'   => true,
         'modifier' => [],
         'from'     => null,

@@ -13,6 +13,7 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\OrderByExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\OrderClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\WithExpression;
 use Somnambulist\Components\QueryBuilder\Query\Type\DeleteQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\InsertQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
@@ -43,7 +44,7 @@ abstract class Query implements ExpressionInterface
         'set' => [],
         'insert' => [],
         'values' => [],
-        'with' => [],
+        'with' => null,
         'select' => [],
         'distinct' => false,
         'modifier' => [],
@@ -203,9 +204,7 @@ abstract class Query implements ExpressionInterface
      * ```
      * $cte = new CommonTableExpression(
      *     'cte',
-     *     $connection
-     *         ->selectQuery('*')
-     *         ->from('articles')
+     *     select('*')->from('articles')
      * );
      *
      * $query->with($cte);
@@ -241,9 +240,14 @@ abstract class Query implements ExpressionInterface
             }
         }
 
-        $this->parts['with'][] = $cte;
+        $this->ctes()->add($cte);
 
         return $this;
+    }
+
+    public function ctes(): WithExpression
+    {
+        return $this->parts['with'] ??= new WithExpression();
     }
 
     /**
@@ -1138,10 +1142,10 @@ abstract class Query implements ExpressionInterface
     public function reset(string ...$name): self
     {
         foreach ($name as $n) {
-            if (in_array($n, ['comment', 'from', 'join', 'where', 'having', 'order', 'limit', 'offset', 'epilog'])) {
+            if (in_array($n, ['comment', 'with', 'from', 'join', 'where', 'having', 'order', 'limit', 'offset', 'epilog'])) {
                 $this->parts[$n] = null;
             }
-            if (in_array($n, ['modifier', 'with', 'select', 'group', 'window', 'union'])) {
+            if (in_array($n, ['modifier', 'select', 'group', 'window', 'union'])) {
                 $this->parts[$n] = [];
             }
             if ('distinct' === $n) {

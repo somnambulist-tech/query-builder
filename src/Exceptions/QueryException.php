@@ -18,6 +18,11 @@ class QueryException extends Exception
         return new self(sprintf('No FROM clause found for "%s"', $alias));
     }
 
+    public static function noWithExpressionNamed(string $alias): self
+    {
+        return new self(sprintf('No WITH clause found for "%s"', $alias));
+    }
+
     public static function fromQueryRequiresAlias(): self
     {
         return new self(sprintf('An alias is required when using "%s" as a FROM clause', Query::class));

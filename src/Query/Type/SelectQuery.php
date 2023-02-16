@@ -23,7 +23,7 @@ class SelectQuery extends Query
     protected array $parts = [
         'comment'  => null,
         'modifier' => [],
-        'with'     => [],
+        'with'     => null,
         'select'   => [],
         'distinct' => false,
         'from'     => null,
@@ -287,7 +287,7 @@ class SelectQuery extends Query
      * ### Examples
      *
      * ```
-     * $union = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $union = (new SelectQuery())->select(['id', 'title'])->from(['a' => 'articles']);
      * $query->select(['id', 'name'])->from(['d' => 'things'])->union($union);
      * ```
      *
@@ -318,7 +318,7 @@ class SelectQuery extends Query
      * Unlike UNION, UNION ALL will not remove duplicate rows.
      *
      * ```
-     * $union = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $union = (new SelectQuery())->select(['id', 'title'])->from(['a' => 'articles']);
      * $query->select(['id', 'name'])->from(['d' => 'things'])->unionAll($union);
      * ```
      *

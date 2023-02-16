@@ -15,6 +15,7 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\StringExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\WithExpression;
 use Somnambulist\Components\QueryBuilder\Query\OrderDirection;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
@@ -2239,11 +2240,11 @@ class SelectQueryTest extends TestCase
         $clause = $query->clause('with');
         $clauseClone = (clone $query)->clause('with');
 
-        $this->assertIsArray($clause);
+        $this->assertInstanceOf(WithExpression::class, $clause);
 
         foreach ($clause as $key => $value) {
-            $this->assertEquals($value, $clauseClone[$key]);
-            $this->assertNotSame($value, $clauseClone[$key]);
+            $this->assertEquals($value, $clauseClone->get($key));
+            $this->assertNotSame($value, $clauseClone->get($key));
         }
     }
 
