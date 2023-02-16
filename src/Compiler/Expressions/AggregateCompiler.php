@@ -2,7 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Expressions;
 
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\AggregateExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\AggregateExpression;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
 class AggregateCompiler extends FunctionCompiler

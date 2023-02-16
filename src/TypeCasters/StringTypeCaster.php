@@ -2,7 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\TypeCasters;
 
-use Somnambulist\Components\QueryBuilder\Builder\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\TypeCasterInterface;
 use function is_null;
 use function str_replace;

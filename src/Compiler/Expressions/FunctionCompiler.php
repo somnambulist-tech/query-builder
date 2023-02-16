@@ -2,10 +2,10 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Expressions;
 
-use Somnambulist\Components\QueryBuilder\Builder\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\AggregateExpression;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\FunctionExpression;
-use Somnambulist\Components\QueryBuilder\Builder\Type\AbstractQuery as Query;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\AggregateExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\FunctionExpression;
+use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
 class FunctionCompiler extends AbstractCompiler

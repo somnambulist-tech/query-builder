@@ -2,11 +2,8 @@
 
 namespace Somnambulist\Components\QueryBuilder\TypeCasters;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
-use Somnambulist\Components\QueryBuilder\Builder\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Builder\Type\AbstractQuery;
-use Somnambulist\Components\QueryBuilder\Builder\Type\SelectQuery;
+use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\TypeCanCastToExpressionInterface;
 use Somnambulist\Components\QueryBuilder\TypeCasterInterface;
 use function array_map;
@@ -22,7 +19,7 @@ class DbalTypeCaster implements TypeCasterInterface
 {
     public function castTo(mixed $value, ?string $type = null): mixed
     {
-        if (is_null($type) || $value instanceof AbstractQuery) {
+        if (is_null($type) || $value instanceof Query) {
             return $value;
         }
 

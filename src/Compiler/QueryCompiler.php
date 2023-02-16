@@ -6,13 +6,13 @@ use Closure;
 use Countable;
 use Exception;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Somnambulist\Components\QueryBuilder\Builder\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\CommonTableExpression;
-use Somnambulist\Components\QueryBuilder\Builder\Type\AbstractQuery;
-use Somnambulist\Components\QueryBuilder\Builder\Type\AbstractQuery as Query;
+use Somnambulist\Components\QueryBuilder\Compiler\Events\CompileJoinClause;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PostQueryCompile;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreQueryCompile;
 use Somnambulist\Components\QueryBuilder\Exceptions\InvalidValueDuringQueryCompilation;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
+use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
 /**
@@ -71,7 +71,7 @@ class QueryCompiler implements CompilerInterface
 
     public function supports(mixed $expression): bool
     {
-        return $expression instanceof AbstractQuery;
+        return $expression instanceof Query;
     }
 
     /**
@@ -89,7 +89,7 @@ class QueryCompiler implements CompilerInterface
             throw InvalidValueDuringQueryCompilation::queryObjectRequired(static::class, $expression);
         }
 
-        $binder ??= $expression->getValueBinder();
+        $binder ??= $expression->getBinder();
 
         $this->dispatcher->dispatch(new PreQueryCompile($expression, $binder));
 
@@ -101,8 +101,8 @@ class QueryCompiler implements CompilerInterface
         );
 
         // Propagate bound parameters from sub-queries if the placeholders can be found in the SQL statement.
-        if ($expression->getValueBinder() !== $binder) {
-            foreach ($expression->getValueBinder()->bindings() as $binding) {
+        if ($expression->getBinder() !== $binder) {
+            foreach ($expression->getBinder()->bindings() as $binding) {
                 $placeholder = ':' . $binding->placeholder;
 
                 if (preg_match('/' . $placeholder . '(?:\W|$)/', $sql) > 0) {
@@ -263,6 +263,8 @@ class QueryCompiler implements CompilerInterface
      */
     protected function buildJoinPart(array $parts, Query $query, ValueBinder $binder): string
     {
+        return $this->dispatcher->dispatch(new CompileJoinClause($parts, $binder))->getSql();
+
         $joins = '';
 
         foreach ($parts as $join) {

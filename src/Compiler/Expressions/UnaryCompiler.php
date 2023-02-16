@@ -2,8 +2,8 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Expressions;
 
-use Somnambulist\Components\QueryBuilder\Builder\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\UnaryExpression;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\UnaryExpression;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
 class UnaryCompiler extends AbstractCompiler

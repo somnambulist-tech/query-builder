@@ -2,9 +2,9 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Expressions;
 
-use Somnambulist\Components\QueryBuilder\Builder\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\OrderClauseExpression;
-use Somnambulist\Components\QueryBuilder\Builder\Type\AbstractQuery as Query;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\OrderClauseExpression;
+use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function assert;
 use function is_string;

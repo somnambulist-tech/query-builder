@@ -2,8 +2,8 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Expressions;
 
-use Somnambulist\Components\QueryBuilder\Builder\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\TupleComparison;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\TupleComparison;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
 class TupleCompiler extends AbstractCompiler

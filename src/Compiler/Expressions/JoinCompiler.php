@@ -2,9 +2,9 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Expressions;
 
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\JoinExpression;
-use Somnambulist\Components\QueryBuilder\Builder\Type\AbstractQuery;
 use Somnambulist\Components\QueryBuilder\Exceptions\InvalidValueDuringQueryCompilation;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
+use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function sprintf;
 
@@ -27,7 +27,7 @@ class JoinCompiler extends AbstractCompiler
         $alias = $expression->getAlias();
         $table = $expression->getTable();
 
-        if ($table instanceof AbstractQuery) {
+        if ($table instanceof Query) {
             $table = sprintf('(%s)', $this->expressionCompiler->compile($table, $binder));
         } else {
             $table = $this->expressionCompiler->compile($table, $binder);

@@ -3,8 +3,8 @@
 namespace Somnambulist\Components\QueryBuilder\Tests\Support\Fixtures\Types;
 
 use Doctrine\DBAL\Types\StringType;
-use Somnambulist\Components\QueryBuilder\Builder\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\FunctionExpression;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\FunctionExpression;
 use Somnambulist\Components\QueryBuilder\TypeCanCastToExpressionInterface;
 
 class CustomExpressionType extends StringType implements TypeCanCastToExpressionInterface

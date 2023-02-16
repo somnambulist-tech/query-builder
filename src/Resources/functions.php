@@ -3,12 +3,13 @@
 namespace Somnambulist\Components\QueryBuilder\Resources;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Builder\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Builder\QueryFactory;
-use Somnambulist\Components\QueryBuilder\Builder\Type\DeleteQuery;
-use Somnambulist\Components\QueryBuilder\Builder\Type\InsertQuery;
-use Somnambulist\Components\QueryBuilder\Builder\Type\SelectQuery;
-use Somnambulist\Components\QueryBuilder\Builder\Type\UpdateQuery;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
+use Somnambulist\Components\QueryBuilder\Query\QueryFactory;
+use Somnambulist\Components\QueryBuilder\Query\Type\DeleteQuery;
+use Somnambulist\Components\QueryBuilder\Query\Type\InsertQuery;
+use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
+use Somnambulist\Components\QueryBuilder\Query\Type\UpdateQuery;
 
 /**
  * See {@link QueryFactory::select()} for definition
@@ -46,7 +47,12 @@ function update(
 /**
  * See {@link QueryFactory::delete()} for definition
  */
-function delete(?string $table = null, array $where = [], array $types = []): DeleteQuery
+function delete(?string $from = null, array $where = [], array $types = []): DeleteQuery
 {
-    return QueryFactory::delete($table, $where, $types);
+    return QueryFactory::delete($from, $where, $types);
+}
+
+function with(): CommonTableExpression
+{
+    return new CommonTableExpression();
 }

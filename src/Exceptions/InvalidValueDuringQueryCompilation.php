@@ -2,7 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\Exceptions;
 
-use Somnambulist\Components\QueryBuilder\Builder\Type\AbstractQuery as Query;
+use Somnambulist\Components\QueryBuilder\Query\Query;
 use function get_debug_type;
 use function sprintf;
 

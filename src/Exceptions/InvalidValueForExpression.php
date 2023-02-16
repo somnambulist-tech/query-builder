@@ -3,8 +3,8 @@
 namespace Somnambulist\Components\QueryBuilder\Exceptions;
 
 use InvalidArgumentException;
-use Somnambulist\Components\QueryBuilder\Builder\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\QueryExpression;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use function get_debug_type;
 use function sprintf;
 

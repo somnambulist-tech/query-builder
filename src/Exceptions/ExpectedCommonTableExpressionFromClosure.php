@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Exceptions;
 
 use InvalidArgumentException;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\CommonTableExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
 use function get_debug_type;
 
 class ExpectedCommonTableExpressionFromClosure extends InvalidArgumentException

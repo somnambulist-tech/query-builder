@@ -4,12 +4,10 @@ namespace Somnambulist\Components\QueryBuilder\Compiler\Expressions;
 
 use Somnambulist\Components\QueryBuilder\Compiler\CompilerAwareInterface;
 use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerTypeAwareInterface;
 use Somnambulist\Components\QueryBuilder\Compiler\ExpressionCompiler;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\TypeCaster;
-use Somnambulist\Components\QueryBuilder\TypeCasterInterface;
-use Somnambulist\Components\QueryBuilder\Builder\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Builder\Type\AbstractQuery as Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
 abstract class AbstractCompiler implements CompilerInterface, CompilerAwareInterface

@@ -4,15 +4,15 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Compiler;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\IdentifierExpression;
-use Somnambulist\Components\QueryBuilder\Builder\FunctionsBuilder;
-use Somnambulist\Components\QueryBuilder\TypeCaster;
-use Somnambulist\Components\QueryBuilder\TypeCasters\DbalTypeCaster;
 use Somnambulist\Components\QueryBuilder\Compiler\ExpressionCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\AggregateCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\FunctionCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\IdentifierCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\WindowCompiler;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
+use Somnambulist\Components\QueryBuilder\Query\FunctionsBuilder;
+use Somnambulist\Components\QueryBuilder\TypeCaster;
+use Somnambulist\Components\QueryBuilder\TypeCasters\DbalTypeCaster;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
 class FunctionsCompilerTest extends TestCase

@@ -2,7 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Expressions;
 
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\StringExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\StringExpression;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
 class StringCompiler extends AbstractCompiler

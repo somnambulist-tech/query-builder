@@ -3,9 +3,9 @@
 namespace Somnambulist\Components\QueryBuilder\Compiler\Expressions;
 
 use LogicException;
-use Somnambulist\Components\QueryBuilder\Builder\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\WhenThenExpression;
-use Somnambulist\Components\QueryBuilder\Builder\Type\AbstractQuery as Query;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\WhenThenExpression;
+use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function is_string;
 use function sprintf;

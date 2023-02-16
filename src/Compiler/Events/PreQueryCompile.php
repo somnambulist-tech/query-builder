@@ -2,14 +2,15 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Events;
 
-use Somnambulist\Components\QueryBuilder\Builder\Type\AbstractQuery;
+use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class PreQueryCompile extends Event
 {
     public function __construct(
-        public AbstractQuery $query,
-        public ValueBinder $binder,
+        public readonly Query $query,
+        public readonly ValueBinder $binder,
     ) {
     }
 }

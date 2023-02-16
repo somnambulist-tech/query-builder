@@ -2,7 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder;
 
-use Somnambulist\Components\QueryBuilder\Builder\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 
 interface TypeCanCastToExpressionInterface
 {

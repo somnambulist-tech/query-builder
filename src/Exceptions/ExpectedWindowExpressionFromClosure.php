@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Exceptions;
 
 use InvalidArgumentException;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\WindowExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use function get_debug_type;
 
 class ExpectedWindowExpressionFromClosure extends InvalidArgumentException

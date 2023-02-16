@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Exceptions;
 
 use LogicException;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\WhenThenExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\WhenThenExpression;
 use function get_debug_type;
 use function sprintf;
 

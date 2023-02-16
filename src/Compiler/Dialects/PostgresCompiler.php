@@ -3,8 +3,8 @@
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects;
 
 use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
-use Somnambulist\Components\QueryBuilder\Builder\Expressions\FunctionExpression;
-use Somnambulist\Components\QueryBuilder\Builder\Type\AbstractQuery as Query;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\FunctionExpression;
+use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
 /**

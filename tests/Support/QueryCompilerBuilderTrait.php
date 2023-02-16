@@ -2,7 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\Tests\Support;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Somnambulist\Components\QueryBuilder\Compiler\Events\CompileJoinClause;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreQueryCompile;
 use Somnambulist\Components\QueryBuilder\Compiler\ExpressionCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\AggregateCompiler;
@@ -22,8 +22,9 @@ use Somnambulist\Components\QueryBuilder\Compiler\Expressions\UnaryCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\ValuesCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\WhenThenCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\WindowCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Listeners\StripAliasesFromConditions;
-use Somnambulist\Components\QueryBuilder\Compiler\Listeners\StripAliasesFromDeleteFrom;
+use Somnambulist\Components\QueryBuilder\Compiler\Listeners\Common\CompileJoinClauseToSQL;
+use Somnambulist\Components\QueryBuilder\Compiler\Listeners\Common\StripAliasesFromConditions;
+use Somnambulist\Components\QueryBuilder\Compiler\Listeners\Common\StripAliasesFromDeleteFrom;
 use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
 use Somnambulist\Components\QueryBuilder\TypeCaster;
 use Somnambulist\Components\QueryBuilder\TypeCasters\DbalTypeCaster;
@@ -41,7 +42,7 @@ trait QueryCompilerBuilderTrait
         $this->registerTypeCaster();
 
         $compiler = new QueryCompiler(
-            $this->buildExpressionCompiler($compilers),
+            $exp = $this->buildExpressionCompiler($compilers),
             $evt = new EventDispatcher()
         );
 
@@ -50,6 +51,9 @@ trait QueryCompilerBuilderTrait
                 PreQueryCompile::class => [
                     new StripAliasesFromDeleteFrom(),
                     new StripAliasesFromConditions(),
+                ],
+                CompileJoinClause::class => [
+                    new CompileJoinClauseToSQL($exp),
                 ]
             ];
         }
