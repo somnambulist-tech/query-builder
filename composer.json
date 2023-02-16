@@ -1,0 +1,45 @@
+{
+    "name": "somnambulist/query-builder",
+    "type": "library",
+    "description": "An object-oriented query builder for programmatically generating SQL queries",
+    "keywords": [
+        "query",
+        "builder",
+        "sql"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dave Redfern",
+            "email": "info@somnambulist.tech"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "psr/event-dispatcher": "^1.0",
+        "psr/log": "^1.0|^2.0|^3.0",
+        "doctrine/inflector": "^2.0",
+        "somnambulist/collection": "^5.2",
+        "somnambulist/domain": "^5.1",
+        "symfony/event-dispatcher": "^6.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "doctrine/dbal": "^3.3",
+        "symfony/var-dumper": "^6.2",
+        "symfony/yaml": "^6.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Somnambulist\\Components\\QueryBuilder\\": "src/"
+        },
+        "files": [
+            "src/Resources/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Somnambulist\\Components\\QueryBuilder\\Tests\\": "tests/"
+        }
+    }
+}
