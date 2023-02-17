@@ -2,7 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Expressions;
 
-use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectClauseExpression;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function implode;
 use function sprintf;
@@ -11,12 +11,12 @@ class SelectClauseCompiler extends AbstractCompiler
 {
     public function supports(mixed $expression): bool
     {
-        return $expression instanceof SelectExpression;
+        return $expression instanceof SelectClauseExpression;
     }
 
     public function compile(mixed $expression, ValueBinder $binder): string
     {
-        /** @var SelectExpression $expression */
+        /** @var SelectClauseExpression $expression */
 
         if (0 === $expression->fields()->count()) {
             return '';

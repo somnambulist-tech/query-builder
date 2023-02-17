@@ -13,6 +13,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\Expressions\ComparisonCompiler
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\FieldCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\FromCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\FunctionCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Expressions\GroupByCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\IdentifierCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\JoinClauseCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\JoinCompiler;
@@ -32,7 +33,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\Listeners\Common\CompileJoinCl
 use Somnambulist\Components\QueryBuilder\Compiler\Listeners\Common\StripAliasesFromConditions;
 use Somnambulist\Components\QueryBuilder\Compiler\Listeners\Common\StripAliasesFromDeleteFrom;
 use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
-use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectClauseExpression;
 use Somnambulist\Components\QueryBuilder\TypeCaster;
 use Somnambulist\Components\QueryBuilder\TypeCasters\DbalTypeCaster;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -86,6 +87,7 @@ trait QueryCompilerBuilderTrait
                 new FieldCompiler(),
                 new FromCompiler(),
                 new FunctionCompiler(),
+                new GroupByCompiler(),
                 new IdentifierCompiler(),
                 new JoinCompiler(),
                 new JoinClauseCompiler(),

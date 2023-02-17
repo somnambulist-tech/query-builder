@@ -13,7 +13,7 @@ class QueryException extends Exception
         return new self(sprintf('An alias is required when using "%s" as a FROM clause', Query::class));
     }
 
-    public static function noExpressionWithKeyInSet(int|string $alias): self
+    public static function noExpressionFor(int|string $alias): self
     {
         return new self(sprintf('No expression found for key "%s" in expression set', $alias));
     }

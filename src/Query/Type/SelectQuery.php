@@ -7,8 +7,9 @@ use InvalidArgumentException;
 use Somnambulist\Components\QueryBuilder\Exceptions\ExpectedWindowExpressionFromClosure;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FieldClauseExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\GroupByExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
-use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use function array_merge;
@@ -32,7 +33,7 @@ class SelectQuery extends Query
         'from'     => null,
         'join'     => null,
         'where'    => null,
-        'group'    => [],
+        'group'    => null,
         'having'   => null,
         'window'   => [],
         'order'    => null,
@@ -82,7 +83,7 @@ class SelectQuery extends Query
             $fields = [$fields];
         }
 
-        $select = $this->parts['select'] ??= new SelectExpression();
+        $select = $this->parts['select'] ??= new SelectClauseExpression();
 
         foreach ($fields as $k => $v) {
             $select->fields()->add(new FieldClauseExpression($v, is_numeric($k) ? null : $k));
@@ -121,7 +122,7 @@ class SelectQuery extends Query
      */
     public function distinct(ExpressionInterface|string ...$on): self
     {
-        $select = $this->parts['select'] ??= new SelectExpression();
+        $select = $this->parts['select'] ??= new SelectClauseExpression();
 
         if ($on === []) {
             $select->distinct()->row();
@@ -152,17 +153,14 @@ class SelectQuery extends Query
      * Group fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param ExpressionInterface|array|string $fields fields to be added to the list
+     * @param ExpressionInterface|string ...$fields
      *
      * @return $this
      */
-    public function groupBy(ExpressionInterface|array|string $fields): self
+    public function groupBy(ExpressionInterface|string ...$fields): self
     {
-        if (!is_array($fields)) {
-            $fields = [$fields];
-        }
-
-        $this->parts['group'] = array_merge($this->parts['group'], array_values($fields));
+        $groupBy = $this->parts['group'] ??= new GroupByExpression();
+        $groupBy->add(...$fields);
 
         return $this;
     }
@@ -341,7 +339,7 @@ class SelectQuery extends Query
 
     public function modifier(ExpressionInterface|string ...$modifiers): self
     {
-        $select = $this->parts['select'] ??= new SelectExpression();
+        $select = $this->parts['select'] ??= new SelectClauseExpression();
         $select->modifier()->add(...$modifiers);
 
         return $this;

@@ -134,7 +134,7 @@ class CaseExpressionQueryTest extends TestCase
             ->select(['articles.title'])
             ->from('articles')
             ->leftJoin('comments', on: ['comments.article_id = articles.id'])
-            ->groupBy(['articles.id', 'articles.title'])
+            ->groupBy('articles.id', 'articles.title')
             ->having(function (QueryExpression $exp, Query $query) {
                 $expression = $query
                     ->newExpr()

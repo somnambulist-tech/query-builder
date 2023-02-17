@@ -9,29 +9,8 @@ use Somnambulist\Components\QueryBuilder\Query\ExpressionSet;
 /**
  * @property array<int, ExpressionInterface|string> $expressions
  */
-class DistinctExpression extends ExpressionSet
+class GroupByExpression extends ExpressionSet
 {
-    private bool $row = false;
-
-    public function row(): static
-    {
-        $this->row = true;
-
-        return $this;
-    }
-
-    public function isDistinctRow(): bool
-    {
-        return $this->row;
-    }
-
-    public function on(ExpressionInterface|string ...$expression): static
-    {
-        $this->add(...$expression);
-
-        return $this;
-    }
-
     public function add(ExpressionInterface|string ...$expression): static
     {
         $this->expressions = array_merge($this->expressions, $expression);
@@ -42,12 +21,5 @@ class DistinctExpression extends ExpressionSet
     public function get(int|string $key): ExpressionInterface|string
     {
         return $this->expressions[$key] ?? throw QueryException::noExpressionFor($key);
-    }
-
-    public function reset(): static
-    {
-        $this->row = false;
-
-        return parent::reset();
     }
 }

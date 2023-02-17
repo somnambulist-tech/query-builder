@@ -11,11 +11,12 @@ use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\DistinctExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FromExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\GroupByExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ModifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
-use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\StringExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WithExpression;
@@ -2262,7 +2263,7 @@ class SelectQueryTest extends TestCase
         $clause = $query->clause('select');
         $clauseClone = (clone $query)->clause('select');
 
-        $this->assertInstanceOf(SelectExpression::class, $clause);
+        $this->assertInstanceOf(SelectClauseExpression::class, $clause);
 
         foreach ($clause->fields() as $key => $value) {
             $this->assertEquals($value, $clauseClone->fields()->get($key));
@@ -2364,11 +2365,11 @@ class SelectQueryTest extends TestCase
         $clause = $query->clause('group');
         $clauseClone = (clone $query)->clause('group');
 
-        $this->assertIsArray($clause);
+        $this->assertInstanceOf(GroupByExpression::class, $clause);
 
         foreach ($clause as $key => $value) {
-            $this->assertEquals($value, $clauseClone[$key]);
-            $this->assertNotSame($value, $clauseClone[$key]);
+            $this->assertEquals($value, $clauseClone->get($key));
+            $this->assertNotSame($value, $clauseClone->get($key));
         }
     }
 
@@ -2533,10 +2534,10 @@ class SelectQueryTest extends TestCase
             ->from('articles')
             ->join('authors', 'authors', on: ['articles.author_id = authors.id'])
         ;
-        $this->assertTrue($query->joins()->has('authors'));
+        $this->assertTrue($query->clause('join')->has('authors'));
 
         $this->assertSame($query, $query->removeJoin('authors'));
-        $this->assertFalse($query->joins()->has('authors'));
+        $this->assertFalse($query->clause('join')->has('authors'));
     }
 
     /**

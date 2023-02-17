@@ -33,7 +33,7 @@ class QueryCompiler implements CompilerInterface
         'from'    => ' %s',
         'join'    => '%s',
         'where'   => ' WHERE %s',
-        'group'   => ' GROUP BY %s',
+        'group'   => ' %s',
         'having'  => ' HAVING %s',
         'order'   => ' %s',
         'limit'   => ' LIMIT %s',

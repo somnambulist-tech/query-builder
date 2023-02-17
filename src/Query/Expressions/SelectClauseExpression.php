@@ -5,7 +5,7 @@ namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 use Closure;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 
-class SelectExpression implements ExpressionInterface
+class SelectClauseExpression implements ExpressionInterface
 {
     private FieldExpression $fields;
     private DistinctExpression $distinct;

@@ -23,7 +23,6 @@ use Somnambulist\Components\QueryBuilder\TypeMap;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function array_key_exists;
 use function array_keys;
-use function is_null;
 use function is_string;
 
 /**
@@ -52,7 +51,7 @@ abstract class Query implements ExpressionInterface
         'from' => null,
         'join' => null,
         'where' => null,
-        'group' => [],
+        'group' => null,
         'having' => null,
         'window' => [],
         'order' => null,
@@ -235,6 +234,8 @@ abstract class Query implements ExpressionInterface
      */
     public function with(CommonTableExpression|Closure $cte): self
     {
+        $with = $this->parts['with'] ??= new WithExpression();
+
         if ($cte instanceof Closure) {
             $cte = $cte(new CommonTableExpression(), new SelectQuery());
 
@@ -243,14 +244,9 @@ abstract class Query implements ExpressionInterface
             }
         }
 
-        $this->ctes()->add($cte);
+        $with->add($cte);
 
         return $this;
-    }
-
-    public function ctes(): WithExpression
-    {
-        return $this->parts['with'] ??= new WithExpression();
     }
 
     /**
@@ -303,19 +299,10 @@ abstract class Query implements ExpressionInterface
      */
     public function from(ExpressionInterface|string $table, string $as = null): self
     {
-        $this->tables()->add($table, $as);
+        $from = $this->parts['from'] ??= new FromExpression();
+        $from->add($table, $as);
 
         return $this;
-    }
-
-    public function tables(): FromExpression
-    {
-        return $this->parts['from'] ??= new FromExpression();
-    }
-
-    public function joins(): JoinExpression
-    {
-        return $this->parts['join'] ??= new JoinExpression();
     }
 
     /**
@@ -388,7 +375,8 @@ abstract class Query implements ExpressionInterface
             $on = $this->newExpr()->add($on, $types);
         }
 
-        $this->joins()->add(new JoinClauseExpression($table, $as, $on, $type));
+        $joins = $this->parts['join'] ??= new JoinExpression();
+        $joins->add(new JoinClauseExpression($table, $as, $on, $type));
 
         return $this;
     }
@@ -404,7 +392,8 @@ abstract class Query implements ExpressionInterface
      */
     public function removeJoin(string $name): self
     {
-        $this->joins()->remove($name);
+        $joins = $this->parts['join'] ??= new JoinExpression();
+        $joins->remove($name);
 
         return $this;
     }
