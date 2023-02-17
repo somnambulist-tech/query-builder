@@ -310,7 +310,7 @@ class UpdateQueryTest extends TestCase
         $query
             ->update('authors')
             ->set('name', 'mark')
-            ->modifier(['TOP 10 PERCENT', 'FOO']);
+            ->modifier('TOP 10 PERCENT', 'FOO');
 
         $sql = $this->compiler->compile($query, new ValueBinder());
 
@@ -323,7 +323,7 @@ class UpdateQueryTest extends TestCase
         $query
             ->update('authors')
             ->set('name', 'mark')
-            ->modifier([$query->newExpr('TOP 10 PERCENT')]);
+            ->modifier($query->newExpr('TOP 10 PERCENT'));
 
         $sql = $this->compiler->compile($query, new ValueBinder());
 

@@ -6,9 +6,14 @@ use Closure;
 use InvalidArgumentException;
 use Somnambulist\Components\QueryBuilder\Exceptions\ExpectedWindowExpressionFromClosure;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\FieldClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
+use function array_merge;
+use function is_array;
+use function is_numeric;
 
 /**
  * This class is used to generate SELECT queries for the relational database.
@@ -22,10 +27,8 @@ class SelectQuery extends Query
      */
     protected array $parts = [
         'comment'  => null,
-        'modifier' => [],
         'with'     => null,
-        'select'   => [],
-        'distinct' => false,
+        'select'   => null,
         'from'     => null,
         'join'     => null,
         'where'    => null,
@@ -71,7 +74,7 @@ class SelectQuery extends Query
      */
     public function select(ExpressionInterface|Closure|array|string|float|int $fields = []): self
     {
-        if (!is_string($fields) && $fields instanceof Closure) {
+        if ($fields instanceof Closure) {
             $fields = $fields($this);
         }
 
@@ -79,7 +82,11 @@ class SelectQuery extends Query
             $fields = [$fields];
         }
 
-        $this->parts['select'] = array_merge($this->parts['select'], $fields);
+        $select = $this->parts['select'] ??= new SelectExpression();
+
+        foreach ($fields as $k => $v) {
+            $select->fields()->add(new FieldClauseExpression($v, is_numeric($k) ? null : $k));
+        }
 
         return $this;
     }
@@ -112,25 +119,17 @@ class SelectQuery extends Query
      *
      * @return $this
      */
-    public function distinct(ExpressionInterface|array|string|bool $on = []): self
+    public function distinct(ExpressionInterface|string ...$on): self
     {
+        $select = $this->parts['select'] ??= new SelectExpression();
+
         if ($on === []) {
-            $on = true;
-        } elseif (is_string($on)) {
-            $on = [$on];
+            $select->distinct()->row();
         }
 
-        if (is_array($on)) {
-            $merge = [];
-
-            if (is_array($this->parts['distinct'])) {
-                $merge = $this->parts['distinct'];
-            }
-
-            $on = array_merge($merge, array_values($on));
+        if (count($on) > 0) {
+            $select->distinct()->on(...$on);
         }
-
-        $this->parts['distinct'] = $on;
 
         return $this;
     }
@@ -338,5 +337,29 @@ class SelectQuery extends Query
         ];
 
         return $this;
+    }
+
+    public function modifier(ExpressionInterface|string ...$modifiers): self
+    {
+        $select = $this->parts['select'] ??= new SelectExpression();
+        $select->modifier()->add(...$modifiers);
+
+        return $this;
+    }
+
+    public function reset(string ...$name): Query
+    {
+        foreach ($name as $k => $n) {
+            if ('distinct' === $n) {
+                $this->parts['select']?->distinct()->reset();
+                unset($name[$k]);
+            }
+            if ('modifier' === $n) {
+                $this->parts['select']?->modifier()->reset();
+                unset($name[$k]);
+            }
+        }
+
+        return parent::reset(...$name);
     }
 }

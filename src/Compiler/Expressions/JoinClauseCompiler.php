@@ -20,11 +20,11 @@ class JoinClauseCompiler extends AbstractCompiler
         /** @var JoinClauseExpression $expression */
 
         if (!$expression->getTable()) {
-            throw InvalidValueDuringQueryCompilation::missingTableForJoinAlias($expression->getAlias());
+            throw InvalidValueDuringQueryCompilation::missingTableForJoinAlias($expression->getAs());
         }
 
         $type = $expression->getType()->value;
-        $alias = $expression->getAlias();
+        $alias = $expression->getAs();
         $table = $expression->getTable();
 
         if ($table instanceof Query) {

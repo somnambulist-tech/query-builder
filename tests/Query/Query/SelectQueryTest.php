@@ -9,10 +9,13 @@ use Somnambulist\Components\Models\Types\DateTime\DateTime;
 use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\DistinctExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FromExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\ModifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\StringExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WithExpression;
@@ -1524,7 +1527,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery();
         $query
             ->select(['author_id'])
-            ->distinct(['author_id'])
+            ->distinct('author_id')
             ->from('articles', 'a')
             ->orderBy(['author_id' => 'ASC'])
         ;
@@ -1555,7 +1558,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select(['city', 'state', 'country'])
             ->from('addresses')
-            ->modifier(['DISTINCTROW', 'SQL_NO_CACHE'])
+            ->modifier('DISTINCTROW', 'SQL_NO_CACHE')
         ;
 
         $this->assertQueryContains(
@@ -1580,7 +1583,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select(['city', 'state', 'country'])
             ->from('addresses')
-            ->modifier(['TOP 10'])
+            ->modifier('TOP 10')
         ;
 
         $this->assertQueryContains(
@@ -2259,11 +2262,11 @@ class SelectQueryTest extends TestCase
         $clause = $query->clause('select');
         $clauseClone = (clone $query)->clause('select');
 
-        $this->assertIsArray($clause);
+        $this->assertInstanceOf(SelectExpression::class, $clause);
 
-        foreach ($clause as $key => $value) {
-            $this->assertEquals($value, $clauseClone[$key]);
-            $this->assertNotSame($value, $clauseClone[$key]);
+        foreach ($clause->fields() as $key => $value) {
+            $this->assertEquals($value, $clauseClone->fields()->get($key));
+            $this->assertNotSame($value, $clauseClone->fields()->get($key));
         }
     }
 
@@ -2272,10 +2275,10 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery();
         $query->distinct($query->newExpr('distinct'));
 
-        $clause = $query->clause('distinct');
-        $clauseClone = (clone $query)->clause('distinct');
+        $clause = $query->clause('select')->distinct();
+        $clauseClone = (clone $query)->clause('select')->distinct();
 
-        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+        $this->assertInstanceOf(DistinctExpression::class, $clause);
 
         $this->assertEquals($clause, $clauseClone);
         $this->assertNotSame($clause, $clauseClone);
@@ -2286,14 +2289,14 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery();
         $query->modifier($query->newExpr('modifier'));
 
-        $clause = $query->clause('modifier');
-        $clauseClone = (clone $query)->clause('modifier');
+        $clause = $query->clause('select')->modifier();
+        $clauseClone = (clone $query)->clause('select')->modifier();
 
-        $this->assertIsArray($clause);
+        $this->assertInstanceOf(ModifierExpression::class, $clause);
 
-        foreach ($clause as $key => $value) {
-            $this->assertEquals($value, $clauseClone[$key]);
-            $this->assertNotSame($value, $clauseClone[$key]);
+        foreach ($clause->all() as $key => $value) {
+            $this->assertEquals($value, $clauseClone->get($key));
+            $this->assertNotSame($value, $clauseClone->get($key));
         }
     }
 
@@ -2509,8 +2512,8 @@ class SelectQueryTest extends TestCase
         $this->assertNotEquals($query->clause('where'), $dupe->clause('where'));
 
         $this->assertNotSame(
-            $query->clause('select')['title'],
-            $dupe->clause('select')['title']
+            $query->clause('select')->fields()->get('title'),
+            $dupe->clause('select')->fields()->get('title')
         );
         $this->assertEquals($query->clause('order'), $dupe->clause('order'));
         $this->assertNotSame($query->clause('order'), $dupe->clause('order'));

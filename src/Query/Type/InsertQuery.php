@@ -21,7 +21,7 @@ class InsertQuery extends Query
         'comment'  => null,
         'with'     => null,
         'insert'   => [],
-        'modifier' => [],
+        'modifier' => null,
         'values'   => [],
         'epilog'   => null,
     ];

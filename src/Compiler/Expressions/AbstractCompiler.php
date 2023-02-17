@@ -46,4 +46,29 @@ abstract class AbstractCompiler implements CompilerInterface, CompilerAwareInter
 
         return $value;
     }
+
+    /**
+     * Converts ExpressionInterface objects inside an iterable into their string representation.
+     *
+     * @param iterable $expressions
+     * @param ValueBinder $binder
+     * @param bool $wrap Whether to wrap each expression object with parenthesis
+     *
+     * @return array
+     */
+    protected function stringifyExpressions(iterable $expressions, ValueBinder $binder, bool $wrap = true): array
+    {
+        $result = [];
+
+        foreach ($expressions as $k => $expression) {
+            if ($expression instanceof ExpressionInterface) {
+                $value = $this->expressionCompiler->compile($expression, $binder);
+                $expression = $wrap ? '(' . $value . ')' : $value;
+            }
+
+            $result[$k] = $expression;
+        }
+
+        return $result;
+    }
 }

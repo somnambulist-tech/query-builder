@@ -2,79 +2,26 @@
 
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
-use ArrayIterator;
-use Closure;
-use Countable;
-use IteratorAggregate;
 use Somnambulist\Components\QueryBuilder\Exceptions\QueryException;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
-use Traversable;
-use function array_key_exists;
-use function count;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionSet;
 
-class JoinExpression implements Countable, ExpressionInterface, IteratorAggregate
+/**
+ * @property array<int|string, JoinClauseExpression> $expressions
+ */
+class JoinExpression extends ExpressionSet
 {
-    /**
-     * @var array<string, JoinClauseExpression>
-     */
-    private array $joins;
-
-    public function __construct(array $joins = [])
-    {
-        $this->joins = $joins;
-    }
-
-    public function getIterator(): Traversable
-    {
-        return new ArrayIterator($this->joins);
-    }
-
-    public function count(): int
-    {
-        return count($this->joins);
-    }
-
-    public function add(JoinClauseExpression $join): self
+    public function add(JoinClauseExpression $join): static
     {
         $i = $this->count();
-        $key = $join->getAlias() ?: $i++;
+        $key = $join->getAs() ?: $i++;
 
-        $this->joins[$key] = $join;
-
-        return $this;
-    }
-
-    public function has(int|string $alias): bool
-    {
-        return array_key_exists($alias, $this->joins);
-    }
-
-    public function get(int|string $alias): JoinClauseExpression
-    {
-        return $this->joins[$alias] ?? throw QueryException::noJoinNamed($alias);
-    }
-
-    public function remove(int|string $alias): self
-    {
-        unset($this->joins[$alias]);
+        $this->expressions[$key] = $join;
 
         return $this;
     }
 
-    public function traverse(Closure $callback): ExpressionInterface
+    public function get(int|string $key): JoinClauseExpression
     {
-        foreach ($this->joins as $e) {
-            $callback($e);
-            $e->traverse($callback);
-        }
-
-        return $this;
-    }
-
-    public function __clone(): void
-    {
-        foreach ($this->joins as $key => $e) {
-            $this->joins[$key] = clone $e;
-        }
+        return $this->expressions[$key] ?? throw QueryException::noJoinNamed($key);
     }
 }

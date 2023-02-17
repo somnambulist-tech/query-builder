@@ -10,6 +10,7 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\FromExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\ModifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\OrderByExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\OrderClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
@@ -37,7 +38,8 @@ abstract class Query implements ExpressionInterface
     protected ValueBinder $binder;
     protected FunctionsBuilder $functions;
     protected TypeMap $types;
-    protected array $parts = [
+
+    protected array $defaultParts = [
         'comment' => null,
         'delete' => true,
         'update' => [],
@@ -45,9 +47,8 @@ abstract class Query implements ExpressionInterface
         'insert' => [],
         'values' => [],
         'with' => null,
-        'select' => [],
-        'distinct' => false,
-        'modifier' => [],
+        'select' => null,
+        'modifier' => null,
         'from' => null,
         'join' => null,
         'where' => null,
@@ -60,6 +61,8 @@ abstract class Query implements ExpressionInterface
         'union' => [],
         'epilog' => null,
     ];
+
+    protected array $parts = [];
 
     public function __construct(?ValueBinder $binder = null, ?FunctionsBuilder $functions = null, ?TypeMap $types = null)
     {
@@ -261,7 +264,7 @@ abstract class Query implements ExpressionInterface
      * // It will produce the SQL: SELECT SQL_NO_CACHE name, city FROM products
      *
      * // Or with multiple modifiers
-     * $query->select(['name', 'city'])->from('products')->modifier(['HIGH_PRIORITY', 'SQL_NO_CACHE']);
+     * $query->select(['name', 'city'])->from('products')->modifier('HIGH_PRIORITY', 'SQL_NO_CACHE');
      * // It will produce the SQL: SELECT HIGH_PRIORITY SQL_NO_CACHE name, city FROM products
      * ```
      *
@@ -271,13 +274,10 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function modifier(ExpressionInterface|array|string $modifiers): self
+    public function modifier(ExpressionInterface|string ...$modifiers): self
     {
-        if (!is_array($modifiers)) {
-            $modifiers = [$modifiers];
-        }
-
-        $this->parts['modifier'] = array_merge($this->parts['modifier'], $modifiers);
+        $modifier = $this->parts['modifier'] ??= new ModifierExpression();
+        $modifier->add(...$modifiers);
 
         return $this;
     }
@@ -388,7 +388,7 @@ abstract class Query implements ExpressionInterface
             $on = $this->newExpr()->add($on, $types);
         }
 
-        $this->joins()->add(new JoinClauseExpression($as, $table, $on, $type));
+        $this->joins()->add(new JoinClauseExpression($table, $as, $on, $type));
 
         return $this;
     }
@@ -1108,10 +1108,9 @@ abstract class Query implements ExpressionInterface
      * - set: QueryExpression
      * - insert: array, will return an array containing the table + columns.
      * - values: ValuesExpression
-     * - select: array, will return empty array when no fields are set
-     * - distinct: boolean
-     * - from: array of tables
-     * - join: array
+     * - select: SelectExpression, null if not yet set
+     * - from: FromExpression, null if not yet set
+     * - join: JoinExpression, null if not yet set
      * - set: array
      * - where: QueryExpression, returns null when not set
      * - group: array
@@ -1120,6 +1119,8 @@ abstract class Query implements ExpressionInterface
      * - limit: integer or QueryExpression, null when not set
      * - offset: integer or QueryExpression, null when not set
      * - union: array
+     * - modifier: ModifierExpression, null if not yet set
+     * - comment: array
      *
      * @param string $name name of the clause to be returned
      *
@@ -1142,14 +1143,8 @@ abstract class Query implements ExpressionInterface
     public function reset(string ...$name): self
     {
         foreach ($name as $n) {
-            if (in_array($n, ['comment', 'with', 'from', 'join', 'where', 'having', 'order', 'limit', 'offset', 'epilog'])) {
-                $this->parts[$n] = null;
-            }
-            if (in_array($n, ['modifier', 'select', 'group', 'window', 'union'])) {
-                $this->parts[$n] = [];
-            }
-            if ('distinct' === $n) {
-                $this->parts['distinct'] = false;
+            if (array_key_exists($n, $this->parts)) {
+                $this->parts[$n] = $this->defaultParts[$n];
             }
         }
 

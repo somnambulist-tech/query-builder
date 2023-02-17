@@ -276,7 +276,7 @@ class InsertQueryTest extends TestCase
             ->insert(['title'])
             ->into('articles')
             ->values(['title' => 'foo'])
-            ->modifier(['IGNORE', 'LOW_PRIORITY'])
+            ->modifier('IGNORE', 'LOW_PRIORITY')
         ;
 
         $sql = $this->compiler->compile($query, new ValueBinder());

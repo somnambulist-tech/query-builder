@@ -9,23 +9,11 @@ use Somnambulist\Components\QueryBuilder\Query\JoinType;
 class JoinClauseExpression implements ExpressionInterface
 {
     public function __construct(
-        protected string $alias,
         protected ExpressionInterface $table,
-        protected ExpressionInterface $conditions,
+        protected string $as,
+        protected ExpressionInterface $on,
         protected JoinType $type,
     ) {
-    }
-
-    public function getAlias(): string
-    {
-        return $this->alias;
-    }
-
-    public function setAlias(string $alias): self
-    {
-        $this->alias = $alias;
-
-        return $this;
     }
 
     public function getTable(): ExpressionInterface
@@ -33,23 +21,42 @@ class JoinClauseExpression implements ExpressionInterface
         return $this->table;
     }
 
-    public function setTable(ExpressionInterface $table): self
+    public function table(ExpressionInterface $table): self
     {
         $this->table = $table;
 
         return $this;
     }
 
-    public function getConditions(): ExpressionInterface
+    public function as(string $as): self
     {
-        return $this->conditions;
-    }
-
-    public function setConditions(ExpressionInterface $conditions): self
-    {
-        $this->conditions = $conditions;
+        $this->as = $as;
 
         return $this;
+    }
+
+    public function on(ExpressionInterface $on): self
+    {
+        $this->on = $on;
+
+        return $this;
+    }
+
+    public function type(JoinType $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getAs(): string
+    {
+        return $this->as;
+    }
+
+    public function getConditions(): ExpressionInterface
+    {
+        return $this->on;
     }
 
     public function getType(): JoinType
@@ -57,20 +64,13 @@ class JoinClauseExpression implements ExpressionInterface
         return $this->type;
     }
 
-    public function setType(JoinType $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
     public function traverse(Closure $callback): self
     {
         $callback($this->table);
         $this->table->traverse($callback);
 
-        $callback($this->conditions);
-        $this->conditions->traverse($callback);
+        $callback($this->on);
+        $this->on->traverse($callback);
 
         return $this;
     }
@@ -78,6 +78,6 @@ class JoinClauseExpression implements ExpressionInterface
     public function __clone(): void
     {
         $this->table = clone $this->table;
-        $this->conditions = clone $this->conditions;
+        $this->on = clone $this->on;
     }
 }

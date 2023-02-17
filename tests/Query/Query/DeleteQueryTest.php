@@ -180,7 +180,7 @@ class DeleteQueryTest extends TestCase
             ->delete()
             ->from('authors')
             ->where('1 = 1')
-            ->modifier(['IGNORE', 'QUICK'])
+            ->modifier('IGNORE', 'QUICK')
         ;
 
         $sql = $this->compiler->compile($query, new ValueBinder());

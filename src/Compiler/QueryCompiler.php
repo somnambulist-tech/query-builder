@@ -6,12 +6,12 @@ use Closure;
 use Countable;
 use Exception;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Somnambulist\Components\QueryBuilder\Compiler\Events\CompileJoinClause;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PostQueryCompile;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreQueryCompile;
 use Somnambulist\Components\QueryBuilder\Exceptions\InvalidValueDuringQueryCompilation;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\ModifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
@@ -29,6 +29,7 @@ class QueryCompiler implements CompilerInterface
     protected array $templates = [
         'delete'  => 'DELETE',
         'with'    => '%s',
+        'select'  => '%s',
         'from'    => ' %s',
         'join'    => '%s',
         'where'   => ' WHERE %s',
@@ -139,12 +140,16 @@ class QueryCompiler implements CompilerInterface
                 return;
             }
 
-            if ($part instanceof ExpressionInterface) {
+            if ($part instanceof ExpressionInterface && 'modifier' !== $partName) {
                 $part = [$this->expressionCompiler->compile($part, $binder)];
             }
             if (isset($this->templates[$partName])) {
                 $part = $this->stringifyExpressions((array)$part, $binder);
                 $sql .= sprintf($this->templates[$partName], implode(', ', $part));
+
+                if ('select' === $partName && $this->orderedUnion && $query->clause('union')) {
+                    $sql = '(' . $sql;
+                }
 
                 return;
             }
@@ -191,38 +196,38 @@ class QueryCompiler implements CompilerInterface
      *
      * @return string
      */
-    protected function buildSelectPart(array $parts, Query $query, ValueBinder $binder): string
-    {
-        $select = 'SELECT%s %s%s';
-
-        if ($this->orderedUnion && $query->clause('union')) {
-            $select = '(SELECT%s %s%s';
-        }
-
-        $normalized = [];
-        $distinct = $query->clause('distinct');
-        $modifiers = $this->buildModifierPart($query->clause('modifier'), $query, $binder);
-        $parts = $this->stringifyExpressions($parts, $binder);
-
-        foreach ($parts as $k => $p) {
-            if (!is_numeric($k)) {
-                $p = sprintf('%s AS %s', $p, $k);
-            }
-
-            $normalized[] = $p;
-        }
-
-        if ($distinct === true) {
-            $distinct = 'DISTINCT ';
-        }
-
-        if (is_array($distinct)) {
-            $distinct = $this->stringifyExpressions($distinct, $binder);
-            $distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $distinct));
-        }
-
-        return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
-    }
+//    protected function buildSelectPart(array $parts, Query $query, ValueBinder $binder): string
+//    {
+//        $select = 'SELECT%s %s%s';
+//
+//        if ($this->orderedUnion && $query->clause('union')) {
+//            $select = '(SELECT%s %s%s';
+//        }
+//
+//        $normalized = [];
+//        $distinct = $query->clause('distinct');
+//        $modifiers = $this->buildModifierPart($query->clause('modifier'), $query, $binder);
+//        $parts = $this->stringifyExpressions($parts, $binder);
+//
+//        foreach ($parts as $k => $p) {
+//            if (!is_numeric($k)) {
+//                $p = sprintf('%s AS %s', $p, $k);
+//            }
+//
+//            $normalized[] = $p;
+//        }
+//
+//        if ($distinct === true) {
+//            $distinct = 'DISTINCT ';
+//        }
+//
+//        if (is_array($distinct)) {
+//            $distinct = $this->stringifyExpressions($distinct, $binder);
+//            $distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $distinct));
+//        }
+//
+//        return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
+//    }
 
     /**
      * Helper function used to build the string representation of a FROM clause,
@@ -424,13 +429,13 @@ class QueryCompiler implements CompilerInterface
      *
      * @return string SQL fragment.
      */
-    protected function buildModifierPart(array $parts, Query $query, ValueBinder $binder): string
+    protected function buildModifierPart(?ModifierExpression $parts, Query $query, ValueBinder $binder): string
     {
-        if ($parts === []) {
+        if (is_null($parts)) {
             return '';
         }
 
-        return ' ' . implode(' ', $this->stringifyExpressions($parts, $binder, false));
+        return ' ' . implode(' ', $this->stringifyExpressions($parts->all(), $binder, false));
     }
 
     /**

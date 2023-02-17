@@ -21,7 +21,7 @@ class UpdateQuery extends Query
         'comment'  => null,
         'with'     => null,
         'update'   => [],
-        'modifier' => [],
+        'modifier' => null,
         'join'     => null,
         'set'      => [],
         'from'     => null,

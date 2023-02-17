@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Somnambulist\Components\QueryBuilder\Tests\Query\Expression;
+namespace Somnambulist\Components\QueryBuilder\Tests\Query\Expressions;
 
 use Somnambulist\Components\QueryBuilder\Query\Expressions\AggregateExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;

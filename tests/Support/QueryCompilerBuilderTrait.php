@@ -10,14 +10,17 @@ use Somnambulist\Components\QueryBuilder\Compiler\Expressions\BetweenCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\CaseStatementCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\CommonTableExpressionCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\ComparisonCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Expressions\FieldCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\FromCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\FunctionCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\IdentifierCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\JoinClauseCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\JoinCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Expressions\ModifierCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\OrderByCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\OrderClauseCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\QueryExpressionCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Expressions\SelectClauseCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\StringCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\TupleCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\UnaryCompiler;
@@ -29,6 +32,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\Listeners\Common\CompileJoinCl
 use Somnambulist\Components\QueryBuilder\Compiler\Listeners\Common\StripAliasesFromConditions;
 use Somnambulist\Components\QueryBuilder\Compiler\Listeners\Common\StripAliasesFromDeleteFrom;
 use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectExpression;
 use Somnambulist\Components\QueryBuilder\TypeCaster;
 use Somnambulist\Components\QueryBuilder\TypeCasters\DbalTypeCaster;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -79,14 +83,17 @@ trait QueryCompilerBuilderTrait
                 new CaseStatementCompiler(),
                 new CommonTableExpressionCompiler(),
                 new ComparisonCompiler(),
+                new FieldCompiler(),
                 new FromCompiler(),
                 new FunctionCompiler(),
                 new IdentifierCompiler(),
                 new JoinCompiler(),
                 new JoinClauseCompiler(),
+                new ModifierCompiler(),
                 new OrderByCompiler(),
                 new OrderClauseCompiler(),
                 new QueryExpressionCompiler(),
+                new SelectClauseCompiler(),
                 new StringCompiler(),
                 new TupleCompiler(),
                 new UnaryCompiler(),

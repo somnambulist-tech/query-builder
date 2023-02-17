@@ -9,12 +9,14 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FromExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\ModifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WithExpression;
 use Somnambulist\Components\QueryBuilder\Query\OrderDirection;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
+use Somnambulist\Components\Utils\EntityAccessor;
 
 class QueryTest extends TestCase
 {
@@ -37,7 +39,11 @@ class QueryTest extends TestCase
 
     protected function newQuery(): Query
     {
-        return $this->getMockForAbstractClass(Query::class);
+        $query = $this->getMockForAbstractClass(Query::class);
+
+        EntityAccessor::set($query, 'parts', EntityAccessor::get($query, 'defaultParts'));
+
+        return $query;
     }
 
     /**
@@ -45,8 +51,7 @@ class QueryTest extends TestCase
      */
     public function testWhereEmptyValues(): void
     {
-        $this->query->from('comments')
-            ->where('');
+        $this->query->from('comments')->where('');
 
         $this->assertCount(0, $this->query->clause('where'));
 
@@ -112,11 +117,11 @@ class QueryTest extends TestCase
         $clause = $this->query->clause('modifier');
         $clauseClone = (clone $this->query)->clause('modifier');
 
-        $this->assertIsArray($clause);
+        $this->assertInstanceOf(ModifierExpression::class, $clause);
 
-        foreach ($clause as $key => $value) {
-            $this->assertEquals($value, $clauseClone[$key]);
-            $this->assertNotSame($value, $clauseClone[$key]);
+        foreach ($clause->all() as $key => $value) {
+            $this->assertEquals($value, $clauseClone->get($key));
+            $this->assertNotSame($value, $clauseClone->get($key));
         }
     }
 
@@ -240,7 +245,7 @@ class QueryTest extends TestCase
     public function testClauseUndefined(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The "nope" clause is not defined. Valid clauses are: comment, delete, update, set, insert, values, with, select, distinct, modifier, from, join, where, group, having, window, order, limit, offset, union, epilog.');
+        $this->expectExceptionMessage('The "nope" clause is not defined. Valid clauses are: comment, delete, update, set, insert, values, with, select, modifier, from, join, where, group, having, window, order, limit, offset, union, epilog.');
 
         $this->assertEmpty($this->query->clause('where'));
         $this->query->clause('nope');

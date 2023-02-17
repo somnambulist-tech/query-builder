@@ -2,38 +2,15 @@
 
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
-use ArrayIterator;
-use Closure;
-use Countable;
-use IteratorAggregate;
 use Somnambulist\Components\QueryBuilder\Exceptions\QueryException;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
-use Traversable;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionSet;
 use function array_key_exists;
-use function count;
 
-class WithExpression implements Countable, ExpressionInterface, IteratorAggregate
+/**
+ * @property array<string, CommonTableExpression> $expressions
+ */
+class WithExpression extends ExpressionSet
 {
-    /**
-     * @var array<CommonTableExpression>
-     */
-    private array $expressions;
-
-    public function __construct(array $expressions = [])
-    {
-        $this->expressions = $expressions;
-    }
-
-    public function getIterator(): Traversable
-    {
-        return new ArrayIterator($this->expressions);
-    }
-
-    public function count(): int
-    {
-        return count($this->expressions);
-    }
-
     public function add(CommonTableExpression $cte): self
     {
         $this->expressions[] = $cte;
@@ -41,10 +18,10 @@ class WithExpression implements Countable, ExpressionInterface, IteratorAggregat
         return $this;
     }
 
-    public function has(string $alias): bool
+    public function has(int|string $key): bool
     {
         foreach ($this->expressions as $cte) {
-            if ($cte->getName() === $alias) {
+            if ($cte->getName() === $key) {
                 return true;
             }
         }
@@ -52,47 +29,30 @@ class WithExpression implements Countable, ExpressionInterface, IteratorAggregat
         return false;
     }
 
-    public function get(int|string $alias): CommonTableExpression
+    public function get(int|string $key): CommonTableExpression
     {
-        if (array_key_exists($alias, $this->expressions)) {
-            return $this->expressions[$alias];
+        if (array_key_exists($key, $this->expressions)) {
+            return $this->expressions[$key];
         }
 
         foreach ($this->expressions as $cte) {
-            if ($cte->getName() === $alias) {
+            if ($cte->getName() === $key) {
                 return $cte;
             }
         }
 
-        throw QueryException::noWithExpressionNamed($alias);
+        throw QueryException::noWithExpressionNamed($key);
     }
 
-    public function remove(string $alias): self
+    public function remove(int|string $key): static
     {
         foreach ($this->expressions as $k => $cte) {
-            if ($cte->getName() === $alias) {
+            if ($cte->getName()->getIdentifier() === $key) {
                 unset($this->expressions[$k]);
                 break;
             }
         }
 
         return $this;
-    }
-
-    public function traverse(Closure $callback): ExpressionInterface
-    {
-        foreach ($this->expressions as $e) {
-            $callback($e);
-            $e->traverse($callback);
-        }
-
-        return $this;
-    }
-
-    public function __clone(): void
-    {
-        foreach ($this->expressions as $key => $e) {
-            $this->expressions[$key] = clone $e;
-        }
     }
 }
