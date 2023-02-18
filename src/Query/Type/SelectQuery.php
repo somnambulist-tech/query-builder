@@ -10,6 +10,8 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\FieldClauseExpression
 use Somnambulist\Components\QueryBuilder\Query\Expressions\GroupByExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectClauseExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\UnionClauseExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\UnionExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use function array_merge;
@@ -39,7 +41,7 @@ class SelectQuery extends Query
         'order'    => null,
         'limit'    => null,
         'offset'   => null,
-        'union'    => [],
+        'union'    => null,
         'epilog'   => null,
     ];
 
@@ -258,12 +260,16 @@ class SelectQuery extends Query
         if ($limit !== null) {
             $this->limit($limit);
         }
+
         $limit = $this->clause('limit');
+
         if ($limit === null) {
             $limit = 25;
             $this->limit($limit);
         }
+
         $offset = ($num - 1) * $limit;
+
         if (PHP_INT_MAX <= $offset) {
             $offset = PHP_INT_MAX;
         }
@@ -276,7 +282,7 @@ class SelectQuery extends Query
      * Adds a complete query to be used in conjunction with a UNION operator with
      * this query. This is used to combine the result set of this query with the one
      * that will be returned by the passed query. You can add as many queries as you
-     * required by calling multiple times this method with different queries.
+     * require by calling multiple times this method with different queries.
      *
      * By default, the UNION operator will remove duplicate rows, if you wish to include
      * every row for all queries, use unionAll().
@@ -292,16 +298,14 @@ class SelectQuery extends Query
      *
      * `SELECT id, name FROM things d UNION SELECT id, title FROM articles a`
      *
-     * @param Query|string $query full SQL query to be used in UNION operator
+     * @param Query $query full SQL query to be used in UNION operator
      *
      * @return $this
      */
-    public function union(Query|string $query): self
+    public function union(Query $query): self
     {
-        $this->parts['union'][] = [
-            'all'   => false,
-            'query' => $query,
-        ];
+        $unions = $this->parts['union'] ??= new UnionExpression();
+        $unions->add(new UnionClauseExpression($query, false));
 
         return $this;
     }
@@ -323,16 +327,14 @@ class SelectQuery extends Query
      *
      * `SELECT id, name FROM things d UNION ALL SELECT id, title FROM articles a`
      *
-     * @param Query|string $query full SQL query to be used in UNION operator
+     * @param Query $query SQL query to be used in UNION operator
      *
      * @return $this
      */
-    public function unionAll(Query|string $query): self
+    public function unionAll(Query $query): self
     {
-        $this->parts['union'][] = [
-            'all'   => true,
-            'query' => $query,
-        ];
+        $unions = $this->parts['union'] ??= new UnionExpression();
+        $unions->add(new UnionClauseExpression($query, true));
 
         return $this;
     }

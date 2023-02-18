@@ -69,7 +69,7 @@ class CommonTableExpressionQueryTest extends TestCase
 
                 return $cte
                     ->name('cte')
-                    ->field(['col'])
+                    ->field('col')
                     ->query($cteQuery)
                     ->recursive();
             })
@@ -96,7 +96,7 @@ class CommonTableExpressionQueryTest extends TestCase
             ->with(function (CommonTableExpression $cte, SelectQuery $query) {
                 return $cte
                     ->name('cte')
-                    ->field(['title', 'body'])
+                    ->field('title', 'body')
                     ->query($query->newExpr("SELECT 'Fourth Article', 'Fourth Article Body'"));
             })
             ->insert(['title', 'body'])
@@ -124,7 +124,7 @@ class CommonTableExpressionQueryTest extends TestCase
                     ->with(function (CommonTableExpression $cte, SelectQuery $query) {
                         return $cte
                             ->name('cte')
-                            ->field(['title', 'body'])
+                            ->field('title', 'body')
                             ->query($query->newExpr("SELECT 'Fourth Article', 'Fourth Article Body'"));
                     })
                     ->select('*')

@@ -18,6 +18,7 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\ModifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\StringExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\UnionExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WithExpression;
 use Somnambulist\Components\QueryBuilder\Query\OrderDirection;
@@ -2470,11 +2471,11 @@ class SelectQueryTest extends TestCase
         $clause = $query->clause('union');
         $clauseClone = (clone $query)->clause('union');
 
-        $this->assertIsArray($clause);
+        $this->assertInstanceOf(UnionExpression::class, $clause);
 
-        foreach ($clause as $key => $value) {
-            $this->assertEquals($value['query'], $clauseClone[$key]['query']);
-            $this->assertNotSame($value['query'], $clauseClone[$key]['query']);
+        foreach ($clause->all() as $key => $value) {
+            $this->assertEquals($value->getQuery(), $clauseClone->get($key)->getQuery());
+            $this->assertNotSame($value->getQuery(), $clauseClone->get($key)->getQuery());
         }
     }
 

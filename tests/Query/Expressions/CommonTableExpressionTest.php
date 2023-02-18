@@ -50,7 +50,7 @@ class CommonTableExpressionTest extends TestCase
     {
         $cte = (new CommonTableExpression('test', select()))
             ->field('col1')
-            ->field([new IdentifierExpression('col2')]);
+            ->field(new IdentifierExpression('col2'));
         $this->assertEqualsSql('test(col1, col2) AS ()', $this->compiler->compile($cte, new ValueBinder()));
     }
 

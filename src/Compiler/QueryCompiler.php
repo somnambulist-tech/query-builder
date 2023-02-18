@@ -38,6 +38,7 @@ class QueryCompiler implements CompilerInterface
         'order'   => ' %s',
         'limit'   => ' LIMIT %s',
         'offset'  => ' OFFSET %s',
+        'union'   => '%s',
         'epilog'  => ' %s',
         'comment' => '/* %s */ ',
     ];
@@ -92,8 +93,6 @@ class QueryCompiler implements CompilerInterface
         if (!$expression instanceof Query) {
             throw InvalidValueDuringQueryCompilation::queryObjectRequired(static::class, $expression);
         }
-
-        $binder ??= $expression->getBinder();
 
         $this->dispatcher->dispatch(new PreQueryCompile($expression, $binder));
 
@@ -344,26 +343,26 @@ class QueryCompiler implements CompilerInterface
      *
      * @return string
      */
-    protected function buildUnionPart(array $parts, Query $query, ValueBinder $binder): string
-    {
-        $parts = array_map(function ($p) use ($binder) {
-            $p['query'] = $this->expressionCompiler->compile($p['query'], $binder);
-            $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
-            $prefix = $p['all'] ? 'ALL ' : '';
-
-            if ($this->orderedUnion) {
-                return sprintf('%s(%s)', $prefix, $p['query']);
-            }
-
-            return $prefix . $p['query'];
-        }, $parts);
-
-        if ($this->orderedUnion) {
-            return sprintf(")\nUNION %s", implode("\nUNION ", $parts));
-        }
-
-        return sprintf("\nUNION %s", implode("\nUNION ", $parts));
-    }
+//    protected function buildUnionPart(array $parts, Query $query, ValueBinder $binder): string
+//    {
+//        $parts = array_map(function ($p) use ($binder) {
+//            $p['query'] = $this->expressionCompiler->compile($p['query'], $binder);
+//            $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
+//            $prefix = $p['all'] ? 'ALL ' : '';
+//
+//            if ($this->orderedUnion) {
+//                return sprintf('%s(%s)', $prefix, $p['query']);
+//            }
+//
+//            return $prefix . $p['query'];
+//        }, $parts);
+//
+//        if ($this->orderedUnion) {
+//            return sprintf(")\nUNION %s", implode("\nUNION ", $parts));
+//        }
+//
+//        return sprintf("\nUNION %s", implode("\nUNION ", $parts));
+//    }
 
     /**
      * Builds the SQL fragment for INSERT INTO.

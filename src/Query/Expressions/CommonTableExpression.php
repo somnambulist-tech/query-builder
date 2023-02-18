@@ -87,21 +87,19 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * Adds one or more fields (arguments) to the CTE.
      *
-     * @param IdentifierExpression|array<IdentifierExpression>|array<string>|string $fields Field names
+     * @param IdentifierExpression|string ...$field Field names
      *
      * @return $this
      */
-    public function field(IdentifierExpression|array|string $fields): self
+    public function field(IdentifierExpression|string ...$field): self
     {
-        $fields = (array)$fields;
-
-        foreach ($fields as &$field) {
-            if (!$field instanceof IdentifierExpression) {
-                $field = new IdentifierExpression($field);
+        foreach ($field as &$f) {
+            if (!$f instanceof IdentifierExpression) {
+                $f = new IdentifierExpression($f);
             }
         }
 
-        $this->fields = array_merge($this->fields, $fields);
+        $this->fields = array_merge($this->fields, $field);
 
         return $this;
     }

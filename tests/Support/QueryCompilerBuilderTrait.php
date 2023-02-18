@@ -25,6 +25,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\Expressions\SelectClauseCompil
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\StringCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\TupleCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\UnaryCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Expressions\UnionCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\ValuesCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\WhenThenCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\WindowCompiler;
@@ -99,6 +100,7 @@ trait QueryCompilerBuilderTrait
                 new StringCompiler(),
                 new TupleCompiler(),
                 new UnaryCompiler(),
+                new UnionCompiler(),
                 new ValuesCompiler(),
                 new WhenThenCompiler(),
                 new WindowCompiler(),

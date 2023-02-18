@@ -57,7 +57,7 @@ abstract class Query implements ExpressionInterface
         'order' => null,
         'limit' => null,
         'offset' => null,
-        'union' => [],
+        'union' => null,
         'epilog' => null,
     ];
 
@@ -1107,7 +1107,7 @@ abstract class Query implements ExpressionInterface
      * - order: OrderByExpression, returns null when not set
      * - limit: integer or QueryExpression, null when not set
      * - offset: integer or QueryExpression, null when not set
-     * - union: array
+     * - union: UnionExpression, null if not yet set
      * - modifier: ModifierExpression, null if not yet set
      * - comment: array
      *
