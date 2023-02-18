@@ -53,7 +53,7 @@ abstract class Query implements ExpressionInterface
         'where' => null,
         'group' => null,
         'having' => null,
-        'window' => [],
+        'window' => null,
         'order' => null,
         'limit' => null,
         'offset' => null,

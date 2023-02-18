@@ -28,6 +28,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\Expressions\UnaryCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\UnionCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\ValuesCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\WhenThenCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Expressions\WindowClauseCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\WindowCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Expressions\WithCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Listeners\Common\CompileJoinClauseToSQL;
@@ -103,6 +104,7 @@ trait QueryCompilerBuilderTrait
                 new UnionCompiler(),
                 new ValuesCompiler(),
                 new WhenThenCompiler(),
+                new WindowClauseCompiler(),
                 new WindowCompiler(),
                 new WithCompiler(),
             ];

@@ -19,6 +19,7 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\StringExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\UnionExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WithExpression;
 use Somnambulist\Components\QueryBuilder\Query\OrderDirection;
@@ -2401,14 +2402,14 @@ class SelectQueryTest extends TestCase
         $clause = $query->clause('window');
         $clauseClone = (clone $query)->clause('window');
 
-        $this->assertIsArray($clause);
+        $this->assertInstanceOf(WindowClauseExpression::class, $clause);
 
         foreach ($clause as $key => $value) {
-            $this->assertEquals($value['name'], $clauseClone[$key]['name']);
-            $this->assertNotSame($value['name'], $clauseClone[$key]['name']);
+            $this->assertEquals($value->getName(), $clauseClone->get($key)->getName());
+            $this->assertNotSame($value->getName(), $clauseClone->get($key)->getName());
 
-            $this->assertEquals($value['window'], $clauseClone[$key]['window']);
-            $this->assertNotSame($value['window'], $clauseClone[$key]['window']);
+            $this->assertEquals($value->getWindow(), $clauseClone->get($key)->getWindow());
+            $this->assertNotSame($value->getWindow(), $clauseClone->get($key)->getWindow());
         }
     }
 

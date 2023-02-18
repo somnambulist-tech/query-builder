@@ -9,9 +9,11 @@ use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FieldClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\GroupByExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\NamedWindowClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\UnionClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\UnionExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use function array_merge;
@@ -37,7 +39,7 @@ class SelectQuery extends Query
         'where'    => null,
         'group'    => null,
         'having'   => null,
-        'window'   => [],
+        'window'   => null,
         'order'    => null,
         'limit'    => null,
         'offset'   => null,
@@ -231,7 +233,8 @@ class SelectQuery extends Query
             }
         }
 
-        $this->parts['window'][] = ['name' => new IdentifierExpression($name), 'window' => $window];
+        $windows = $this->parts['window'] ??= new WindowClauseExpression();
+        $windows->add(new NamedWindowClauseExpression(new IdentifierExpression($name), $window));
 
         return $this;
     }

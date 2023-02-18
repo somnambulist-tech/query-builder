@@ -35,6 +35,7 @@ class QueryCompiler implements CompilerInterface
         'where'   => ' WHERE %s',
         'group'   => ' %s',
         'having'  => ' HAVING %s',
+        'window'  => '%s',
         'order'   => ' %s',
         'limit'   => ' LIMIT %s',
         'offset'  => ' OFFSET %s',
@@ -290,20 +291,20 @@ class QueryCompiler implements CompilerInterface
      *
      * @return string
      */
-    protected function buildWindowPart(array $parts, Query $query, ValueBinder $binder): string
-    {
-        $windows = [];
-
-        foreach ($parts as $window) {
-            $windows[] = sprintf(
-                '%s AS (%s)',
-                $this->expressionCompiler->compile($window['name'], $binder),
-                $this->expressionCompiler->compile($window['window'], $binder)
-            );
-        }
-
-        return ' WINDOW ' . implode(', ', $windows);
-    }
+//    protected function buildWindowPart(array $parts, Query $query, ValueBinder $binder): string
+//    {
+//        $windows = [];
+//
+//        foreach ($parts as $window) {
+//            $windows[] = sprintf(
+//                '%s AS (%s)',
+//                $this->expressionCompiler->compile($window['name'], $binder),
+//                $this->expressionCompiler->compile($window['window'], $binder)
+//            );
+//        }
+//
+//        return ' WINDOW ' . implode(', ', $windows);
+//    }
 
     /**
      * Helper function to generate SQL for SET expressions.
