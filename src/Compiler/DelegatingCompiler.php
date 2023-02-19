@@ -6,11 +6,11 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PostQueryCompile;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreQueryCompile;
 use Somnambulist\Components\QueryBuilder\Exceptions\NoCompilerForExpression;
-use Somnambulist\Components\QueryBuilder\Exceptions\UnsupportedExpressionType;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function array_key_exists;
 use function get_debug_type;
+use function is_string;
 
 /**
  * Delegates query and query expression compiling to appropriate handlers
@@ -19,7 +19,7 @@ use function get_debug_type;
  * process. The same handler can be assigned to multiple expressions, however many compilers
  * are specific to a given function or SQL part.
  */
-class DelegatingCompiler implements CompilerInterface
+class DelegatingCompiler implements DelegatingCompilerInterface
 {
     /**
      * @var array<string, CompilerInterface>
@@ -40,20 +40,22 @@ class DelegatingCompiler implements CompilerInterface
 
     public function has(mixed $expression): bool
     {
-        return array_key_exists(get_debug_type($expression), $this->compilers);
+        $key = is_string($expression) ? $expression : get_debug_type($expression);
+
+        return array_key_exists($key, $this->compilers);
     }
 
-    public function compile(mixed $query, ValueBinder $binder): string
+    public function compile(mixed $expression, ValueBinder $binder): string
     {
-        if ($query instanceof Query) {
-            $this->dispatcher->dispatch(new PreQueryCompile($query, $binder));
+        if ($expression instanceof Query) {
+            $this->dispatcher->dispatch(new PreQueryCompile($expression, $binder));
 
-            $sql = $this->get($query)->compile($query, $binder);
+            $sql = $this->get($expression)->compile($expression, $binder);
 
-            return $this->dispatcher->dispatch(new PostQueryCompile($sql, $query, $binder))->getRevisedSql();
+            return $this->dispatcher->dispatch(new PostQueryCompile($sql, $expression, $binder))->getRevisedSql();
         }
 
-        return $this->get($query)->compile($query, $binder);
+        return $this->get($expression)->compile($expression, $binder);
     }
 
     /**
@@ -82,7 +84,7 @@ class DelegatingCompiler implements CompilerInterface
 
     public function get(mixed $expression): CompilerInterface
     {
-        $key = get_debug_type($expression);
+        $key = is_string($expression) ? $expression : get_debug_type($expression);
 
         return $this->compilers[$key] ?? throw NoCompilerForExpression::create($key);
     }

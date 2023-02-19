@@ -5,6 +5,7 @@ namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type;
 use Closure;
 use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\CompileExpressionsToString;
 use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\DispatchesCompilerEvents;
+use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\GetCompilerForExpression;
 use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\IsCompilable;
 use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\DispatchesCompilerEventsInterface;
@@ -20,6 +21,7 @@ class SelectCompiler extends AbstractCompiler implements DispatchesCompilerEvent
     use IsCompilable;
     use CompileExpressionsToString;
     use DispatchesCompilerEvents;
+    use GetCompilerForExpression;
 
     protected array $templates = [
         'with'    => '%s',
@@ -45,6 +47,7 @@ class SelectCompiler extends AbstractCompiler implements DispatchesCompilerEvent
     public function compile(mixed $expression, ValueBinder $binder): string
     {
         /** @var SelectQuery $expression */
+        $this->assertExpressionIsSupported($expression, [SelectQuery::class]);
 
         $sql = '';
 
@@ -66,14 +69,14 @@ class SelectCompiler extends AbstractCompiler implements DispatchesCompilerEvent
             $this->preCompile($partName, $part, $query, $binder);
 
             if ($part instanceof ExpressionInterface) {
-                $part = [$this->compiler->compile($part, $binder)];
+                $part = [$this->getCompiler($partName, $part)->compile($part, $binder)];
             }
             if (isset($this->templates[$partName])) {
                 $part = $this->compileExpressionsToString((array)$part, $binder);
                 $sql .= sprintf($this->templates[$partName], implode(', ', $part));
-            }
 
-            $sql = $this->postCompile($partName, $sql, $query, $binder);
+                $sql = $this->postCompile($partName, $sql, $query, $binder);
+            }
         };
     }
 }

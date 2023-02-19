@@ -12,7 +12,7 @@ class Context
         'limit'   => ' LIMIT %s',
         'offset'  => ' OFFSET %s',
         'epilog'  => ' %s',
-        'comment' => '-- %s',
+        'comment' => '/* %s */',
     ];
 
     public function __construct(private array $data = [])

@@ -16,7 +16,6 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\UnionExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
-use function array_merge;
 use function is_array;
 use function is_numeric;
 

@@ -6,10 +6,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function class_exists;
-use function dirname;
-use function file_put_contents;
 use function sprintf;
-use function str_starts_with;
 use function ucfirst;
 
 trait DispatchesCompilerEvents

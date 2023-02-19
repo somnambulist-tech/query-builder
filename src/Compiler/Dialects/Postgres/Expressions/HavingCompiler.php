@@ -4,6 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Postgres\Expres
 
 use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FunctionExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function implode;
 use function is_string;
@@ -21,6 +22,7 @@ class HavingCompiler extends AbstractCompiler
 
     public function compile(mixed $expression, ValueBinder $binder): string
     {
+        /** @var QueryExpression $selectParts */
         $selectParts = $query->clause('select');
 
         foreach ($selectParts as $selectKey => $selectPart) {
@@ -28,7 +30,7 @@ class HavingCompiler extends AbstractCompiler
                 continue;
             }
 
-            foreach ($parts as $k => $p) {
+            foreach ($expression as $k => $p) {
                 if (!is_string($p)) {
                     continue;
                 }
@@ -41,7 +43,7 @@ class HavingCompiler extends AbstractCompiler
 
                 $parts[$k] = preg_replace(
                     ['/"/', '/\b' . trim($selectKey, '"') . '\b/i'],
-                    ['', $this->expressionCompiler->compile($selectPart, $binder)],
+                    ['', $this->compiler->compile($selectPart, $binder)],
                     $p
                 );
             }

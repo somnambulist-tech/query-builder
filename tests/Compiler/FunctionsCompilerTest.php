@@ -2,21 +2,12 @@
 
 namespace Somnambulist\Components\QueryBuilder\Tests\Compiler;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
-use Somnambulist\Components\QueryBuilder\Compiler\DelegatingCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\AggregateCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\FunctionCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\IdentifierCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\WindowCompiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\FunctionsBuilder;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
-use Somnambulist\Components\QueryBuilder\TypeCaster;
-use Somnambulist\Components\QueryBuilder\TypeCasters\DbalTypeCaster;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class FunctionsCompilerTest extends TestCase
 {

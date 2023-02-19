@@ -7,7 +7,6 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\Models\Types\DateTime\DateTime;
 use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
-use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\DistinctExpression;

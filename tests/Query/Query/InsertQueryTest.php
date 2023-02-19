@@ -6,7 +6,6 @@ use Exception;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
-use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Type\InsertQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;

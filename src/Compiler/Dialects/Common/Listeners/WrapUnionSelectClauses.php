@@ -5,7 +5,10 @@ namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listener
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PostSelectExpressionCompile;
 
 /**
- * Ensures all placeholders are correctly bound to the value binder for the query
+ * Prefixes an opening parenthesis to the SELECT statement so that ORDER BY may be used with a UNION
+ *
+ * Note: this is not supported by all databases, notably SQlite does not support order by in the
+ * individual UNION statements, only over the whole combined set.
  */
 class WrapUnionSelectClauses
 {

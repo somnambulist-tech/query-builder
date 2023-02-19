@@ -8,6 +8,11 @@ use function file_put_contents;
 use function sprintf;
 use function str_starts_with;
 
+/**
+ * Debug only, used to create missing events during development
+ *
+ * @internal Do not use
+ */
 trait MakeMissingEvents
 {
     protected function makeEvent(string $event): void
