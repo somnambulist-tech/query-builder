@@ -2,23 +2,15 @@
 
 namespace Somnambulist\Components\QueryBuilder\Tests\Compiler;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
-use Somnambulist\Components\QueryBuilder\Compiler\ExpressionCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Expressions\BetweenCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Expressions\ComparisonCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Expressions\FunctionCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Expressions\IdentifierCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Expressions\ValuesCompiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\BetweenExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ComparisonExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FunctionExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ValuesExpression;
 use Somnambulist\Components\QueryBuilder\Tests\Support\Fixtures\Types\TestType;
-use Somnambulist\Components\QueryBuilder\TypeCaster;
-use Somnambulist\Components\QueryBuilder\TypeCasters\DbalTypeCaster;
+use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\TypeMap;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
@@ -29,6 +21,8 @@ use Somnambulist\Components\QueryBuilder\ValueBinder;
  */
 class ExpressionTypeCastingTest extends TestCase
 {
+    use QueryCompilerBuilderTrait;
+
     private ?CompilerInterface $compiler = null;
 
     public function setUp(): void
@@ -39,15 +33,7 @@ class ExpressionTypeCastingTest extends TestCase
             Type::getTypeRegistry()->register('test_type', new TestType());
         }
 
-        TypeCaster::register(new DbalTypeCaster($this->getMockBuilder(AbstractPlatform::class)->getMock()));
-
-        $this->compiler = new ExpressionCompiler([
-            new BetweenCompiler(),
-            new ComparisonCompiler(),
-            new FunctionCompiler(),
-            new IdentifierCompiler(),
-            new ValuesCompiler(),
-        ]);
+        $this->compiler = $this->buildCompiler();
     }
 
     /**

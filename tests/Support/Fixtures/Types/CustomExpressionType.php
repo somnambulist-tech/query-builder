@@ -9,7 +9,7 @@ use Somnambulist\Components\QueryBuilder\TypeCanCastToExpressionInterface;
 
 class CustomExpressionType extends StringType implements TypeCanCastToExpressionInterface
 {
-    public function getName()
+    public function getName(): string
     {
         return 'custom';
     }

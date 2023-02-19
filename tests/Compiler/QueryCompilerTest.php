@@ -4,6 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Compiler;
 
 use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\Query\Type;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;

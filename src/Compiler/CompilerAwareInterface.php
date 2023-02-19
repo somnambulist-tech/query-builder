@@ -4,5 +4,5 @@ namespace Somnambulist\Components\QueryBuilder\Compiler;
 
 interface CompilerAwareInterface
 {
-    public function setExpressionCompiler(ExpressionCompiler $expressionCompiler): self;
+    public function setCompiler(DelegatingCompiler $expressionCompiler): self;
 }

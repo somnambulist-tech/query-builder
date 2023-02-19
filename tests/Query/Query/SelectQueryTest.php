@@ -6,6 +6,7 @@ use Exception;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\Models\Types\DateTime\DateTime;
+use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
 use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
@@ -39,7 +40,7 @@ class SelectQueryTest extends TestCase
     use QueryAssertsTrait;
     use QueryCompilerBuilderTrait;
 
-    protected ?QueryCompiler $compiler = null;
+    protected ?CompilerInterface $compiler = null;
 
     public function setUp(): void
     {
@@ -272,13 +273,12 @@ class SelectQueryTest extends TestCase
     public function testSelectJoinWithCallback(): void
     {
         $query = new SelectQuery();
-        $types = ['created' => 'datetime'];
         $query
             ->select(['title', 'name' => 'c.comment'])
             ->from('articles')
-            ->innerJoin('comments', 'c', function ($exp, $q) use ($query, $types) {
+            ->innerJoin('comments', 'c', function ($exp, $q) use ($query) {
                 $this->assertSame($q, $query);
-                $exp->add(['created <' => new DateTime('2007-03-18 10:45:23')], $types);
+                $exp->add(['created <' => new DateTime('2007-03-18 10:45:23')], ['created' => 'datetime']);
 
                 return $exp;
             })
@@ -1132,11 +1132,9 @@ class SelectQueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function ($exp) {
-                $or = $exp->or(function ($or) {
+                return $exp->or(function ($or) {
                     return $or->eq('id', 1)->eq('id', 2);
                 });
-
-                return $or;
             })
         ;
 
@@ -1348,7 +1346,7 @@ class SelectQueryTest extends TestCase
         $query
             ->reset('order')
             ->orderBy([$query->newExpr(['(id + :offset) % 2']), 'id' => 'desc'])
-            ->bind(':offset', 1, null)
+            ->bind(':offset', 1)
         ;
 
         $sql = $this->compiler->compile($query, new ValueBinder());
@@ -2640,7 +2638,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery();
         $query->select(['test_string' => new StringExpression('testString', $collation)]);
 
-        $expected = "SELECT (:c_0 COLLATE {$collation}) AS test_string";
+        $expected = "SELECT (:c_0 COLLATE $collation) AS test_string";
 
         $this->assertEquals($expected, $this->compiler->compile($query, new ValueBinder()));
     }
@@ -2658,7 +2656,7 @@ class SelectQueryTest extends TestCase
             ->where(['id' => 1])
         ;
 
-        $expected = "SELECT \(title COLLATE {$collation}\) AS test_string";
+        $expected = "SELECT \(title COLLATE $collation\) AS test_string";
 
         $this->assertQueryContains($expected, $this->compiler->compile($query, new ValueBinder()));
     }

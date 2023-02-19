@@ -23,7 +23,7 @@ class TupleComparisonTest extends TestCase
     {
         $this->registerTypeCaster();
         
-        $this->compiler = $this->buildExpressionCompiler();
+        $this->compiler = $this->buildDelegatingCompiler();
     }
 
     protected function tearDown(): void
@@ -99,7 +99,6 @@ class TupleComparisonTest extends TestCase
         $value1 = new QueryExpression(['a' => 1]);
         $field2 = new QueryExpression(['b' => 2]);
         $f = new TupleComparison(['field1', $field2], [$value1, 2], ['integer', 'integer'], '=');
-        $binder = new ValueBinder();
         $expressions = [];
 
         $collector = function ($e) use (&$expressions): void {

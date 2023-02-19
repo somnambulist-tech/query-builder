@@ -23,7 +23,7 @@ class UpdateQuery extends Query
         'update'   => [],
         'modifier' => null,
         'join'     => null,
-        'set'      => [],
+        'set'      => null,
         'from'     => null,
         'where'    => null,
         'order'    => null,
@@ -76,28 +76,24 @@ class UpdateQuery extends Query
      *    + values to set. This can also be a QueryExpression containing a SQL fragment.
      *    It can also be a Closure, that is required to return an expression object.
      * @param mixed $value The value to update $key to. Can be null if $key is an
-     *    array or QueryExpression. When $key is an array, this parameter will be
-     *    used as $types instead.
+     *    array or QueryExpression.
      * @param array<string, string>|string $types The column types to treat data as.
      *
      * @return $this
      */
     public function set(QueryExpression|Closure|array|string $key, mixed $value = null, array|string $types = []): self
     {
-        if (empty($this->parts['set'])) {
-            $this->parts['set'] = $this->newExpr()->useConjunction(',');
-        }
+        $set = $this->parts['set'] ??= $this->newExpr()->useConjunction(',');
 
         if ($key instanceof Closure) {
             $exp = $this->newExpr()->useConjunction(',');
-            $this->parts['set']->add($key($exp));
+            $set->add($key($exp));
 
             return $this;
         }
 
         if (is_array($key) || $key instanceof ExpressionInterface) {
-            $types = (array)$value;
-            $this->parts['set']->add($key, $types);
+            $set->add($key, $types);
 
             return $this;
         }
@@ -105,7 +101,7 @@ class UpdateQuery extends Query
         if (!is_string($types)) {
             $types = null;
         }
-        $this->parts['set']->eq($key, $value, $types);
+        $set->eq($key, $value, $types);
 
         return $this;
     }

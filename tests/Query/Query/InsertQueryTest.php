@@ -5,6 +5,7 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Query\Query;
 use Exception;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
 use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Type\InsertQuery;
@@ -21,7 +22,7 @@ class InsertQueryTest extends TestCase
     use QueryAssertsTrait;
     use QueryCompilerBuilderTrait;
 
-    protected ?QueryCompiler $compiler = null;
+    protected ?CompilerInterface $compiler = null;
 
     public function setUp(): void
     {

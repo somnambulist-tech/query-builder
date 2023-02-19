@@ -24,7 +24,7 @@ class ComparisonExpressionTest extends TestCase
     public function testIdentifiers(): void
     {
         $this->registerTypeCaster();
-        $compiler = $this->buildExpressionCompiler();
+        $compiler = $this->buildDelegatingCompiler();
         
         $expr = new ComparisonExpression('field', new IdentifierExpression('other_field'));
         $this->assertEqualsSql('field = other_field', $compiler->compile($expr, new ValueBinder()));

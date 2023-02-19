@@ -20,8 +20,7 @@ class CommonTableExpressionTest extends TestCase
 
     public function setUp(): void
     {
-        $this->compiler = $this->buildExpressionCompiler();
-        $this->compiler->add($this->buildCompiler());
+        $this->compiler = $this->buildDelegatingCompiler();
     }
 
     public function tearDown(): void

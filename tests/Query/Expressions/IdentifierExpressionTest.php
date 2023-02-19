@@ -36,7 +36,7 @@ class IdentifierExpressionTest extends TestCase
     public function testSQL(): void
     {
         $expression = new IdentifierExpression('foo');
-        $this->assertSame('foo', $this->buildExpressionCompiler()->compile($expression, new ValueBinder()));
+        $this->assertSame('foo', $this->buildDelegatingCompiler()->compile($expression, new ValueBinder()));
     }
 
     /**
@@ -45,6 +45,6 @@ class IdentifierExpressionTest extends TestCase
     public function testCollation(): void
     {
         $expresssion = new IdentifierExpression('test', 'utf8_general_ci');
-        $this->assertSame('test COLLATE utf8_general_ci', $this->buildExpressionCompiler()->compile($expresssion, new ValueBinder()));
+        $this->assertSame('test COLLATE utf8_general_ci', $this->buildDelegatingCompiler()->compile($expresssion, new ValueBinder()));
     }
 }

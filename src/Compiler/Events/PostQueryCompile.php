@@ -2,28 +2,21 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Events;
 
+use Somnambulist\Components\QueryBuilder\Compiler\Events\Behaviours\HasSql;
+use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class PostQueryCompile extends Event
 {
-    private string $revisedSql = '';
+    use HasSql;
 
     public function __construct(
-        public readonly string $sql,
+        string $sql,
+        public readonly Query $query,
         public readonly ValueBinder $binder,
     ) {
-    }
-
-    public function revisedSql(): string
-    {
-        return $this->revisedSql;
-    }
-
-    public function reviseSql(string $sql): self
-    {
-        $this->revisedSql = $sql;
-
-        return $this;
+        $this->original = $sql;
+        $this->revised = $sql;
     }
 }

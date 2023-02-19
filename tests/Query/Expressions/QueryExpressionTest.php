@@ -25,7 +25,7 @@ class QueryExpressionTest extends TestCase
     protected function setUp(): void
     {
         $this->registerTypeCaster();
-        $this->compiler = $this->buildExpressionCompiler();
+        $this->compiler = $this->buildDelegatingCompiler();
     }
 
     protected function tearDown(): void

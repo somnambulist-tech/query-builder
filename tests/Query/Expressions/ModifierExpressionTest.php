@@ -33,14 +33,14 @@ class ModifierExpressionTest extends TestCase
         $set = new ModifierExpression();
         $this->assertCount(0, $set);
 
-        $set->add('SQL_NO_CACHE',);
+        $set->add('SQL_NO_CACHE');
         $this->assertCount(1, $set);
     }
 
     public function testRemove()
     {
         $set = new ModifierExpression();
-        $set->add('SQL_NO_CACHE',);
+        $set->add('SQL_NO_CACHE');
         $this->assertCount(1, $set);
 
         $set->remove(0);
@@ -50,7 +50,7 @@ class ModifierExpressionTest extends TestCase
     public function testReset()
     {
         $set = new ModifierExpression();
-        $set->add('SQL_NO_CACHE',);
+        $set->add('SQL_NO_CACHE');
         $this->assertCount(1, $set);
 
         $set->reset();
@@ -60,7 +60,7 @@ class ModifierExpressionTest extends TestCase
     public function testGet()
     {
         $set = new ModifierExpression();
-        $set->add('SQL_NO_CACHE',);
+        $set->add('SQL_NO_CACHE');
 
         $this->assertSame('SQL_NO_CACHE', $set->get(0));
     }

@@ -5,6 +5,7 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Query\Query;
 use DateTime;
 use Exception;
 use PHPUnit\Framework\TestCase;
+use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
 use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
@@ -22,7 +23,7 @@ class UpdateQueryTest extends TestCase
     use QueryAssertsTrait;
     use QueryCompilerBuilderTrait;
 
-    protected ?QueryCompiler $compiler = null;
+    protected ?CompilerInterface $compiler = null;
 
     public function setUp(): void
     {

@@ -17,7 +17,7 @@ class StringExpressionTest extends TestCase
     public function testCollation(): void
     {
         $this->registerTypeCaster();
-        $compiler = $this->buildExpressionCompiler();
+        $compiler = $this->buildDelegatingCompiler();
 
         $expr = new StringExpression('testString', 'utf8_general_ci');
 

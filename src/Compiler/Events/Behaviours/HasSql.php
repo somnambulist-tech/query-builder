@@ -4,16 +4,22 @@ namespace Somnambulist\Components\QueryBuilder\Compiler\Events\Behaviours;
 
 trait HasSql
 {
-    private string $sql = '';
+    private string $original = '';
+    private string $revised = '';
 
-    public function getSql(): string
+    public function sql(): string
     {
-        return $this->sql;
+        return $this->original;
     }
 
-    public function setSql(string $sql): self
+    public function getRevisedSql(): string
     {
-        $this->sql = $sql;
+        return $this->revised;
+    }
+
+    public function setRevisedSql(string $revised): self
+    {
+        $this->revised = $revised;
 
         return $this;
     }

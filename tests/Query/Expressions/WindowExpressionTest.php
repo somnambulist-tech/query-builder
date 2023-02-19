@@ -29,7 +29,7 @@ class WindowExpressionTest extends TestCase
     {
         $this->registerTypeCaster();
 
-        $this->compiler = $this->buildExpressionCompiler();
+        $this->compiler = $this->buildDelegatingCompiler();
     }
 
     protected function tearDown(): void
@@ -162,7 +162,7 @@ class WindowExpressionTest extends TestCase
             $this->compiler->compile($w, new ValueBinder())
         );
 
-        $w = (new WindowExpression())->range(0, 0);
+        $w = (new WindowExpression())->range(0);
         $this->assertEqualsSql(
             'RANGE BETWEEN CURRENT ROW AND CURRENT ROW',
             $this->compiler->compile($w, new ValueBinder())
@@ -234,7 +234,7 @@ class WindowExpressionTest extends TestCase
             $this->compiler->compile($w, new ValueBinder())
         );
 
-        $w = (new WindowExpression())->rows(0, 0);
+        $w = (new WindowExpression())->rows(0);
         $this->assertEqualsSql(
             'ROWS BETWEEN CURRENT ROW AND CURRENT ROW',
             $this->compiler->compile($w, new ValueBinder())
@@ -295,7 +295,7 @@ class WindowExpressionTest extends TestCase
             $this->compiler->compile($w, new ValueBinder())
         );
 
-        $w = (new WindowExpression())->groups(0, 0);
+        $w = (new WindowExpression())->groups(0);
         $this->assertEqualsSql(
             'GROUPS BETWEEN CURRENT ROW AND CURRENT ROW',
             $this->compiler->compile($w, new ValueBinder())
@@ -460,7 +460,7 @@ class WindowExpressionTest extends TestCase
         $this->assertNotSame($this->compiler->compile($w1, new ValueBinder()), $this->compiler->compile($w2, new ValueBinder()));
 
         $w1 = (new WindowExpression())->rows(0, null);
-        $w2 = (clone $w1)->rows(0, 0);
+        $w2 = (clone $w1)->rows(0);
         $this->assertNotSame($this->compiler->compile($w1, new ValueBinder()), $this->compiler->compile($w2, new ValueBinder()));
     }
 }

@@ -10,12 +10,12 @@ use Somnambulist\Components\QueryBuilder\TypeCanCastToExpressionInterface;
 
 class TestType extends Type implements TypeCanCastToExpressionInterface
 {
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL($column);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'test_type';
     }

@@ -4,37 +4,33 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Compiler;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Compiler\ExpressionCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Expressions\AggregateCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Expressions\FunctionCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Expressions\IdentifierCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Expressions\WindowCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\DelegatingCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\AggregateCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\FunctionCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\IdentifierCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\WindowCompiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\FunctionsBuilder;
+use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\TypeCaster;
 use Somnambulist\Components\QueryBuilder\TypeCasters\DbalTypeCaster;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class FunctionsCompilerTest extends TestCase
 {
+    use QueryCompilerBuilderTrait;
+
     protected ?FunctionsBuilder $functions = null;
-    protected ?ExpressionCompiler $compiler = null;
+    protected ?CompilerInterface $compiler = null;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        TypeCaster::register(new DbalTypeCaster($this->getMockBuilder(AbstractPlatform::class)->getMock()));
-
-        $expr = new ExpressionCompiler([
-            new AggregateCompiler(),
-            new FunctionCompiler(),
-            new IdentifierCompiler(),
-            new WindowCompiler(),
-        ]);
-
         $this->functions = new FunctionsBuilder();
-        $this->compiler = $expr;
+        $this->compiler = $this->buildCompiler();
     }
 
     /**

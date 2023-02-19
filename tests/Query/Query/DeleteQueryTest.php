@@ -5,6 +5,7 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Query\Query;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\QueryCompiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Type\DeleteQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;

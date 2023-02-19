@@ -22,7 +22,7 @@ class InsertQuery extends Query
         'with'     => null,
         'insert'   => [],
         'modifier' => null,
-        'values'   => [],
+        'values'   => null,
         'epilog'   => null,
     ];
 

@@ -21,7 +21,7 @@ class FunctionExpressionTest extends TestCase
     {
         $this->registerTypeCaster();
 
-        $this->compiler = $this->buildExpressionCompiler();
+        $this->compiler = $this->buildDelegatingCompiler();
     }
 
     protected function tearDown(): void
@@ -96,8 +96,6 @@ class FunctionExpressionTest extends TestCase
      */
     public function testFunctionWithDatabaseQuery(): void
     {
-        $this->compiler->add($this->buildCompiler());
-
         $query = select(['column']);
 
         $binder = new ValueBinder();
