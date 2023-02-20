@@ -39,15 +39,22 @@ use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type\InsertCom
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type\SelectCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type\UpdateCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PostSelectExpressionCompile;
-use Somnambulist\Components\QueryBuilder\Compiler\Events\PreQueryCompile;
+use Somnambulist\Components\QueryBuilder\Compiler\Events\PreDeleteQueryCompile;
+use Somnambulist\Components\QueryBuilder\Compiler\Events\PreSelectQueryCompile;
+use Somnambulist\Components\QueryBuilder\Compiler\Events\PreUpdateQueryCompile;
 use Somnambulist\Components\QueryBuilder\Query\Expressions;
 use Somnambulist\Components\QueryBuilder\Query\Type;
 use Somnambulist\Components\QueryBuilder\TypeCaster;
 use Somnambulist\Components\QueryBuilder\TypeCasters\DbalTypeCaster;
+use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 trait QueryCompilerBuilderTrait
 {
+//    protected ?CompilerInterface $compiler = null;
+    protected ?TraceableEventDispatcher $dispatcher = null;
+
     protected function registerTypeCaster(): void
     {
         TypeCaster::register(new DbalTypeCaster());
@@ -55,12 +62,18 @@ trait QueryCompilerBuilderTrait
 
     protected function buildEventDispatcher(array $events = []): EventDispatcherInterface
     {
-        $evt = new EventDispatcher();
+        $this->dispatcher = $evt = new TraceableEventDispatcher(
+            new EventDispatcher(),
+            new Stopwatch()
+        );
 
         if (empty($events)) {
             $events = [
-                PreQueryCompile::class => [
+                PreDeleteQueryCompile::class => [
                     new StripAliasesFromDeleteFrom(),
+                    new StripAliasesFromConditions(),
+                ],
+                PreUpdateQueryCompile::class => [
                     new StripAliasesFromConditions(),
                 ],
                 PostSelectExpressionCompile::class => [

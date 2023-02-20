@@ -4,7 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type;
 
 use Closure;
 use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\CompileExpressionsToString;
-use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\DispatchesCompilerEvents;
+use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\DispatchCompilerEvents;
 use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\GetCompilerForExpression;
 use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\IsCompilable;
 use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
@@ -20,7 +20,7 @@ class DeleteCompiler extends AbstractCompiler implements DispatchesCompilerEvent
 {
     use IsCompilable;
     use CompileExpressionsToString;
-    use DispatchesCompilerEvents;
+    use DispatchCompilerEvents;
     use GetCompilerForExpression;
 
     protected array $templates = [

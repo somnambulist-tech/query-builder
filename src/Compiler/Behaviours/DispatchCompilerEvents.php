@@ -9,8 +9,10 @@ use function class_exists;
 use function sprintf;
 use function ucfirst;
 
-trait DispatchesCompilerEvents
+trait DispatchCompilerEvents
 {
+    use GenerateEventForExpression;
+
     protected ?EventDispatcherInterface $dispatcher = null;
 
     public function setDispatcher(EventDispatcherInterface $dispatcher): void
@@ -18,13 +20,17 @@ trait DispatchesCompilerEvents
         $this->dispatcher = $dispatcher;
     }
 
-    protected function preCompile(string $partName, mixed $part, Query $query, ValueBinder $binder): void
+    protected function preCompile(string $partName, mixed $expression, Query $query, ValueBinder $binder): ?string
     {
         $event = sprintf('Somnambulist\Components\QueryBuilder\Compiler\Events\Pre%sExpressionCompile', ucfirst($partName));
 
         if (class_exists($event)) {
-            $this->dispatcher->dispatch(new $event($part, $query, $binder));
+            $event = $this->dispatcher->dispatch(new $event($expression, $query, $binder));
+
+            return $event->getRevisedSql() ?: null;
         }
+
+        return null;
     }
 
     protected function postCompile(string $partName, string $sql, Query $query, ValueBinder $binder): string

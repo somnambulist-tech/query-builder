@@ -6,7 +6,7 @@ use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class PreQueryCompile extends Event
+class PreDeleteQueryCompile extends Event
 {
     public function __construct(
         public readonly Query $query,

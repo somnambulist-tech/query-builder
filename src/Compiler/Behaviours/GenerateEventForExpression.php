@@ -3,7 +3,9 @@
 namespace Somnambulist\Components\QueryBuilder\Compiler\Behaviours;
 
 use IlluminateAgnostic\Str\Support\Str;
+use function array_pop;
 use function dirname;
+use function end;
 use function file_put_contents;
 use function sprintf;
 use function str_starts_with;
@@ -13,25 +15,37 @@ use function str_starts_with;
  *
  * @internal Do not use
  */
-trait MakeMissingEvents
+trait GenerateEventForExpression
 {
     protected function makeEvent(string $event): void
     {
-        $event = Str::afterLast($event, '\\');
+        $event = explode('\\', $event);
+        $event = array_pop($event);
 
-        $pre = <<<'CLASS'
+        $template = str_starts_with($event, 'Pre') ? $this->preEventTemplate() : $this->postEventTemplate();
+        $file = sprintf('%s/Events/%s.php', dirname(__DIR__, 1), $event);
+
+        file_put_contents($file, sprintf($template, $event));
+    }
+
+    private function preEventTemplate(): string
+    {
+        return <<<'CLASS'
 <?php declare(strict_types=1);
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Events;
 
+use Somnambulist\Components\QueryBuilder\Compiler\Events\Behaviours\HasSql;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class %s extends Event
 {
+    use HasSql;
+    
     public function __construct(
-        public readonly mixed $part,
+        public readonly mixed $expression,
         public readonly Query $query,
         public readonly ValueBinder $binder,
     ) {
@@ -39,7 +53,11 @@ class %s extends Event
 }
 
 CLASS;
-        $post = <<<'CLASS'
+    }
+
+    private function postEventTemplate(): string
+    {
+        return <<<'CLASS'
 <?php declare(strict_types=1);
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Events;
@@ -64,9 +82,5 @@ class %s extends Event
 }
 
 CLASS;
-        $template = str_starts_with($event, 'Pre') ? $pre : $post;
-        $file = sprintf('%s/Events/%s.php', dirname(__DIR__, 1), $event);
-
-        file_put_contents($file, sprintf($template, $event));
     }
 }

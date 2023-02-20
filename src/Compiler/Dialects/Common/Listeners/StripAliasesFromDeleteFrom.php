@@ -2,18 +2,13 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners;
 
-use Somnambulist\Components\QueryBuilder\Compiler\Events\PreQueryCompile;
-use Somnambulist\Components\QueryBuilder\Query\Type\DeleteQuery;
+use Somnambulist\Components\QueryBuilder\Compiler\Events\PreDeleteQueryCompile;
 use function is_string;
 
 class StripAliasesFromDeleteFrom
 {
-    public function __invoke(PreQueryCompile $event): PreQueryCompile
+    public function __invoke(PreDeleteQueryCompile $event): PreDeleteQueryCompile
     {
-        if (!$event->query instanceof DeleteQuery) {
-            return $event;
-        }
-
         $hadAlias = false;
         $tables = [];
 

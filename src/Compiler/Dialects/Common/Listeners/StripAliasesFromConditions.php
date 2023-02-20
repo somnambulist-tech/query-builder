@@ -3,19 +3,16 @@
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners;
 
 use RuntimeException;
-use Somnambulist\Components\QueryBuilder\Compiler\Events\PreQueryCompile;
+use Somnambulist\Components\QueryBuilder\Compiler\Events\PreDeleteQueryCompile;
+use Somnambulist\Components\QueryBuilder\Compiler\Events\PreUpdateQueryCompile;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ComparisonExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 
 class StripAliasesFromConditions
 {
-    public function __invoke(PreQueryCompile $event): PreQueryCompile
+    public function __invoke(PreUpdateQueryCompile|PreDeleteQueryCompile $event): mixed
     {
-        if (!in_array($event->query->getType(), ['update', 'delete'])) {
-            return $event;
-        }
-
         if ($event->query->clause('join')) {
             throw new RuntimeException(
                 'Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.'

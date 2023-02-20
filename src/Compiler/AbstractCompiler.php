@@ -2,20 +2,14 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler;
 
+use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\CompilerAwareTrait;
 use Somnambulist\Components\QueryBuilder\Exceptions\UnsupportedExpressionType;
 use function get_debug_type;
 use function is_string;
 
 abstract class AbstractCompiler implements CompilerInterface, CompilerAwareInterface
 {
-    protected ?CompilerInterface $compiler = null;
-
-    public function setCompiler(CompilerInterface $compiler): self
-    {
-        $this->compiler = $compiler;
-
-        return $this;
-    }
+    use CompilerAwareTrait;
 
     protected function assertExpressionIsSupported(mixed $expression, array $types): void
     {

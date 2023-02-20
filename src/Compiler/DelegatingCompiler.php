@@ -2,15 +2,21 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler;
 
+use IlluminateAgnostic\Str\Support\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Somnambulist\Components\QueryBuilder\Compiler\Events\PostQueryCompile;
-use Somnambulist\Components\QueryBuilder\Compiler\Events\PreQueryCompile;
+use Somnambulist\Components\QueryBuilder\Compiler\Events\PostSelectQueryCompile;
+use Somnambulist\Components\QueryBuilder\Compiler\Events\PreSelectQueryCompile;
 use Somnambulist\Components\QueryBuilder\Exceptions\NoCompilerForExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function array_key_exists;
+use function array_pop;
+use function explode;
+use function get_class;
 use function get_debug_type;
 use function is_string;
+use function sprintf;
+use function ucfirst;
 
 /**
  * Delegates query and query expression compiling to appropriate handlers
@@ -48,11 +54,16 @@ class DelegatingCompiler implements DelegatingCompilerInterface
     public function compile(mixed $expression, ValueBinder $binder): string
     {
         if ($expression instanceof Query) {
-            $this->dispatcher->dispatch(new PreQueryCompile($expression, $binder));
+            $event = explode('\\', get_class($expression));
+            $name = array_pop($event);
+            $preEvent = sprintf('Somnambulist\Components\QueryBuilder\Compiler\Events\Pre%sCompile', $name);
+            $postEvent = sprintf('Somnambulist\Components\QueryBuilder\Compiler\Events\Post%sCompile', $name);
+
+            $this->dispatcher->dispatch(new $preEvent($expression, $binder));
 
             $sql = $this->get($expression)->compile($expression, $binder);
 
-            return $this->dispatcher->dispatch(new PostQueryCompile($sql, $expression, $binder))->getRevisedSql();
+            return $this->dispatcher->dispatch(new $postEvent($sql, $expression, $binder))->getRevisedSql();
         }
 
         return $this->get($expression)->compile($expression, $binder);

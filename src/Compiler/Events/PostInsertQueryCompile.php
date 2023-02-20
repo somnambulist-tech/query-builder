@@ -7,14 +7,16 @@ use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class PreHavingExpressionCompile extends Event
+class PostInsertQueryCompile extends Event
 {
     use HasSql;
-    
+
     public function __construct(
-        public readonly mixed $expression,
+        string $sql,
         public readonly Query $query,
         public readonly ValueBinder $binder,
     ) {
+        $this->original = $sql;
+        $this->revised = $sql;
     }
 }

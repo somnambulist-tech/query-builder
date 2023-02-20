@@ -2,7 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners;
 
-use Somnambulist\Components\QueryBuilder\Compiler\Events\PostQueryCompile;
+use Somnambulist\Components\QueryBuilder\Compiler\Events\PostSelectQueryCompile;
 use function preg_match;
 
 /**
@@ -10,7 +10,7 @@ use function preg_match;
  */
 class PropagateBoundParameters
 {
-    public function __invoke(PostQueryCompile $event): void
+    public function __invoke(PostSelectQueryCompile $event): void
     {
         if ($event->query->getBinder() !== $event->binder) {
             foreach ($event->query->getBinder()->bindings() as $binding) {
