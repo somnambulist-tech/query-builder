@@ -8,6 +8,7 @@ use Countable;
 use IteratorAggregate;
 use Somnambulist\Components\QueryBuilder\Exceptions\QueryException;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionSet;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Traversable;
 use function array_key_exists;
@@ -15,28 +16,11 @@ use function count;
 use function is_null;
 use function is_string;
 
-class FromExpression implements Countable, ExpressionInterface, IteratorAggregate
+/**
+ * @property array<int, TableClauseExpression> $expressions
+ */
+class FromExpression extends ExpressionSet
 {
-    /**
-     * @var array<string, ExpressionInterface>
-     */
-    private array $tables;
-
-    public function __construct(array $tables = [])
-    {
-        $this->tables = $tables;
-    }
-
-    public function getIterator(): Traversable
-    {
-        return new ArrayIterator($this->tables);
-    }
-
-    public function count(): int
-    {
-        return count($this->tables);
-    }
-
     public function add(ExpressionInterface|string $table, string $as = null): self
     {
         if ($table instanceof Query && is_null($as)) {
@@ -46,10 +30,7 @@ class FromExpression implements Countable, ExpressionInterface, IteratorAggregat
             $table = new IdentifierExpression($table);
         }
 
-        $i = $this->count();
-        $key = $as ?: $i++;
-
-        $this->tables[$key] = $table;
+        $this->expressions[] = new TableClauseExpression($table, $as);
 
         return $this;
     }
@@ -77,37 +58,33 @@ class FromExpression implements Countable, ExpressionInterface, IteratorAggregat
         return false;
     }
 
-    public function has(int|string $alias): bool
+    public function has(int|string $key): bool
     {
-        return array_key_exists($alias, $this->tables);
-    }
-
-    public function get(int|string $alias): ExpressionInterface
-    {
-        return $this->tables[$alias] ?? throw QueryException::noFromClauseFor($alias);
-    }
-
-    public function remove(int|string $alias): self
-    {
-        unset($this->tables[$alias]);
-
-        return $this;
-    }
-
-    public function traverse(Closure $callback): ExpressionInterface
-    {
-        foreach ($this->tables as $e) {
-            $callback($e);
-            $e->traverse($callback);
+        if (array_key_exists($key, $this->expressions)) {
+            return true;
         }
 
-        return $this;
+        foreach ($this->expressions as $cte) {
+            if ($cte->getAlias() === $key) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public function __clone(): void
+    public function get(int|string $key): TableClauseExpression
     {
-        foreach ($this->tables as $key => $e) {
-            $this->tables[$key] = clone $e;
+        if (array_key_exists($key, $this->expressions)) {
+            return $this->expressions[$key];
         }
+
+        foreach ($this->expressions as $e) {
+            if ($e->getAlias() === $key) {
+                return $e;
+            }
+        }
+
+        throw QueryException::noFromClauseFor($key);
     }
 }

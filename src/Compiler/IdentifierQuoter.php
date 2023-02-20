@@ -12,6 +12,7 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\JoinExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\OrderByExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectClauseExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\TableClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\UpdateClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\FieldInterface;
 use Somnambulist\Components\QueryBuilder\Query\Query;
@@ -20,10 +21,7 @@ use Somnambulist\Components\QueryBuilder\Query\Type\InsertQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\UpdateQuery;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
-use function get_debug_type;
 use function is_string;
-use function PHPUnit\Framework\assertInstanceOf;
-use function Somnambulist\Components\QueryBuilder\Resources\insert;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object
@@ -152,8 +150,13 @@ class IdentifierQuoter
 
     protected function quoteFrom(FromExpression $from): void
     {
+        /** @var TableClauseExpression $item */
         foreach ($from as $item) {
-            $this->quoteExpression($item);
+            if ($item->getAlias()) {
+                $item->as($this->quoteIdentifier($item->getAlias()));
+            }
+
+            $this->quoteExpression($item->getTable());
         }
     }
 

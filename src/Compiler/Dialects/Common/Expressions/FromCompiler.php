@@ -4,10 +4,10 @@ namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressi
 
 use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FromExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\TableClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function implode;
-use function is_numeric;
 use function sprintf;
 
 class FromCompiler extends AbstractCompiler
@@ -15,23 +15,24 @@ class FromCompiler extends AbstractCompiler
     public function compile(mixed $expression, ValueBinder $binder): string
     {
         /** @var FromExpression $expression */
-        $select = ' FROM %s';
+
         $normalized = [];
 
-        foreach ($expression as $k => $p) {
-            if ($p instanceof Query) {
-                $table = sprintf('(%s)', $this->compiler->compile($p, $binder));
+        /** @var TableClauseExpression $p */
+        foreach ($expression as $p) {
+            if ($p->getTable() instanceof Query) {
+                $table = sprintf('(%s)', $this->compiler->compile($p->getTable(), $binder));
             } else {
-                $table = $this->compiler->compile($p, $binder);
+                $table = $this->compiler->compile($p->getTable(), $binder);
             }
 
-            if (!is_numeric($k)) {
-                $table = sprintf('%s %s', $table, $k);
+            if ($p->getAlias()) {
+                $table = sprintf('%s %s', $table, $p->getAlias());
             }
 
             $normalized[] = $table;
         }
 
-        return sprintf($select, implode(', ', $normalized));
+        return sprintf(' FROM %s', implode(', ', $normalized));
     }
 }

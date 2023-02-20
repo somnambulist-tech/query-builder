@@ -3,27 +3,17 @@
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners;
 
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreDeleteQueryCompile;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\TableClauseExpression;
 use function is_string;
 
 class StripAliasesFromDeleteFrom
 {
     public function __invoke(PreDeleteQueryCompile $event): PreDeleteQueryCompile
     {
-        $hadAlias = false;
-        $tables = [];
-
-        foreach ($event->query->clause('from') as $alias => $table) {
-            if (is_string($alias)) {
-                $hadAlias = true;
-            }
-            $tables[] = $table;
-        }
-
-        if ($hadAlias) {
-            $event->query->reset('from');
-
-            foreach ($tables as $t) {
-                $event->query->from($t);
+        /** @var TableClauseExpression $table */
+        foreach ($event->query->clause('from') as $table) {
+            if ($table->getAlias()) {
+                $table->as(null);
             }
         }
 

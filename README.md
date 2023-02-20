@@ -53,17 +53,23 @@ For Postgres the recommended setup is:
 
 ```php
 use Somnambulist\Components\QueryBuilder\Compiler\DelegatingCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions as ExpHandler;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners\StripAliasesFromDeleteFrom;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners\StripAliasesFromConditions;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type as QueryHandler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Postgres\Expressions\HavingCompiler;
-use Somnambulist\Components\QueryBuilder\Query\Expressions;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Postgres\Listeners\HavingPreProcessor;
+use Somnambulist\Components\QueryBuilder\Compiler\Events\PreHavingExpressionCompile;
+use Somnambulist\Components\QueryBuilder\Compiler\IdentifierQuoter;
 use Somnambulist\Components\QueryBuilder\Query\Type;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 $dispatcher = new EventDispatcher();
-$dispatcher->addListener(PreQueryCompile::class, new StripAliasesFromDeleteFrom());
-$dispatcher->addListener(PreQueryCompile::class, new StripAliasesFromConditions());
+$dispatcher->addListener(PreDeleteQueryCompile::class, $a = new StripAliasesFromDeleteFrom());
+$dispatcher->addListener(PreDeleteQueryCompile::class, $b = new StripAliasesFromConditions());
+$dispatcher->addListener(PreUpdateQueryCompile::class, $b);
 $dispatcher->addListener(PostSelectExpressionCompile::class, new WrapUnionSelectClauses());
+$dispatcher->addListener(PreSelectQueryCompile::class, [new IdentifierQuoter('"', '"'), 'quote']);
+$dispatcher->addListener(PreHavingExpressionCompile::class, new HavingPreProcessor());
 
 $compiler = new DelegatingCompiler(
     $dispatcher,
@@ -73,38 +79,71 @@ $compiler = new DelegatingCompiler(
         Type\UpdateQuery::class => new QueryHandler\UpdateCompiler(),
         Type\DeleteQuery::class => new QueryHandler\DeleteCompiler(),
         
-        'having' => HavingCompiler::class,
-        Expressions\AggregateExpression::class => new ExpHandler\AggregateCompiler(),
-        Expressions\BetweenExpression::class => new ExpHandler\BetweenCompiler(),
-        Expressions\CaseStatementExpression::class => new ExpHandler\CaseStatementCompiler(),
-        Expressions\CommonTableExpression::class => new ExpHandler\CommonTableExpressionCompiler(),
-        Expressions\ComparisonExpression::class => new ExpHandler\ComparisonCompiler(),
-        Expressions\FieldExpression::class => new ExpHandler\FieldCompiler(),
-        Expressions\FromExpression::class => new ExpHandler\FromCompiler(),
-        Expressions\FunctionExpression::class => new ExpHandler\FunctionCompiler(),
-        Expressions\GroupByExpression::class => new ExpHandler\GroupByCompiler(),
-        Expressions\IdentifierExpression::class => new ExpHandler\IdentifierCompiler(),
-        Expressions\JoinExpression::class => new ExpHandler\JoinCompiler(),
-        Expressions\JoinClauseExpression::class => new ExpHandler\JoinClauseCompiler(),
-        Expressions\ModifierExpression::class => new ExpHandler\ModifierCompiler(),
-        Expressions\OrderByExpression::class => new ExpHandler\OrderByCompiler(),
-        Expressions\OrderClauseExpression::class => new ExpHandler\OrderClauseCompiler(),
-        Expressions\QueryExpression::class => new ExpHandler\QueryExpressionCompiler(),
-        Expressions\SelectClauseExpression::class => new ExpHandler\SelectClauseCompiler(),
-        Expressions\StringExpression::class => new ExpHandler\StringCompiler(),
-        Expressions\TupleComparison::class => new ExpHandler\TupleCompiler(),
-        Expressions\UnaryExpression::class => new ExpHandler\UnaryCompiler(),
-        Expressions\UnionExpression::class => new ExpHandler\UnionCompiler(),
-        Expressions\ValuesExpression::class => new ExpHandler\ValuesCompiler(),
-        Expressions\WhenThenExpression::class => new ExpHandler\WhenThenCompiler(),
-        Expressions\WindowClauseExpression::class => new ExpHandler\WindowClauseCompiler(),
-        Expressions\WindowExpression::class => new ExpHandler\WindowCompiler(),
-        Expressions\WithExpression::class => new ExpHandler\WithCompiler(),
+        'delete' => new DeleteClauseCompiler(),
+        'where' => new WhereCompiler(),
+        'limit' => new LimitCompiler(),
+        'offset' => new OffsetCompiler(),
+        'epilog' => new EpiLogCompiler(),
+        'comment' => new CommentCompiler(),
+        'set' => new UpdateSetValuesCompiler(),
+        'values' => new InsertValuesCompiler(),
+
+        Expressions\AggregateExpression::class => new AggregateCompiler(),
+        Expressions\BetweenExpression::class => new BetweenCompiler(),
+        Expressions\CaseStatementExpression::class => new CaseStatementCompiler(),
+        Expressions\CommonTableExpression::class => new CommonTableExpressionCompiler(),
+        Expressions\ComparisonExpression::class => new ComparisonCompiler(),
+        Expressions\FieldExpression::class => new FieldCompiler(),
+        Expressions\FromExpression::class => new FromCompiler(),
+        Expressions\FunctionExpression::class => new FunctionCompiler(),
+        Expressions\GroupByExpression::class => new GroupByCompiler(),
+        Expressions\IdentifierExpression::class => new IdentifierCompiler(),
+        Expressions\InsertClauseExpression::class => new InsertClauseCompiler(),
+        Expressions\JoinExpression::class => new JoinCompiler(),
+        Expressions\JoinClauseExpression::class => new JoinClauseCompiler(),
+        Expressions\ModifierExpression::class => new ModifierCompiler(),
+        Expressions\OrderByExpression::class => new OrderByCompiler(),
+        Expressions\OrderClauseExpression::class => new OrderClauseCompiler(),
+        Expressions\QueryExpression::class => new QueryExpressionCompiler(),
+        Expressions\SelectClauseExpression::class => new SelectClauseCompiler(),
+        Expressions\StringExpression::class => new StringCompiler(),
+        Expressions\TupleComparison::class => new TupleCompiler(),
+        Expressions\UnaryExpression::class => new UnaryCompiler(),
+        Expressions\UnionExpression::class => new UnionCompiler(),
+        Expressions\UpdateClauseExpression::class => new UpdateClauseCompiler(),
+        Expressions\ValuesExpression::class => new ValuesCompiler(),
+        Expressions\WhenThenExpression::class => new WhenThenCompiler(),
+        Expressions\WindowClauseExpression::class => new WindowClauseCompiler(),
+        Expressions\WindowExpression::class => new WindowCompiler(),
+        Expressions\WithExpression::class => new WithCompiler(),
     ]
 );
 ```
 
-For MySQL, drop the `having` override.
+### Querying
+
+## Extending
+
+Queries and the compilers can be extended easily by either replacing classes, or components, or hooking into the
+event system of the compiler.
+
+For example: to add bespoke database feature support you would want to consider adding an expression specifically
+for the feature and then a compiler to handle it, or you may extend existing functionality to cover the bases
+and then handle the details.
+
+In more complex cases where the query itself is needed as reference, then the event system must be used. Events
+are raised for:
+
+ * pre/post query
+ * pre/post select, from, where, having, order, group, with, modifier, epilog, insert, update, delete, comment
+
+Note that individual expression compilers do not fire events.
+
+In the case of post events, the generated SQL is provided and may be revised as needed by the listener.
+For pre events, the execution flow can be early terminated by providing compiled SQL. This is useful when
+altering the main part makeup for a given SQL dialect, for example: Postgres HAVINGs cannot working with
+aliased fields. The listener converts these and returns pre-built SQL avoiding the need for further
+processing.
 
 ### Tests
 

@@ -18,10 +18,7 @@ class AbstractQueryCompiler extends AbstractCompiler implements DispatchesCompil
     use DispatchCompilerEvents;
     use GetCompilerForExpression;
 
-    protected array $order = [
-        'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
-        'limit', 'offset', 'union', 'epilog',
-    ];
+    protected array $order = [];
     protected array $supports = [];
 
     public function compile(mixed $expression, ValueBinder $binder): string
