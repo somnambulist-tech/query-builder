@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Postgres;
+namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common;
 
 use Somnambulist\Components\QueryBuilder\Compiler\CompilerAwareInterface;
 use Somnambulist\Components\QueryBuilder\Compiler\DelegatingCompiler;
@@ -16,6 +16,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\Fi
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\FromCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\FunctionCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\GroupByCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\HavingCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\IdentifierCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\InsertClauseCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\InsertValuesCompiler;
@@ -47,14 +48,9 @@ use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type\DeleteCom
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type\InsertCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type\SelectCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type\UpdateCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Postgres\Listeners\HavingPreProcessor;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PostSelectExpressionCompile;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreDeleteQueryCompile;
-use Somnambulist\Components\QueryBuilder\Compiler\Events\PreHavingExpressionCompile;
-use Somnambulist\Components\QueryBuilder\Compiler\Events\PreInsertQueryCompile;
-use Somnambulist\Components\QueryBuilder\Compiler\Events\PreSelectQueryCompile;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreUpdateQueryCompile;
-use Somnambulist\Components\QueryBuilder\Compiler\IdentifierQuoter;
 use Somnambulist\Components\QueryBuilder\Query\Expressions;
 use Somnambulist\Components\QueryBuilder\Query\Type;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -83,26 +79,15 @@ class CompilerConfigurator
     {
         return [
             PreDeleteQueryCompile::class => [
-                $qi = new IdentifierQuoter('"', '"'),
                 new StripAliasesFromDeleteFrom(),
                 $sa = new StripAliasesFromConditions(),
             ],
-            PreInsertQueryCompile::class => [
-                $qi
-            ],
-            PreSelectQueryCompile::class => [
-                $qi
-            ],
             PreUpdateQueryCompile::class => [
-                $qi,
                 $sa,
             ],
             PostSelectExpressionCompile::class => [
                 new WrapUnionSelectClauses(),
             ],
-            PreHavingExpressionCompile::class => [
-                new HavingPreProcessor()
-            ]
         ];
     }
 
@@ -116,6 +101,7 @@ class CompilerConfigurator
 
             'delete'  => new DeleteClauseCompiler(),
             'where'   => new WhereCompiler(),
+            'having'  => new HavingCompiler(),
             'limit'   => new LimitCompiler(),
             'offset'  => new OffsetCompiler(),
             'epilog'  => new EpiLogCompiler(),

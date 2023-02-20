@@ -7,7 +7,6 @@ use Somnambulist\Components\QueryBuilder\Exceptions\InvalidValueDuringQueryCompi
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ComparisonExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
-use Somnambulist\Components\QueryBuilder\Query\Expressions\TupleComparison;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function assert;
 use function is_array;

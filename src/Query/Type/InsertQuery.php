@@ -6,7 +6,6 @@ use Exception;
 use InvalidArgumentException;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\InsertClauseExpression;
-use Somnambulist\Components\QueryBuilder\Query\Expressions\UpdateClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ValuesExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 

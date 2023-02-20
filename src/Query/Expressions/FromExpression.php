@@ -2,17 +2,11 @@
 
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
-use ArrayIterator;
-use Closure;
-use Countable;
-use IteratorAggregate;
 use Somnambulist\Components\QueryBuilder\Exceptions\QueryException;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionSet;
 use Somnambulist\Components\QueryBuilder\Query\Query;
-use Traversable;
 use function array_key_exists;
-use function count;
 use function is_null;
 use function is_string;
 

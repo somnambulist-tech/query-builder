@@ -4,7 +4,6 @@ namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listener
 
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreDeleteQueryCompile;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\TableClauseExpression;
-use function is_string;
 
 class StripAliasesFromDeleteFrom
 {

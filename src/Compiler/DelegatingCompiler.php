@@ -2,10 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler;
 
-use IlluminateAgnostic\Str\Support\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Somnambulist\Components\QueryBuilder\Compiler\Events\PostSelectQueryCompile;
-use Somnambulist\Components\QueryBuilder\Compiler\Events\PreSelectQueryCompile;
 use Somnambulist\Components\QueryBuilder\Exceptions\NoCompilerForExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
@@ -16,7 +13,6 @@ use function get_class;
 use function get_debug_type;
 use function is_string;
 use function sprintf;
-use function ucfirst;
 
 /**
  * Delegates query and query expression compiling to appropriate handlers

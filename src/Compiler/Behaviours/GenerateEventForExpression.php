@@ -2,10 +2,8 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Behaviours;
 
-use IlluminateAgnostic\Str\Support\Str;
 use function array_pop;
 use function dirname;
-use function end;
 use function file_put_contents;
 use function sprintf;
 use function str_starts_with;
