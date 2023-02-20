@@ -4,20 +4,19 @@ namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressi
 
 use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\CompileExpressionsToString;
-use Somnambulist\Components\QueryBuilder\Query\Expressions\GroupByExpression;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
-use function implode;
+use function sprintf;
 
-class GroupByCompiler extends AbstractCompiler
+class LimitCompiler extends AbstractCompiler
 {
     use CompileExpressionsToString;
 
+    protected string $template = ' LIMIT %s';
+
     public function compile(mixed $expression, ValueBinder $binder): string
     {
-        /** @var GroupByExpression $expression */
+        $sql = $this->compileExpressionsToString((array)$expression, $binder);
 
-        $fields = $this->compileExpressionsToString($expression, $binder);
-
-        return sprintf(' GROUP BY %s', implode(', ', $fields));
+        return sprintf($this->template, implode(', ', $sql));
     }
 }

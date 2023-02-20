@@ -41,10 +41,10 @@ abstract class Query implements ExpressionInterface
     protected array $defaultParts = [
         'comment' => null,
         'delete' => true,
-        'update' => [],
-        'set' => [],
-        'insert' => [],
-        'values' => [],
+        'update' => null,
+        'set' => null,
+        'insert' => null,
+        'values' => null,
         'with' => null,
         'select' => null,
         'modifier' => null,
@@ -266,7 +266,7 @@ abstract class Query implements ExpressionInterface
      *
      * See your database SQL documentation for the available modifiers that you may use.
      *
-     * @param ExpressionInterface|array|string $modifiers modifiers to be applied to the query
+     * @param ExpressionInterface|string ...$modifiers modifiers to be applied to the query
      *
      * @return $this
      */
@@ -294,6 +294,7 @@ abstract class Query implements ExpressionInterface
      * ```
      *
      * @param ExpressionInterface|string $table
+     * @param string|null $as the alias for the table/expression
      *
      * @return $this
      */

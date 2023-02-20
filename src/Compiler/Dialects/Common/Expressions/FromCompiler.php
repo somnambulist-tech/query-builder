@@ -15,7 +15,7 @@ class FromCompiler extends AbstractCompiler
     public function compile(mixed $expression, ValueBinder $binder): string
     {
         /** @var FromExpression $expression */
-        $select = 'FROM %s';
+        $select = ' FROM %s';
         $normalized = [];
 
         foreach ($expression as $k => $p) {

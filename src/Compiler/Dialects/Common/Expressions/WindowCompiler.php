@@ -31,7 +31,7 @@ class WindowCompiler extends AbstractCompiler
         }
 
         if ($expression->getOrderBy()) {
-            $clauses[] = $this->compiler->compile($expression->getOrderBy(), $binder);
+            $clauses[] = trim($this->compiler->compile($expression->getOrderBy(), $binder));
         }
 
         if ($expression->getFrame()) {

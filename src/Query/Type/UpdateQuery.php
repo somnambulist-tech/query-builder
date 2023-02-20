@@ -5,6 +5,7 @@ namespace Somnambulist\Components\QueryBuilder\Query\Type;
 use Closure;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\UpdateClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 
 /**
@@ -20,8 +21,7 @@ class UpdateQuery extends Query
     protected array $parts = [
         'comment'  => null,
         'with'     => null,
-        'update'   => [],
-        'modifier' => null,
+        'update'   => null,
         'join'     => null,
         'set'      => null,
         'from'     => null,
@@ -42,7 +42,8 @@ class UpdateQuery extends Query
      */
     public function update(ExpressionInterface|string $table): self
     {
-        $this->parts['update'][0] = $table;
+        $update = $this->parts['update'] ??= new UpdateClauseExpression();
+        $update->table($table);
 
         return $this;
     }
@@ -104,5 +105,25 @@ class UpdateQuery extends Query
         $set->eq($key, $value, $types);
 
         return $this;
+    }
+
+    public function modifier(ExpressionInterface|string ...$modifiers): Query
+    {
+        $update = $this->parts['update'] ??= new UpdateClauseExpression();
+        $update->modifier()->add(...$modifiers);
+
+        return $this;
+    }
+
+    public function reset(string ...$name): Query
+    {
+        foreach ($name as $k => $n) {
+            if ('modifier' === $n) {
+                $this->parts['update']?->modifier()->reset();
+                unset($name[$k]);
+            }
+        }
+
+        return parent::reset(...$name);
     }
 }

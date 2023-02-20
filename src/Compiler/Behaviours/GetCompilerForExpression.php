@@ -15,11 +15,11 @@ trait GetCompilerForExpression
      *
      * @return CompilerInterface
      */
-    protected function getCompiler(ExpressionInterface|string ...$expression): CompilerInterface
+    protected function getCompiler(mixed ...$expression): CompilerInterface
     {
         if ($this->compiler instanceof DelegatingCompilerInterface) {
             foreach ($expression as $test) {
-                if ($this->compiler->has($test)) {
+                if ((is_string($test) || is_object($test)) && $this->compiler->has($test)) {
                     return $this->compiler->get($test);
                 }
             }

@@ -13,28 +13,28 @@ class FieldClauseExpression implements ExpressionInterface
     ) {
     }
 
-    public function getField(): ExpressionInterface|string|float|int
-    {
-        return $this->field;
-    }
-
-    public function setField(ExpressionInterface|string|float|int $field): self
+    public function field(ExpressionInterface|string|float|int $field): self
     {
         $this->field = $field;
 
         return $this;
     }
 
-    public function getAlias(): ?string
-    {
-        return $this->as;
-    }
-
-    public function setAlias(?string $as): self
+    public function as(?string $as): self
     {
         $this->as = $as;
 
         return $this;
+    }
+
+    public function getField(): ExpressionInterface|string|float|int
+    {
+        return $this->field;
+    }
+
+    public function getAlias(): ?string
+    {
+        return $this->as;
     }
 
     public function traverse(Closure $callback): self

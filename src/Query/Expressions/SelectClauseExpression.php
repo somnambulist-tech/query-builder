@@ -44,8 +44,6 @@ class SelectClauseExpression implements ExpressionInterface
 
     public function traverse(Closure $callback): ExpressionInterface
     {
-        $callback($this);
-
         $callback($this->fields);
         $this->fields->traverse($callback);
         $callback($this->distinct);

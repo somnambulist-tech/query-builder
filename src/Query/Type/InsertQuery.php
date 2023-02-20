@@ -4,6 +4,9 @@ namespace Somnambulist\Components\QueryBuilder\Query\Type;
 
 use Exception;
 use InvalidArgumentException;
+use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\InsertClauseExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\UpdateClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ValuesExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 
@@ -20,7 +23,7 @@ class InsertQuery extends Query
     protected array $parts = [
         'comment'  => null,
         'with'     => null,
-        'insert'   => [],
+        'insert'   => null,
         'modifier' => null,
         'values'   => null,
         'epilog'   => null,
@@ -44,7 +47,9 @@ class InsertQuery extends Query
             throw new InvalidArgumentException('At least 1 column is required to perform an insert.');
         }
 
-        $this->parts['insert'][1] = $columns;
+        $insert = $this->parts['insert'] ??= new InsertClauseExpression();
+        $insert->columns($columns);
+
         if (!$this->parts['values']) {
             $this->parts['values'] = new ValuesExpression($columns, $this->getTypes()->setTypes($types));
         } else {
@@ -63,7 +68,8 @@ class InsertQuery extends Query
      */
     public function into(string $table): self
     {
-        $this->parts['insert'][0] = $table;
+        $insert = $this->parts['insert'] ??= new InsertClauseExpression();
+        $insert->into($table);
 
         return $this;
     }
@@ -83,10 +89,8 @@ class InsertQuery extends Query
      */
     public function values(ValuesExpression|Query|array $data): self
     {
-        if (empty($this->parts['insert'])) {
-            throw new Exception(
-                'You cannot add values before defining columns to use.'
-            );
+        if (null === $this->parts['insert']) {
+            throw new Exception('You cannot add values before defining columns to use.');
         }
 
         if ($data instanceof ValuesExpression) {
@@ -98,5 +102,25 @@ class InsertQuery extends Query
         $this->parts['values']->add($data);
 
         return $this;
+    }
+
+    public function modifier(ExpressionInterface|string ...$modifiers): Query
+    {
+        $update = $this->parts['insert'] ??= new InsertClauseExpression();
+        $update->modifier()->add(...$modifiers);
+
+        return $this;
+    }
+
+    public function reset(string ...$name): Query
+    {
+        foreach ($name as $k => $n) {
+            if ('modifier' === $n) {
+                $this->parts['insert']?->modifier()->reset();
+                unset($name[$k]);
+            }
+        }
+
+        return parent::reset(...$name);
     }
 }

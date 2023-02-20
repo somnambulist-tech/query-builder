@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\UpdateClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\UpdateQuery;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
@@ -265,12 +266,10 @@ class UpdateQueryTest extends TestCase
         $clause = $query->clause('update');
         $clauseClone = (clone $query)->clause('update');
 
-        $this->assertIsArray($clause);
+        $this->assertInstanceOf(UpdateClauseExpression::class, $clause);
 
-        foreach ($clause as $key => $value) {
-            $this->assertEquals($value, $clauseClone[$key]);
-            $this->assertNotSame($value, $clauseClone[$key]);
-        }
+        $this->assertEquals($clause, $clauseClone);
+        $this->assertNotSame($clause, $clauseClone);
     }
 
     public function testCloneSetExpression(): void

@@ -4,11 +4,9 @@ namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Postgres\Listen
 
 use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\CompilerAwareTrait;
 use Somnambulist\Components\QueryBuilder\Compiler\CompilerAwareInterface;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreHavingExpressionCompile;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FieldClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FunctionExpression;
-use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectClauseExpression;
 use function implode;
 use function is_string;
