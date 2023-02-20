@@ -40,5 +40,8 @@
         "psr-4": {
             "Somnambulist\\Components\\QueryBuilder\\Tests\\": "tests/"
         }
+    },
+    "suggest": {
+        "symfony/event-dispatcher": "Required for the configurators"
     }
 }

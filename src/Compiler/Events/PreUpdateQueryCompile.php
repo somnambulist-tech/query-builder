@@ -2,9 +2,9 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Events;
 
+use Somnambulist\Components\QueryBuilder\Compiler\AbstractEvent as Event;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
-use Symfony\Contracts\EventDispatcher\Event;
 
 class PreUpdateQueryCompile extends Event
 {

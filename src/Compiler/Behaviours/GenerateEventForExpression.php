@@ -33,12 +33,12 @@ trait GenerateEventForExpression
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Events;
 
+use Somnambulist\Components\QueryBuilder\Compiler\AbstractEvent;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\Behaviours\HasSql;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
-use Symfony\Contracts\EventDispatcher\Event;
 
-class %s extends Event
+class %s extends AbstractEvent
 {
     use HasSql;
     
@@ -60,12 +60,12 @@ CLASS;
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Events;
 
+use Somnambulist\Components\QueryBuilder\Compiler\AbstractEvent;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\Behaviours\HasSql;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
-use Symfony\Contracts\EventDispatcher\Event;
 
-class %s extends Event
+class %s extends AbstractEvent
 {
     use HasSql;
     
