@@ -80,7 +80,7 @@ class CompilerConfigurator
     {
         return [
             PreDeleteQueryCompile::class => [
-                $qi = new IdentifierQuoter('"', '"'),
+                $qi = [new IdentifierQuoter(), 'quote'],
                 new StripAliasesFromDeleteFrom(),
                 $sa = new StripAliasesFromConditions(),
             ],

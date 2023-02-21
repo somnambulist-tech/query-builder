@@ -1,11 +1,30 @@
 Change Log
 ==========
 
+2023-02-21
+----------
+
+ * default `IdentifierQuoter` to `"` for convenience
+ * fix registration of quoter in configurators (not bound to quote method)
+
+2023-02-20
+----------
+
+ * add default configurators for Postgres, MySQL, and SQlite (requires Symfony EventDispatcher)
+ * add `IdentifierQuoter` and update to work with object graph revisions
+ * refactor (again) how queries are compiled
+ * refactor insert/update to use objects instead of arrays
+ * refactor `FromExpression` to be an `ExpressionSet` with `TableClauseExpression`s
+ * refactor events to use built-in base event to remove dependency on SF EventDispatcher
+ * extracted all query specific method compiling to compiler classes
+
 2023-02-19
 ----------
 
  * update readme and changelog
  * add additional notes and comments
+ * add query events for each query type instead of just "query"
+ * add Postgres `Having` listener to re-writing queries in this dialect
 
 2023-02-18
 ----------
