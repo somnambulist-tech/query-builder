@@ -20,6 +20,8 @@ This query builder is derived from the excellent work done by the [Cake Software
 ## Requirements
 
  * PHP 8.1+
+ * PSR compatible event dispatcher e.g. [symfony/event-dispatcher](https://github.com/symfony/event-dispatcher)
+ * Database driver package and/or PDO e.g. [doctrine/dbal](https://github.com/doctrine/dbal)
 
 ## Installation
 
@@ -36,7 +38,24 @@ is used to convert values to data types suitable for use in queries. Specificall
 custom data types that should be converted to `ExpressionInterface` instances during query compilation.
 
 A Doctrine DBAL caster is included (this library is intended to be used with Doctrine DBAL), allowing DBAL types
-to be used with the query builder and compiler. This can be registered by adding to your applications bootstrap:
+to be used with the query builder and compiler. For other DB drivers, you will need to implement your own type
+caster for that driver, or submit a request to have one added to the project.
+
+__Note:__ the StringTypeCaster is extremely basic and will only cast everything to strings. Alternatively:
+register an anonymous class that only returns the value back:
+
+```php
+use Somnambulist\Components\QueryBuilder\TypeCasterInterface;
+
+TypeCaster::register(new class implements TypeCasterInterface {
+    public function castTo(mixed $value, ?string $type = null): mixed
+    {
+        return $value;
+    }
+});
+```
+
+To register a type caster, you must add to your applications bootstrap:
 
 ```php
 use Somnambulist\Components\QueryBuilder\TypeCaster;
@@ -49,7 +68,10 @@ Next: the compiler needs configuring for your chosen database dialect. You can c
 different databases, just be sure you know which one you are using as a query built using one set of
 compilers may not create a query that can run on another server.
 
-For Postgres the recommended setup is:
+Defaults for the `Common`, `Postgres`, `MySQL`, and `SQlite` dialects are included as `CompilerConfigurator`
+classes. You can use these to provide a configured `Compiler`, or wire what you need together yourself.
+
+An example for Postgres would be (missing many use statements for various classes):
 
 ```php
 use Somnambulist\Components\QueryBuilder\Compiler\DelegatingCompiler;
@@ -67,8 +89,12 @@ $dispatcher = new EventDispatcher();
 $dispatcher->addListener(PreDeleteQueryCompile::class, $a = new StripAliasesFromDeleteFrom());
 $dispatcher->addListener(PreDeleteQueryCompile::class, $b = new StripAliasesFromConditions());
 $dispatcher->addListener(PreUpdateQueryCompile::class, $b);
+// Postgres like MySQL allows ORDER BY in a UNION clause provided that clause is wrapped in `()`
+// however: ordering like this may produce weird results and is not recommended.
 $dispatcher->addListener(PostSelectExpressionCompile::class, new WrapUnionSelectClauses());
-$dispatcher->addListener(PreSelectQueryCompile::class, [new IdentifierQuoter('"', '"'), 'quote']);
+// add other PreXXXQueryCompile events to quote other types of query
+$dispatcher->addListener(PreSelectQueryCompile::class, [new IdentifierQuoter(), 'quote']);
+// re-writes HAVING clauses so they will work in Postgres
 $dispatcher->addListener(PreHavingExpressionCompile::class, new HavingPreProcessor());
 
 $compiler = new DelegatingCompiler(
@@ -122,6 +148,39 @@ $compiler = new DelegatingCompiler(
 
 ### Querying
 
+The 4 main query types are supported: `SELECT`, `INSERT`, `UPDATE`, and `DELETE`. Each is represented by a query
+class e.g. `SelectQuery` from the `Query\Type` namespace. Queries are built up by adding object representations
+through the available methods. Not all methods or functions are compatible with each query type. You must know
+ahead of time which dialect you are targeting.
+
+__Note:__ the builder and compiler do not perform any checks for whether the query you create is valid.
+There is no guarantee that any particular combination will work for any given database. You must compile and run
+the query against your chosen database to avoid issues.
+
+Helper functions are included to make it a little nice to create queries. For example:
+
+```php
+use Somnambulist\Components\QueryBuilder\Query\OrderDirection;
+use function Somnambulist\Components\QueryBuilder\Resources\expr;
+use function Somnambulist\Components\QueryBuilder\Resources\select;
+
+$qb = select(['a.id', 'a.title', 'a.summary', 'a.published_at'])
+    ->from('articles', 'a')
+    ->where(expr()->isNotNull('a.published_at'))
+    ->orderBy('a.published_at', OrderDirection::DESC)
+;
+
+// or
+
+$qb = select(
+        fields: ['id', 'title', 'summary', 'published_at'],
+        from: 'articles'
+    )
+    ->where(expr()->isNotNull('published_at'))
+    ->orderBy('published_at', OrderDirection::DESC)
+;
+```
+
 ## Extending
 
 Queries and the compilers can be extended easily by either replacing classes, or components, or hooking into the
@@ -134,16 +193,22 @@ and then handle the details.
 In more complex cases where the query itself is needed as reference, then the event system must be used. Events
 are raised for:
 
- * pre/post query
+ * pre/post select, insert, update, delete query
  * pre/post select, from, where, having, order, group, with, modifier, epilog, insert, update, delete, comment
 
 Note that individual expression compilers do not fire events.
 
 In the case of post events, the generated SQL is provided and may be revised as needed by the listener.
 For pre events, the execution flow can be early terminated by providing compiled SQL. This is useful when
-altering the main part makeup for a given SQL dialect, for example: Postgres HAVINGs cannot working with
-aliased fields. The listener converts these and returns pre-built SQL avoiding the need for further
-processing.
+altering the main part for a given SQL dialect, for example: Postgres HAVINGs cannot work with  aliased fields.
+The listener converts these and returns pre-built SQL avoiding the need for further processing.
+
+If you have multiple listeners per event, then you should consider using an event dispatcher that allows setting
+the priority to avoid collisions, or ensure that the listeners are registered in the correct order.
+
+One use case would be to add a Pre*QueryCompile listener to check for function usage for a given dialect and ensure
+that invalid or unsupported types are detected ahead of time. Another could be to add smarty join functionality
+where a separate schema object is used to automatically resolve joins based on aliases etc.
 
 ### Tests
 

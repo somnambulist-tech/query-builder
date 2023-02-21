@@ -5,6 +5,8 @@ namespace Somnambulist\Components\QueryBuilder\Resources;
 use Closure;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
+use Somnambulist\Components\QueryBuilder\Query\FunctionsBuilder;
 use Somnambulist\Components\QueryBuilder\Query\Type\DeleteQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\InsertQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
@@ -118,6 +120,26 @@ function delete(?string $from = null, array $where = [], array $types = []): Del
     }
 
     return $query;
+}
+
+/**
+ * Create a new expression object
+ *
+ * @return QueryExpression
+ */
+function expr(): QueryExpression
+{
+    return new QueryExpression();
+}
+
+/**
+ * Create a new function builder
+ *
+ * @return FunctionsBuilder
+ */
+function func(): FunctionsBuilder
+{
+    return new FunctionsBuilder();
 }
 
 /**
