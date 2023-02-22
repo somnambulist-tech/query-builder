@@ -143,6 +143,23 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT comment AS text, (1 + 1) AS two, (article_id + :c_0) AS three FROM comments', $sql);
     }
 
+    public function testSelectAliasedFieldsFromStringContainingAs(): void
+    {
+        $query = new SelectQuery();
+        $query->select(['comment AS text', 'article_id as id'])->from('comments');
+
+        $sql = $this->compiler->compile($query, new ValueBinder());
+
+        $this->assertEquals('SELECT comment AS text, article_id AS id FROM comments', $sql);
+
+        $query = new SelectQuery();
+        $query->select(['cast(to_char(reporting_month, \'YYYY\') AS integer) AS quarter'])->from('reports');
+
+        $sql = $this->compiler->compile($query, new ValueBinder());
+
+        $this->assertEquals('SELECT cast(to_char(reporting_month, \'YYYY\') AS integer) AS quarter FROM reports', $sql);
+    }
+
     /**
      * Tests that tables can also be aliased and referenced in the select clause using such alias
      */

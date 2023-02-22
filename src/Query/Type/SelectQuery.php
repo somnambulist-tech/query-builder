@@ -18,6 +18,11 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use function is_array;
 use function is_numeric;
+use function is_string;
+use function str_contains;
+use function strripos;
+use function strtolower;
+use function substr;
 
 /**
  * This class is used to generate SELECT queries for the relational database.
@@ -53,7 +58,7 @@ class SelectQuery extends Query
      *
      * If an array is passed, keys will be used to alias fields using the value as the
      * real field to be aliased. It is possible to alias strings, Expression objects or
-     * even other Query objects.
+     * even other Query objects. For strings you can also just add `AS alias` to.
      *
      * If a callback is passed, the returning array of the function will
      * be used as the list of fields.
@@ -63,6 +68,8 @@ class SelectQuery extends Query
      * ```
      * $query->select(['id', 'title']); // Produces SELECT id, title
      * $query->select(['author' => 'author_id']); // Appends author: SELECT id, title, author_id as author
+     * $query->select(['author_id as author']); // same as above
+     * $query->select(['author_id AS author']); // still the same same as above
      * $query->select('id', true); // Resets the list: SELECT id
      * $query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
      * $query->select(function ($query) {
@@ -89,6 +96,12 @@ class SelectQuery extends Query
         $select = $this->parts['select'] ??= new SelectClauseExpression();
 
         foreach ($fields as $k => $v) {
+            if (is_string($v) && str_contains(strtolower($v), ' as ')) {
+                // look for the last AS; this should ignore CAST(x AS y) strings
+                $k = trim(substr($v, strripos($v, ' as ')+4));
+                $v = trim(substr($v, 0, strripos($v, ' as ')));
+            }
+
             $select->fields()->add(new FieldClauseExpression($v, is_numeric($k) ? null : $k));
         }
 
