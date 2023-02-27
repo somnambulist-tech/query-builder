@@ -14,7 +14,7 @@ class WrapUnionSelectClauses
 {
     public function __invoke(PostSelectExpressionCompile $event): PostSelectExpressionCompile
     {
-        if ($event->query->clause('union')) {
+        if ($event->query->hasClauses('union', 'intersect', 'except')) {
             $event->setRevisedSql('(' . $event->getRevisedSql());
         }
 

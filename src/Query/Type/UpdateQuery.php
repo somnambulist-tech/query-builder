@@ -40,7 +40,7 @@ class UpdateQuery extends Query
      *
      * @return $this
      */
-    public function update(ExpressionInterface|string $table): self
+    public function update(ExpressionInterface|string $table): static
     {
         $update = $this->parts['update'] ??= new UpdateClauseExpression();
         $update->table($table);
@@ -82,7 +82,7 @@ class UpdateQuery extends Query
      *
      * @return $this
      */
-    public function set(QueryExpression|Closure|array|string $key, mixed $value = null, array|string $types = []): self
+    public function set(QueryExpression|Closure|array|string $key, mixed $value = null, array|string $types = []): static
     {
         $set = $this->parts['set'] ??= $this->newExpr()->useConjunction(',');
 
@@ -107,7 +107,7 @@ class UpdateQuery extends Query
         return $this;
     }
 
-    public function modifier(ExpressionInterface|string ...$modifiers): Query
+    public function modifier(ExpressionInterface|string ...$modifiers): static
     {
         $update = $this->parts['update'] ??= new UpdateClauseExpression();
         $update->modifier()->add(...$modifiers);
@@ -115,7 +115,7 @@ class UpdateQuery extends Query
         return $this;
     }
 
-    public function reset(string ...$name): Query
+    public function reset(string ...$name): static
     {
         foreach ($name as $k => $n) {
             if ('modifier' === $n) {

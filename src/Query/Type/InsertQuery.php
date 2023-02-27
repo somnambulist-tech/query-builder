@@ -40,7 +40,7 @@ class InsertQuery extends Query
      * @return $this
      * @throws InvalidArgumentException When there are 0 columns.
      */
-    public function insert(array $columns, array $types = []): self
+    public function insert(array $columns, array $types = []): static
     {
         if (empty($columns)) {
             throw new InvalidArgumentException('At least 1 column is required to perform an insert.');
@@ -65,7 +65,7 @@ class InsertQuery extends Query
      *
      * @return $this
      */
-    public function into(string $table): self
+    public function into(string $table): static
     {
         $insert = $this->parts['insert'] ??= new InsertClauseExpression();
         $insert->into($table);
@@ -86,7 +86,7 @@ class InsertQuery extends Query
      * @throws Exception if you try to set values before declaring columns.
      *   Or if you try to set values on non-insert queries.
      */
-    public function values(ValuesExpression|Query|array $data): self
+    public function values(ValuesExpression|Query|array $data): static
     {
         if (null === $this->parts['insert']) {
             throw new Exception('You cannot add values before defining columns to use.');
@@ -103,7 +103,7 @@ class InsertQuery extends Query
         return $this;
     }
 
-    public function modifier(ExpressionInterface|string ...$modifiers): Query
+    public function modifier(ExpressionInterface|string ...$modifiers): static
     {
         $update = $this->parts['insert'] ??= new InsertClauseExpression();
         $update->modifier()->add(...$modifiers);
@@ -111,7 +111,7 @@ class InsertQuery extends Query
         return $this;
     }
 
-    public function reset(string ...$name): Query
+    public function reset(string ...$name): static
     {
         foreach ($name as $k => $n) {
             if ('modifier' === $n) {

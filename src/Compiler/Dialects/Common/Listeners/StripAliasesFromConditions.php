@@ -29,7 +29,7 @@ class StripAliasesFromConditions
 
                 if (is_string($field) && str_contains($field, '.')) {
                     [, $unaliasedField] = explode('.', $field, 2);
-                    $expression->setField($unaliasedField);
+                    $expression->field($unaliasedField);
                 }
 
                 return $expression;
@@ -40,7 +40,7 @@ class StripAliasesFromConditions
 
                 if (str_contains($identifier, '.')) {
                     [, $unaliasedIdentifier] = explode('.', $identifier, 2);
-                    $expression->setIdentifier($unaliasedIdentifier);
+                    $expression->identifier($unaliasedIdentifier);
                 }
 
                 return $expression;

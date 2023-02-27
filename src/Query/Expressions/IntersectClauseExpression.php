@@ -2,6 +2,6 @@
 
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
-class UnionClauseExpression extends CombinationExpression
+class IntersectClauseExpression extends CombinationExpression
 {
 }

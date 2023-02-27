@@ -46,6 +46,8 @@ use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type\DeleteCom
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type\InsertCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type\SelectCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type\UpdateCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Sqlite\Expressions\ExceptCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Sqlite\Expressions\IntersectCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Sqlite\Expressions\UnionCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreDeleteQueryCompile;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreInsertQueryCompile;
@@ -120,12 +122,14 @@ class CompilerConfigurator
             Expressions\CaseStatementExpression::class => new CaseStatementCompiler(),
             Expressions\CommonTableExpression::class   => new CommonTableExpressionCompiler(),
             Expressions\ComparisonExpression::class    => new ComparisonCompiler(),
+            Expressions\ExceptExpression::class        => new ExceptCompiler(),
             Expressions\FieldExpression::class         => new FieldCompiler(),
             Expressions\FromExpression::class          => new FromCompiler(),
             Expressions\FunctionExpression::class      => new FunctionCompiler(),
             Expressions\GroupByExpression::class       => new GroupByCompiler(),
             Expressions\IdentifierExpression::class    => new IdentifierCompiler(),
             Expressions\InsertClauseExpression::class  => new InsertClauseCompiler(),
+            Expressions\IntersectExpression::class     => new IntersectCompiler(),
             Expressions\JoinExpression::class          => new JoinCompiler(),
             Expressions\JoinClauseExpression::class    => new JoinClauseCompiler(),
             Expressions\ModifierExpression::class      => new ModifierCompiler(),

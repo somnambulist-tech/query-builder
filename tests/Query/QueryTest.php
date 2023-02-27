@@ -80,7 +80,7 @@ class QueryTest extends TestCase
         $this->assertInstanceOf(ExpressionInterface::class, $identifier);
         $this->assertSame('description', $identifier->getIdentifier());
 
-        $identifier->setIdentifier('title');
+        $identifier->identifier('title');
         $this->assertSame('title', $identifier->getIdentifier());
     }
 
@@ -245,7 +245,11 @@ class QueryTest extends TestCase
     public function testClauseUndefined(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The "nope" clause is not defined. Valid clauses are: comment, delete, update, set, insert, values, with, select, modifier, from, join, where, group, having, window, order, limit, offset, union, epilog.');
+        $this->expectExceptionMessage(
+            'The "nope" clause is not defined. Valid clauses are: comment, delete, update, set, insert, values, ' .
+            'with, select, modifier, from, join, where, group, having, window, order, limit, offset, union, ' .
+            'intersect, except, epilog.'
+        );
 
         $this->assertEmpty($this->query->clause('where'));
         $this->query->clause('nope');

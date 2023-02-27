@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+2023-02-27
+----------
+
+ * add `EXCEPT` and `INTERSECT` combination support to select queries
+ * change some method names to be more fluent'ish
+
 2023-02-21
 ----------
 

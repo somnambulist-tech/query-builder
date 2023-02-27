@@ -241,13 +241,13 @@ class IdentifierQuoter
     {
         $field = $expression->getField();
         if (is_string($field)) {
-            $expression->setField($this->quoteIdentifier($field));
+            $expression->field($this->quoteIdentifier($field));
         } elseif (is_array($field)) {
             $quoted = [];
             foreach ($field as $f) {
                 $quoted[] = $this->quoteIdentifier($f);
             }
-            $expression->setField($quoted);
+            $expression->field($quoted);
         } else {
             $this->quoteExpression($field);
         }
@@ -276,6 +276,6 @@ class IdentifierQuoter
 
     protected function quoteIdentifierExpression(IdentifierExpression $expression): void
     {
-        $expression->setIdentifier($this->quoteIdentifier($expression->getIdentifier()));
+        $expression->identifier($this->quoteIdentifier($expression->getIdentifier()));
     }
 }

@@ -26,7 +26,7 @@ class IdentifierExpressionTest extends TestCase
     {
         $expression = new IdentifierExpression('foo');
         $this->assertSame('foo', $expression->getIdentifier());
-        $expression->setIdentifier('bar');
+        $expression->identifier('bar');
         $this->assertSame('bar', $expression->getIdentifier());
     }
 

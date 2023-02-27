@@ -13,28 +13,28 @@ class NamedWindowClauseExpression implements ExpressionInterface
     ) {
     }
 
-    public function getName(): IdentifierExpression
-    {
-        return $this->name;
-    }
-
-    public function setName(IdentifierExpression $name): self
+    public function name(IdentifierExpression $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function getWindow(): WindowExpression
-    {
-        return $this->window;
-    }
-
-    public function setWindow(WindowExpression $window): self
+    public function window(WindowExpression $window): self
     {
         $this->window = $window;
 
         return $this;
+    }
+
+    public function getName(): IdentifierExpression
+    {
+        return $this->name;
+    }
+
+    public function getWindow(): WindowExpression
+    {
+        return $this->window;
     }
 
     public function traverse(Closure $callback): self

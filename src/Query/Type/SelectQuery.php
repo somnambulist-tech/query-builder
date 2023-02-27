@@ -6,9 +6,13 @@ use Closure;
 use InvalidArgumentException;
 use Somnambulist\Components\QueryBuilder\Exceptions\ExpectedWindowExpressionFromClosure;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\ExceptClauseExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\ExceptExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FieldClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\GroupByExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\IntersectClauseExpression;
+use Somnambulist\Components\QueryBuilder\Query\Expressions\IntersectExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\NamedWindowClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\UnionClauseExpression;
@@ -35,20 +39,22 @@ class SelectQuery extends Query
      * @var array<string, mixed>
      */
     protected array $parts = [
-        'comment'  => null,
-        'with'     => null,
-        'select'   => null,
-        'from'     => null,
-        'join'     => null,
-        'where'    => null,
-        'group'    => null,
-        'having'   => null,
-        'window'   => null,
-        'order'    => null,
-        'limit'    => null,
-        'offset'   => null,
-        'union'    => null,
-        'epilog'   => null,
+        'comment'   => null,
+        'with'      => null,
+        'select'    => null,
+        'from'      => null,
+        'join'      => null,
+        'where'     => null,
+        'group'     => null,
+        'having'    => null,
+        'window'    => null,
+        'order'     => null,
+        'limit'     => null,
+        'offset'    => null,
+        'union'     => null,
+        'intersect' => null,
+        'except'    => null,
+        'epilog'    => null,
     ];
 
     /**
@@ -83,7 +89,7 @@ class SelectQuery extends Query
      *
      * @return $this
      */
-    public function select(ExpressionInterface|Closure|array|string|float|int $fields = []): self
+    public function select(ExpressionInterface|Closure|array|string|float|int $fields = []): static
     {
         if ($fields instanceof Closure) {
             $fields = $fields($this);
@@ -98,7 +104,7 @@ class SelectQuery extends Query
         foreach ($fields as $k => $v) {
             if (is_string($v) && str_contains(strtolower($v), ' as ')) {
                 // look for the last AS; this should ignore CAST(x AS y) strings
-                $k = trim(substr($v, strripos($v, ' as ')+4));
+                $k = trim(substr($v, strripos($v, ' as ') + 4));
                 $v = trim(substr($v, 0, strripos($v, ' as ')));
             }
 
@@ -136,7 +142,7 @@ class SelectQuery extends Query
      *
      * @return $this
      */
-    public function distinct(ExpressionInterface|string ...$on): self
+    public function distinct(ExpressionInterface|string ...$on): static
     {
         $select = $this->parts['select'] ??= new SelectClauseExpression();
 
@@ -173,7 +179,7 @@ class SelectQuery extends Query
      *
      * @return $this
      */
-    public function groupBy(ExpressionInterface|string ...$fields): self
+    public function groupBy(ExpressionInterface|string ...$fields): static
     {
         $groupBy = $this->parts['group'] ??= new GroupByExpression();
         $groupBy->add(...$fields);
@@ -196,7 +202,7 @@ class SelectQuery extends Query
      * @return $this
      * @see Query::where()
      */
-    public function having(ExpressionInterface|Closure|array|string|null $conditions = null, array $types = []): self
+    public function having(ExpressionInterface|Closure|array|string|null $conditions = null, array $types = []): static
     {
         $this->conjugate('having', $conditions, 'AND', $types);
 
@@ -218,7 +224,7 @@ class SelectQuery extends Query
      * @return $this
      * @see Query::andWhere()
      */
-    public function andHaving(ExpressionInterface|Closure|array|string $conditions, array $types = []): self
+    public function andHaving(ExpressionInterface|Closure|array|string $conditions, array $types = []): static
     {
         $this->conjugate('having', $conditions, 'AND', $types);
 
@@ -235,7 +241,7 @@ class SelectQuery extends Query
      *
      * @return $this
      */
-    public function window(string $name, WindowExpression|Closure $window): self
+    public function window(string $name, WindowExpression|Closure $window): static
     {
         if ($window instanceof Closure) {
             $window = $window(new WindowExpression(), $this);
@@ -267,7 +273,7 @@ class SelectQuery extends Query
      * @return $this
      * @throws InvalidArgumentException If page number < 1.
      */
-    public function page(int $num, ?int $limit = null): self
+    public function page(int $num, ?int $limit = null): static
     {
         if ($num < 1) {
             throw new InvalidArgumentException('Pages must start at 1.');
@@ -317,7 +323,7 @@ class SelectQuery extends Query
      *
      * @return $this
      */
-    public function union(Query $query): self
+    public function union(Query $query): static
     {
         $unions = $this->parts['union'] ??= new UnionExpression();
         $unions->add(new UnionClauseExpression($query, false));
@@ -346,7 +352,7 @@ class SelectQuery extends Query
      *
      * @return $this
      */
-    public function unionAll(Query $query): self
+    public function unionAll(Query $query): static
     {
         $unions = $this->parts['union'] ??= new UnionExpression();
         $unions->add(new UnionClauseExpression($query, true));
@@ -354,7 +360,83 @@ class SelectQuery extends Query
         return $this;
     }
 
-    public function modifier(ExpressionInterface|string ...$modifiers): self
+    /**
+     * Adds a complete query to be used in conjunction with an EXCEPT operator. This will create a result
+     * set that excludes all the records from the query that appear in the query argument. Any duplicates
+     * will be removed, however the exceptAll() method may be used to include duplicate rows.
+     *
+     * Note that the usage of `ALL` is dependent on the database server and is not supported by all types.
+     *
+     * ### Examples
+     *
+     * ```
+     * $except = (new SelectQuery())->select(['id', 'title'])->from(['a' => 'articles'])->where('is_published = false');
+     * $query->select(['id', 'name'])->from(['a' => 'articles'])->except($except);
+     * ```
+     *
+     * Will produce:
+     *
+     * `SELECT id, name FROM articles a EXCEPT SELECT id, title FROM articles a WHERE is_published = false`
+     *
+     * @param Query $query
+     *
+     * @return $this
+     */
+    public function except(Query $query): static
+    {
+        $except = $this->parts['except'] ??= new ExceptExpression();
+        $except->add(new ExceptClauseExpression($query));
+
+        return $this;
+    }
+
+    public function exceptAll(Query $query): static
+    {
+        $except = $this->parts['except'] ??= new ExceptExpression();
+        $except->add(new ExceptClauseExpression($query, true));
+
+        return $this;
+    }
+
+    /**
+     * Adds a complete query to be used in conjunction with an INTERSECT operator. This will create a result
+     * set that contains only the records from the query that appear in the query argument. Any duplicates
+     * will be removed, however the intersectAll() method may be used to include duplicate rows.
+     *
+     * Note that the usage of `ALL` is dependent on the database server and is not supported by all types.
+     *
+     * ### Examples
+     *
+     * ```
+     * $intersect = (new SelectQuery())->select(['id', 'title'])->from(['a' => 'articles'])->where('published BETWEEN');
+     * $query->select(['id', 'name'])->from(['a' => 'articles'])->intersect($intersect);
+     * ```
+     *
+     * Will produce:
+     *
+     * `SELECT id, name FROM articles a INTERSECT SELECT id, title FROM articles a WHERE published BETWEEN :start AND :end`
+     *
+     * @param Query $query
+     *
+     * @return $this
+     */
+    public function intersect(Query $query): static
+    {
+        $intersect = $this->parts['intersect'] ??= new IntersectExpression();
+        $intersect->add(new IntersectClauseExpression($query));
+
+        return $this;
+    }
+
+    public function intersectAll(Query $query): static
+    {
+        $except = $this->parts['intersect'] ??= new IntersectExpression();
+        $except->add(new IntersectClauseExpression($query, true));
+
+        return $this;
+    }
+
+    public function modifier(ExpressionInterface|string ...$modifiers): static
     {
         $select = $this->parts['select'] ??= new SelectClauseExpression();
         $select->modifier()->add(...$modifiers);
@@ -362,7 +444,7 @@ class SelectQuery extends Query
         return $this;
     }
 
-    public function reset(string ...$name): Query
+    public function reset(string ...$name): static
     {
         foreach ($name as $k => $n) {
             if ('distinct' === $n) {

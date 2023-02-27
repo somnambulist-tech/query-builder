@@ -16,28 +16,28 @@ class StringExpression implements ExpressionInterface
     ) {
     }
 
-    public function getString(): string
-    {
-        return $this->string;
-    }
-
-    public function setString(string $string): self
+    public function string(string $string): self
     {
         $this->string = $string;
 
         return $this;
     }
 
-    public function getCollation(): string
-    {
-        return $this->collation;
-    }
-
-    public function setCollation(string $collation): self
+    public function collate(string $collation): self
     {
         $this->collation = $collation;
 
         return $this;
+    }
+
+    public function getString(): string
+    {
+        return $this->string;
+    }
+
+    public function getCollation(): string
+    {
+        return $this->collation;
     }
 
     public function traverse(Closure $callback): self

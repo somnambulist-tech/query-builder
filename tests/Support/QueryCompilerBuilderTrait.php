@@ -13,6 +13,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\Co
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\ComparisonCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\DeleteClauseCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\EpiLogCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\ExceptCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\FieldCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\FromCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\FunctionCompiler;
@@ -21,6 +22,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\Ha
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\IdentifierCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\InsertClauseCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\InsertValuesCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\IntersectCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\JoinClauseCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\JoinCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\LimitCompiler;
@@ -62,7 +64,6 @@ use Symfony\Component\Stopwatch\Stopwatch;
 
 trait QueryCompilerBuilderTrait
 {
-//    protected ?CompilerInterface $compiler = null;
     protected ?TraceableEventDispatcher $dispatcher = null;
 
     protected function registerTypeCaster(): void
@@ -127,34 +128,36 @@ trait QueryCompilerBuilderTrait
                 'set' => new UpdateSetValuesCompiler(),
                 'values' => new InsertValuesCompiler(),
 
-                Expressions\AggregateExpression::class => new AggregateCompiler(),
-                Expressions\BetweenExpression::class => new BetweenCompiler(),
+                Expressions\AggregateExpression::class     => new AggregateCompiler(),
+                Expressions\BetweenExpression::class       => new BetweenCompiler(),
                 Expressions\CaseStatementExpression::class => new CaseStatementCompiler(),
-                Expressions\CommonTableExpression::class => new CommonTableExpressionCompiler(),
-                Expressions\ComparisonExpression::class => new ComparisonCompiler(),
-                Expressions\FieldExpression::class => new FieldCompiler(),
-                Expressions\FromExpression::class => new FromCompiler(),
-                Expressions\FunctionExpression::class => new FunctionCompiler(),
-                Expressions\GroupByExpression::class => new GroupByCompiler(),
-                Expressions\IdentifierExpression::class => new IdentifierCompiler(),
-                Expressions\InsertClauseExpression::class => new InsertClauseCompiler(),
-                Expressions\JoinExpression::class => new JoinCompiler(),
-                Expressions\JoinClauseExpression::class => new JoinClauseCompiler(),
-                Expressions\ModifierExpression::class => new ModifierCompiler(),
-                Expressions\OrderByExpression::class => new OrderByCompiler(),
-                Expressions\OrderClauseExpression::class => new OrderClauseCompiler(),
-                Expressions\QueryExpression::class => new QueryExpressionCompiler(),
-                Expressions\SelectClauseExpression::class => new SelectClauseCompiler(),
-                Expressions\StringExpression::class => new StringCompiler(),
-                Expressions\TupleComparison::class => new TupleCompiler(),
-                Expressions\UnaryExpression::class => new UnaryCompiler(),
-                Expressions\UnionExpression::class => new UnionCompiler(),
-                Expressions\UpdateClauseExpression::class => new UpdateClauseCompiler(),
-                Expressions\ValuesExpression::class => new ValuesCompiler(),
-                Expressions\WhenThenExpression::class => new WhenThenCompiler(),
-                Expressions\WindowClauseExpression::class => new WindowClauseCompiler(),
-                Expressions\WindowExpression::class => new WindowCompiler(),
-                Expressions\WithExpression::class => new WithCompiler(),
+                Expressions\CommonTableExpression::class   => new CommonTableExpressionCompiler(),
+                Expressions\ComparisonExpression::class    => new ComparisonCompiler(),
+                Expressions\ExceptExpression::class        => new ExceptCompiler(),
+                Expressions\FieldExpression::class         => new FieldCompiler(),
+                Expressions\FromExpression::class          => new FromCompiler(),
+                Expressions\FunctionExpression::class      => new FunctionCompiler(),
+                Expressions\GroupByExpression::class       => new GroupByCompiler(),
+                Expressions\IdentifierExpression::class    => new IdentifierCompiler(),
+                Expressions\InsertClauseExpression::class  => new InsertClauseCompiler(),
+                Expressions\IntersectExpression::class     => new IntersectCompiler(),
+                Expressions\JoinExpression::class          => new JoinCompiler(),
+                Expressions\JoinClauseExpression::class    => new JoinClauseCompiler(),
+                Expressions\ModifierExpression::class      => new ModifierCompiler(),
+                Expressions\OrderByExpression::class       => new OrderByCompiler(),
+                Expressions\OrderClauseExpression::class   => new OrderClauseCompiler(),
+                Expressions\QueryExpression::class         => new QueryExpressionCompiler(),
+                Expressions\SelectClauseExpression::class  => new SelectClauseCompiler(),
+                Expressions\StringExpression::class        => new StringCompiler(),
+                Expressions\TupleComparison::class         => new TupleCompiler(),
+                Expressions\UnaryExpression::class         => new UnaryCompiler(),
+                Expressions\UnionExpression::class         => new UnionCompiler(),
+                Expressions\UpdateClauseExpression::class  => new UpdateClauseCompiler(),
+                Expressions\ValuesExpression::class        => new ValuesCompiler(),
+                Expressions\WhenThenExpression::class      => new WhenThenCompiler(),
+                Expressions\WindowClauseExpression::class  => new WindowClauseCompiler(),
+                Expressions\WindowExpression::class        => new WindowCompiler(),
+                Expressions\WithExpression::class          => new WithCompiler(),
             ];
         }
 

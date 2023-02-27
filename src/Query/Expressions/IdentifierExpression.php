@@ -21,28 +21,28 @@ class IdentifierExpression implements ExpressionInterface
     ) {
     }
 
-    public function getIdentifier(): string
-    {
-        return $this->identifier;
-    }
-
-    public function setIdentifier(string $identifier): self
+    public function identifier(string $identifier): self
     {
         $this->identifier = $identifier;
 
         return $this;
     }
 
-    public function getCollation(): ?string
-    {
-        return $this->collation;
-    }
-
-    public function setCollation(?string $collation): self
+    public function collate(?string $collation): self
     {
         $this->collation = $collation;
 
         return $this;
+    }
+
+    public function getIdentifier(): string
+    {
+        return $this->identifier;
+    }
+
+    public function getCollation(): ?string
+    {
+        return $this->collation;
     }
 
     public function traverse(Closure $callback): self

@@ -10,5 +10,5 @@ interface FieldInterface
 {
     public function getField(): ExpressionInterface|array|string;
 
-    public function setField(ExpressionInterface|array|string $field): self;
+    public function field(ExpressionInterface|array|string $field): self;
 }

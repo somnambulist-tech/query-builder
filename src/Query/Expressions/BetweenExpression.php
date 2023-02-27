@@ -22,16 +22,30 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
         $this->to = TypeCaster::castTo($this->to, $this->type);
     }
 
-    public function getField(): ExpressionInterface|array|string
-    {
-        return $this->field;
-    }
-
-    public function setField(ExpressionInterface|array|string $field): self
+    public function field(ExpressionInterface|array|string $field): self
     {
         $this->field = $field;
 
         return $this;
+    }
+
+    public function from(mixed $from): self
+    {
+        $this->from = $from;
+
+        return $this;
+    }
+
+    public function to(mixed $to): self
+    {
+        $this->to = $to;
+
+        return $this;
+    }
+
+    public function getField(): ExpressionInterface|array|string
+    {
+        return $this->field;
     }
 
     public function getFrom(): mixed
@@ -39,23 +53,9 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
         return $this->from;
     }
 
-    public function setFrom(mixed $from): self
-    {
-        $this->from = $from;
-
-        return $this;
-    }
-
     public function getTo(): mixed
     {
         return $this->to;
-    }
-
-    public function setTo(mixed $to): self
-    {
-        $this->to = $to;
-
-        return $this;
     }
 
     public function getType(): ?string

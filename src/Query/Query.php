@@ -58,6 +58,8 @@ abstract class Query implements ExpressionInterface
         'limit' => null,
         'offset' => null,
         'union' => null,
+        'intersect' => null,
+        'except' => null,
         'epilog' => null,
     ];
 
@@ -102,7 +104,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function traverse(Closure $callback): self
+    public function traverse(Closure $callback): static
     {
         foreach ($this->parts as $name => $part) {
             $callback($part, $name);
@@ -136,7 +138,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function traverseParts(Closure $visitor, array $parts): self
+    public function traverseParts(Closure $visitor, array $parts): static
     {
         foreach ($parts as $name) {
             $visitor($this->parts[$name], $name);
@@ -158,7 +160,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function traverseExpressions(Closure $callback): self
+    public function traverseExpressions(Closure $callback): static
     {
         foreach ($this->parts as $part) {
             $this->expressionsVisitor($part, $callback);
@@ -232,7 +234,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function with(CommonTableExpression|Closure $cte): self
+    public function with(CommonTableExpression|Closure $cte): static
     {
         $with = $this->parts['with'] ??= new WithExpression();
 
@@ -270,7 +272,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function modifier(ExpressionInterface|string ...$modifiers): self
+    public function modifier(ExpressionInterface|string ...$modifiers): static
     {
         $modifier = $this->parts['modifier'] ??= new ModifierExpression();
         $modifier->add(...$modifiers);
@@ -298,7 +300,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function from(ExpressionInterface|string $table, string $as = null): self
+    public function from(ExpressionInterface|string $table, string $as = null): static
     {
         $from = $this->parts['from'] ??= new FromExpression();
         $from->add($table, $as);
@@ -362,7 +364,7 @@ abstract class Query implements ExpressionInterface
         ExpressionInterface|Closure|array|string $on = [],
         JoinType $type = JoinType::INNER,
         array $types = []
-    ): self
+    ): static
     {
         if (is_string($table)) {
             $table = new IdentifierExpression($table);
@@ -391,7 +393,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function removeJoin(string $name): self
+    public function removeJoin(string $name): static
     {
         $joins = $this->parts['join'] ??= new JoinExpression();
         $joins->remove($name);
@@ -428,7 +430,7 @@ abstract class Query implements ExpressionInterface
         string $as = '',
         ExpressionInterface|Closure|array|string $on = [],
         array $types = []
-    ): self
+    ): static
     {
         $this->join($table, $as, $on, JoinType::LEFT, $types);
 
@@ -449,7 +451,7 @@ abstract class Query implements ExpressionInterface
         string $as = '',
         ExpressionInterface|Closure|array|string $on = [],
         array $types = []
-    ): self
+    ): static
     {
         $this->join($table, $as, $on, JoinType::RIGHT, $types);
 
@@ -470,7 +472,7 @@ abstract class Query implements ExpressionInterface
         string $as = '',
         ExpressionInterface|Closure|array|string $on = [],
         array $types = []
-    ): self
+    ): static
     {
         $this->join($table, $as, $on, JoinType::INNER, $types);
 
@@ -598,7 +600,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function where(ExpressionInterface|Closure|array|string|null $conditions = null, array $types = []): self
+    public function where(ExpressionInterface|Closure|array|string|null $conditions = null, array $types = []): static
     {
         $this->conjugate('where', $conditions, 'AND', $types);
 
@@ -612,7 +614,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function whereNotNull(ExpressionInterface|array|string $fields): self
+    public function whereNotNull(ExpressionInterface|array|string $fields): static
     {
         if (!is_array($fields)) {
             $fields = [$fields];
@@ -634,7 +636,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function whereNull(ExpressionInterface|array|string $fields): self
+    public function whereNull(ExpressionInterface|array|string $fields): static
     {
         if (!is_array($fields)) {
             $fields = [$fields];
@@ -665,7 +667,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function whereInList(string $field, array $values, array $options = []): self
+    public function whereInList(string $field, array $values, array $options = []): static
     {
         $options += [
             'types'      => [],
@@ -691,7 +693,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function whereNotInList(string $field, array $values, array $options = []): self
+    public function whereNotInList(string $field, array $values, array $options = []): static
     {
         $options += [
             'types'      => [],
@@ -719,7 +721,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function whereNotInListOrNull(string $field, array $values, array $options = []): self
+    public function whereNotInListOrNull(string $field, array $values, array $options = []): static
     {
         $options += [
             'types'      => [],
@@ -793,7 +795,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function andWhere(ExpressionInterface|Closure|array|string $conditions, array $types = []): self
+    public function andWhere(ExpressionInterface|Closure|array|string $conditions, array $types = []): static
     {
         $this->conjugate('where', $conditions, 'AND', $types);
 
@@ -810,7 +812,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function orWhere(ExpressionInterface|Closure|array|string $conditions, array $types = []): self
+    public function orWhere(ExpressionInterface|Closure|array|string $conditions, array $types = []): static
     {
         $this->conjugate('where', $conditions, 'OR', $types);
 
@@ -873,7 +875,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function orderBy(ExpressionInterface|Closure|array|string $field, ?OrderDirection $dir = null): self
+    public function orderBy(ExpressionInterface|Closure|array|string $field, ?OrderDirection $dir = null): static
     {
         if (!$field) {
             return $this;
@@ -913,7 +915,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function limit(ExpressionInterface|int|null $limit): self
+    public function limit(ExpressionInterface|int|null $limit): static
     {
         $this->parts['limit'] = $limit;
 
@@ -939,7 +941,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function offset(ExpressionInterface|int|null $offset): self
+    public function offset(ExpressionInterface|int|null $offset): static
     {
         $this->parts['offset'] = $offset;
 
@@ -986,7 +988,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function epilog(ExpressionInterface|string|null $expression = null): self
+    public function epilog(ExpressionInterface|string|null $expression = null): static
     {
         $this->parts['epilog'] = $expression;
 
@@ -1007,7 +1009,7 @@ abstract class Query implements ExpressionInterface
      *
      * @return $this
      */
-    public function comment(?string $expression = null): self
+    public function comment(?string $expression = null): static
     {
         $this->parts['comment'] = $expression;
 
@@ -1130,7 +1132,18 @@ abstract class Query implements ExpressionInterface
         return $this->parts[$name];
     }
 
-    public function reset(string ...$name): self
+    public function hasClauses(string ...$name): bool
+    {
+        foreach  ($name as $n) {
+            if (null !== $this->clause($n)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function reset(string ...$name): static
     {
         foreach ($name as $n) {
             if (array_key_exists($n, $this->parts)) {
@@ -1148,7 +1161,7 @@ abstract class Query implements ExpressionInterface
      * $query->bind(':id', 1, 'integer');
      * ```
      */
-    public function bind(string $param, mixed $value, string|int|null $type = null): self
+    public function bind(string $param, mixed $value, string|int|null $type = null): static
     {
         $this->binder->bind($param, $value, $type);
 
@@ -1160,7 +1173,7 @@ abstract class Query implements ExpressionInterface
         return $this->binder;
     }
 
-    public function setBinder(ValueBinder $binder): self
+    public function setBinder(ValueBinder $binder): static
     {
         $this->binder = $binder;
 
@@ -1172,7 +1185,7 @@ abstract class Query implements ExpressionInterface
         return $this->types;
     }
 
-    public function setTypes(TypeMap $types): self
+    public function setTypes(TypeMap $types): static
     {
         $this->types = $types;
 

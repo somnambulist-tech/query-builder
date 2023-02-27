@@ -36,7 +36,7 @@ class DeleteQuery extends Query
      *
      * @return $this
      */
-    public function delete(?string $table = null): self
+    public function delete(?string $table = null): static
     {
         if ($table !== null) {
             $this->from($table);

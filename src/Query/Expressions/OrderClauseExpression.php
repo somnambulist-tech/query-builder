@@ -18,28 +18,42 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     ) {
     }
 
-    public function getField(): ExpressionInterface|array|string
-    {
-        return $this->field;
-    }
-
-    public function setField(ExpressionInterface|array|string $field): self
+    public function field(ExpressionInterface|array|string $field): self
     {
         $this->field = $field;
 
         return $this;
     }
 
-    public function getDirection(): OrderDirection
-    {
-        return $this->direction;
-    }
-
-    public function setDirection(OrderDirection $direction): self
+    public function direction(OrderDirection $direction): self
     {
         $this->direction = $direction;
 
         return $this;
+    }
+
+    public function asc(): self
+    {
+        $this->direction = OrderDirection::ASC;
+
+        return $this;
+    }
+
+    public function desc(): self
+    {
+        $this->direction = OrderDirection::DESC;
+
+        return $this;
+    }
+
+    public function getField(): ExpressionInterface|array|string
+    {
+        return $this->field;
+    }
+
+    public function getDirection(): OrderDirection
+    {
+        return $this->direction;
     }
 
     public function traverse(Closure $callback): self

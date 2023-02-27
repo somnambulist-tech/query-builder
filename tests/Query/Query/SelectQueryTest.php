@@ -1968,6 +1968,94 @@ class SelectQueryTest extends TestCase
     }
 
     /**
+     * Tests that it is possible to add one or multiple INTERSECT statements in a query
+     */
+    public function testIntersect(): void
+    {
+        $intersect = (new SelectQuery())->select(['id', 'title'])->from('articles', 'a');
+        $query = new SelectQuery();
+        $query->select(['id', 'comment'])
+              ->from('comments', 'c')
+              ->intersect($intersect)
+        ;
+        $sql = $this->compiler->compile($query, $b = new ValueBinder());
+        $this->assertQueryContains('INTERSECT \(SELECT id', $sql);
+
+        $intersect->select(['foo' => 'id', 'bar' => 'title']);
+        $intersect = (new SelectQuery())
+            ->select(['id', 'name', 'other' => 'id', 'nameish' => 'name'])
+            ->from('authors', 'b')
+            ->where(['id ' => 1])
+            ->orderBy(['id' => 'desc'])
+        ;
+
+        $query->select(['foo' => 'id', 'bar' => 'comment'])->intersect($intersect);
+        $sql = $this->compiler->compile($query, new ValueBinder());
+        $this->assertEquals(
+            "(SELECT id, comment, id AS foo, comment AS bar FROM comments c)\n" .
+            "INTERSECT (SELECT id, title, id AS foo, title AS bar FROM articles a)\n" .
+            "INTERSECT (SELECT id, name, id AS other, name AS nameish FROM authors b WHERE id = :c_0 ORDER BY id desc)",
+            $sql
+        );
+
+        $intersect = (new SelectQuery())
+            ->select(['id', 'title'])
+            ->from('articles', 'c')
+        ;
+        $query
+            ->reset('select', 'intersect')
+            ->select(['id', 'comment'])
+            ->intersect($intersect)
+        ;
+        $sql = $this->compiler->compile($query, new ValueBinder());
+        $this->assertEquals("(SELECT id, comment FROM comments c)\nINTERSECT (SELECT id, title FROM articles c)", $sql);
+    }
+
+    /**
+     * Tests that it is possible to add one or multiple EXCEPT statements in a query
+     */
+    public function testExcept(): void
+    {
+        $except = (new SelectQuery())->select(['id', 'title'])->from('articles', 'a');
+        $query = new SelectQuery();
+        $query->select(['id', 'comment'])
+              ->from('comments', 'c')
+              ->except($except)
+        ;
+        $sql = $this->compiler->compile($query, $b = new ValueBinder());
+        $this->assertQueryContains('EXCEPT \(SELECT id', $sql);
+
+        $except->select(['foo' => 'id', 'bar' => 'title']);
+        $except = (new SelectQuery())
+            ->select(['id', 'name', 'other' => 'id', 'nameish' => 'name'])
+            ->from('authors', 'b')
+            ->where(['id ' => 1])
+            ->orderBy(['id' => 'desc'])
+        ;
+
+        $query->select(['foo' => 'id', 'bar' => 'comment'])->except($except);
+        $sql = $this->compiler->compile($query, new ValueBinder());
+        $this->assertEquals(
+            "(SELECT id, comment, id AS foo, comment AS bar FROM comments c)\n" .
+            "EXCEPT (SELECT id, title, id AS foo, title AS bar FROM articles a)\n" .
+            "EXCEPT (SELECT id, name, id AS other, name AS nameish FROM authors b WHERE id = :c_0 ORDER BY id desc)",
+            $sql
+        );
+
+        $except = (new SelectQuery())
+            ->select(['id', 'title'])
+            ->from('articles', 'c')
+        ;
+        $query
+            ->reset('select', 'except')
+            ->select(['id', 'comment'])
+            ->except($except)
+        ;
+        $sql = $this->compiler->compile($query, new ValueBinder());
+        $this->assertEquals("(SELECT id, comment FROM comments c)\nEXCEPT (SELECT id, title FROM articles c)", $sql);
+    }
+
+    /**
      * Tests that it is possible to run unions with order by statements
      */
     public function testUnionOrderBy(): void

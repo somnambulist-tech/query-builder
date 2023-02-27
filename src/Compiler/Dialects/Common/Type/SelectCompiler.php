@@ -8,7 +8,7 @@ class SelectCompiler extends AbstractQueryCompiler
 {
     protected array $order = [
         'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
-        'limit', 'offset', 'union', 'epilog',
+        'limit', 'offset', 'union', 'intersect', 'except', 'epilog',
     ];
     protected array $supports = [SelectQuery::class];
 }

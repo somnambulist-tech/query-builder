@@ -32,7 +32,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
         return $this->field;
     }
 
-    public function setField(string|array|ExpressionInterface $field): self
+    public function field(string|array|ExpressionInterface $field): self
     {
         $this->field = $field;
 
