@@ -907,7 +907,7 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE (SELECT MIN(id) FROM comments) = :c_0', $sql);
     }
 
-    public function methodProvider(): array
+    public static function methodProvider(): array
     {
         return [
             ['gt', '>', 1],

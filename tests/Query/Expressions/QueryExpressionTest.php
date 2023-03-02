@@ -201,7 +201,7 @@ class QueryExpressionTest extends TestCase
     /**
      * Returns the list of specific comparison methods
      */
-    public function methodsProvider(): array
+    public static function methodsProvider(): array
     {
         return [
             ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],

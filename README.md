@@ -216,4 +216,4 @@ where a separate schema object is used to automatically resolve joins based on a
 
 ### Tests
 
-PHPUnit 9+ is used for testing. Run tests via `vendor/bin/phpunit`.
+PHPUnit 10+ is used for testing. Run tests via `vendor/bin/phpunit`.

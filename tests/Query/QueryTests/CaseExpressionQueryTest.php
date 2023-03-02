@@ -183,7 +183,7 @@ class CaseExpressionQueryTest extends TestCase
         );
     }
 
-    public function bindingValueDataProvider(): array
+    public static function bindingValueDataProvider(): array
     {
         return [
             ['1', 3],

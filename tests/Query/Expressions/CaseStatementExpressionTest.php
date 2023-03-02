@@ -226,7 +226,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->assertSame('float', $expression->getReturnType());
     }
 
-    public function valueTypeInferenceDataProvider(): array
+    public static function valueTypeInferenceDataProvider(): array
     {
         return [
             // Values that should have their type inferred because
@@ -269,7 +269,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->assertSame($type, $expression->getValueType());
     }
 
-    public function whenTypeInferenceDataProvider(): array
+    public static function whenTypeInferenceDataProvider(): array
     {
         return [
             // Values that should have their type inferred because
@@ -314,7 +314,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->assertSame($type, $expression->clause('when')[0]->getWhenType());
     }
 
-    public function resultTypeInferenceDataProvider(): array
+    public static function resultTypeInferenceDataProvider(): array
     {
         return [
             // Unless a result type has been set manually, values
@@ -1101,7 +1101,7 @@ class CaseStatementExpressionTest extends TestCase
 
     // region Valid values
 
-    public function validCaseValuesDataProvider(): array
+    public static function validCaseValuesDataProvider(): array
     {
         return [
             [null, 'NULL', null],
@@ -1154,7 +1154,7 @@ class CaseStatementExpressionTest extends TestCase
         }
     }
 
-    public function validWhenValuesSimpleCaseDataProvider(): array
+    public static function validWhenValuesSimpleCaseDataProvider(): array
     {
         return [
             ['0', null, 'string'],
@@ -1276,7 +1276,7 @@ class CaseStatementExpressionTest extends TestCase
         }
     }
 
-    public function validWhenValuesSearchedCaseDataProvider(): array
+    public static function validWhenValuesSearchedCaseDataProvider(): array
     {
         return [
             ['0', null, 'string'],
@@ -1378,7 +1378,7 @@ class CaseStatementExpressionTest extends TestCase
         }
     }
 
-    public function validThenValuesDataProvider(): array
+    public static function validThenValuesDataProvider(): array
     {
         return [
             [null, 'NULL', null],
@@ -1431,7 +1431,7 @@ class CaseStatementExpressionTest extends TestCase
         }
     }
 
-    public function validElseValuesDataProvider(): array
+    public static function validElseValuesDataProvider(): array
     {
         return [
             [null, 'NULL', null],
@@ -1489,7 +1489,7 @@ class CaseStatementExpressionTest extends TestCase
 
     // region Invalid values
 
-    public function invalidCaseValuesDataProvider(): array
+    public static function invalidCaseValuesDataProvider(): array
     {
         $res = fopen('data:text/plain,123', 'rb');
         fclose($res);
@@ -1538,7 +1538,7 @@ class CaseStatementExpressionTest extends TestCase
         ;
     }
 
-    public function invalidThenValueDataProvider(): array
+    public static function invalidThenValueDataProvider(): array
     {
         $res = fopen('data:text/plain,123', 'rb');
         fclose($res);
@@ -1577,7 +1577,7 @@ class CaseStatementExpressionTest extends TestCase
         ;
     }
 
-    public function invalidThenTypeDataProvider(): array
+    public static function invalidThenTypeDataProvider(): array
     {
         $res = fopen('data:text/plain,123', 'rb');
         fclose($res);
@@ -1609,7 +1609,7 @@ class CaseStatementExpressionTest extends TestCase
         ;
     }
 
-    public function invalidElseValueDataProvider(): array
+    public static function invalidElseValueDataProvider(): array
     {
         $res = fopen('data:text/plain,123', 'rb');
         fclose($res);
@@ -1649,7 +1649,7 @@ class CaseStatementExpressionTest extends TestCase
         ;
     }
 
-    public function invalidElseTypeDataProvider(): array
+    public static function invalidElseTypeDataProvider(): array
     {
         $res = fopen('data:text/plain,123', 'rb');
         fclose($res);
