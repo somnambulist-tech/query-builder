@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Tests\Query\Expressions;
 
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
@@ -16,7 +16,7 @@ class CommonTableExpressionTest extends TestCase
     use QueryAssertsTrait;
     use QueryCompilerBuilderTrait;
     
-    protected ?CompilerInterface $compiler = null;
+    protected ?Compiler $compiler = null;
 
     public function setUp(): void
     {

@@ -3,8 +3,8 @@
 namespace Somnambulist\Components\QueryBuilder\Exceptions;
 
 use RuntimeException;
+use Somnambulist\Components\QueryBuilder\TypeCasterManager;
 use Somnambulist\Components\QueryBuilder\TypeCaster;
-use Somnambulist\Components\QueryBuilder\TypeCasterInterface;
 use function sprintf;
 
 class TypeCasterException extends RuntimeException
@@ -14,7 +14,7 @@ class TypeCasterException extends RuntimeException
         return new self(
             sprintf(
                 'A database "%s" has not been registered in the the "%s", call "TypeCaster::register()" first',
-                TypeCasterInterface::class, TypeCaster::class
+                TypeCaster::class, TypeCasterManager::class
             )
         );
     }

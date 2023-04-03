@@ -4,7 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Query;
 
 use Closure;
 
-interface ExpressionInterface
+interface Expression
 {
     /**
      * Iterates over each part of the expression recursively for every

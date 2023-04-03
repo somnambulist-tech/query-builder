@@ -4,8 +4,8 @@ namespace Somnambulist\Components\QueryBuilder\TypeCasters;
 
 use Doctrine\DBAL\Types\Type;
 use Somnambulist\Components\QueryBuilder\Query\Query;
-use Somnambulist\Components\QueryBuilder\TypeCanCastToExpressionInterface;
-use Somnambulist\Components\QueryBuilder\TypeCasterInterface;
+use Somnambulist\Components\QueryBuilder\TypeCanCastToExpression;
+use Somnambulist\Components\QueryBuilder\TypeCaster;
 use function array_map;
 use function str_replace;
 
@@ -15,7 +15,7 @@ use function str_replace;
  * To return expression for complex types, implement the TypeCanCasterToExpressionInterface on
  * the custom type.
  */
-class DbalTypeCaster implements TypeCasterInterface
+class DbalTypeCaster implements TypeCaster
 {
     public function castTo(mixed $value, ?string $type = null): mixed
     {
@@ -31,7 +31,7 @@ class DbalTypeCaster implements TypeCasterInterface
 
         $handler = Type::getTypeRegistry()->get($baseType);
 
-        if (!$handler instanceof TypeCanCastToExpressionInterface) {
+        if (!$handler instanceof TypeCanCastToExpression) {
             return $value;
         }
 

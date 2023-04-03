@@ -3,10 +3,10 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 
-abstract class CombinationExpression implements ExpressionInterface
+abstract class CombinationExpression implements Expression
 {
     public function __construct(
         protected Query $query,
@@ -38,7 +38,7 @@ abstract class CombinationExpression implements ExpressionInterface
         return $this->all;
     }
 
-    public function traverse(Closure $callback): ExpressionInterface
+    public function traverse(Closure $callback): Expression
     {
         if ($this->query instanceof Query) {
             $callback($this->query);

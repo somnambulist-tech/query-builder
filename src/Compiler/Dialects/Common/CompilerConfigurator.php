@@ -2,8 +2,8 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common;
 
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerAwareInterface;
-use Somnambulist\Components\QueryBuilder\Compiler\DelegatingCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\CompilerAware;
+use Somnambulist\Components\QueryBuilder\Compiler\DelegatingSqlCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\AggregateCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\BetweenCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\CaseStatementCompiler;
@@ -59,14 +59,14 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class CompilerConfigurator
 {
-    public function configure(): DelegatingCompiler
+    public function configure(): DelegatingSqlCompiler
     {
         $dispatcher = new EventDispatcher();
-        $compiler = new DelegatingCompiler($dispatcher, $this->compilers());
+        $compiler = new DelegatingSqlCompiler($dispatcher, $this->compilers());
 
         foreach ($this->listeners() as $event => $listeners) {
             foreach ($listeners as $listener) {
-                if ($listener instanceof CompilerAwareInterface) {
+                if ($listener instanceof CompilerAware) {
                     $listener->setCompiler($compiler);
                 }
 

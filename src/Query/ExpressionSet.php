@@ -18,13 +18,13 @@ use function is_object;
  * functionality for a given use-case. Note: a given concrete expression set should never be
  * extended for another.
  *
- * @method static add(ExpressionInterface $expression)
+ * @method static add(Expression $expression)
  * @method abstract static get(int|string $key)
  */
-abstract class ExpressionSet implements Countable, ExpressionInterface, IteratorAggregate
+abstract class ExpressionSet implements Countable, Expression, IteratorAggregate
 {
     /**
-     * @var array<int|string, ExpressionInterface>
+     * @var array<int|string, Expression>
      */
     protected array $expressions = [];
 
@@ -69,10 +69,10 @@ abstract class ExpressionSet implements Countable, ExpressionInterface, Iterator
         return $this;
     }
 
-    public function traverse(Closure $callback): ExpressionInterface
+    public function traverse(Closure $callback): Expression
     {
         foreach ($this->expressions as $e) {
-            if ($e instanceof ExpressionInterface) {
+            if ($e instanceof Expression) {
                 $callback($e);
                 $e->traverse($callback);
             }

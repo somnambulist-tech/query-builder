@@ -2,9 +2,9 @@
 
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Query\HasReturnTypeInterface;
-use Somnambulist\Components\QueryBuilder\TypeCaster;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
+use Somnambulist\Components\QueryBuilder\Query\HasReturnType;
+use Somnambulist\Components\QueryBuilder\TypeCasterManager;
 use Somnambulist\Components\QueryBuilder\TypeMap;
 
 /**
@@ -13,7 +13,7 @@ use Somnambulist\Components\QueryBuilder\TypeMap;
  * Calls can be constructed by passing the name of the function and a list of params.
  * For security reasons, all params passed are quoted by default unless explicitly told otherwise.
  */
-class FunctionExpression extends QueryExpression implements HasReturnTypeInterface
+class FunctionExpression extends QueryExpression implements HasReturnType
 {
     /**
      * The name of the function to be constructed when generating the SQL string
@@ -88,7 +88,7 @@ class FunctionExpression extends QueryExpression implements HasReturnTypeInterfa
     /**
      * Adds one or more arguments for the function call.
      *
-     * @param ExpressionInterface|array|string $conditions list of arguments to be passed to the function
+     * @param Expression|array|string $conditions list of arguments to be passed to the function
      * If associative the key would be used as argument when value is 'literal'
      * @param array<string, string> $types Associative array of types to be associated with the
      * passed arguments
@@ -98,7 +98,7 @@ class FunctionExpression extends QueryExpression implements HasReturnTypeInterfa
      * @psalm-suppress MoreSpecificImplementedParamType
      * @see FunctionExpression::__construct() for more details.
      */
-    public function add(ExpressionInterface|array|string $conditions, array $types = [], bool $prepend = false): self
+    public function add(Expression|array|string $conditions, array $types = [], bool $prepend = false): self
     {
         $put = $prepend ? 'array_unshift' : 'array_push';
         $typeMap = $this->typeMap->setTypes($types);
@@ -116,11 +116,11 @@ class FunctionExpression extends QueryExpression implements HasReturnTypeInterfa
 
             $type = $typeMap->type($k);
 
-            if ($type !== null && !$p instanceof ExpressionInterface) {
-                $p = TypeCaster::castTo($p, $type);
+            if ($type !== null && !$p instanceof Expression) {
+                $p = TypeCasterManager::castTo($p, $type);
             }
 
-            if ($p instanceof ExpressionInterface) {
+            if ($p instanceof Expression) {
                 $put($this->conditions, $p);
                 continue;
             }

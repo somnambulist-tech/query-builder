@@ -4,7 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Query\QueryTests;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
@@ -20,7 +20,7 @@ class WindowQueryTest extends TestCase
     use QueryAssertsTrait;
     use QueryCompilerBuilderTrait;
 
-    protected ?CompilerInterface $compiler = null;
+    protected ?Compiler $compiler = null;
 
     public function setUp(): void
     {

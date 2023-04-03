@@ -3,22 +3,22 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Query\FieldInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
+use Somnambulist\Components\QueryBuilder\Query\Field;
 use Somnambulist\Components\QueryBuilder\Query\OrderDirection;
 
 /**
  * An expression object for complex ORDER BY clauses
  */
-class OrderClauseExpression implements ExpressionInterface, FieldInterface
+class OrderClauseExpression implements Expression, Field
 {
     public function __construct(
-        protected ExpressionInterface|string $field,
+        protected Expression|string $field,
         protected OrderDirection $direction
     ) {
     }
 
-    public function field(ExpressionInterface|array|string $field): self
+    public function field(Expression|array|string $field): self
     {
         $this->field = $field;
 
@@ -46,7 +46,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
         return $this;
     }
 
-    public function getField(): ExpressionInterface|array|string
+    public function getField(): Expression|array|string
     {
         return $this->field;
     }
@@ -58,7 +58,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
 
     public function traverse(Closure $callback): self
     {
-        if ($this->field instanceof ExpressionInterface) {
+        if ($this->field instanceof Expression) {
             $callback($this->field);
             $this->field->traverse($callback);
         }
@@ -68,7 +68,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
 
     public function __clone()
     {
-        if ($this->field instanceof ExpressionInterface) {
+        if ($this->field instanceof Expression) {
             $this->field = clone $this->field;
         }
     }

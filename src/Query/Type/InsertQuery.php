@@ -4,7 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Query\Type;
 
 use Exception;
 use InvalidArgumentException;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\InsertClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ValuesExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
@@ -103,7 +103,7 @@ class InsertQuery extends Query
         return $this;
     }
 
-    public function modifier(ExpressionInterface|string ...$modifiers): static
+    public function modifier(Expression|string ...$modifiers): static
     {
         $update = $this->parts['insert'] ??= new InsertClauseExpression();
         $update->modifier()->add(...$modifiers);

@@ -4,7 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressi
 
 use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
 use Somnambulist\Components\QueryBuilder\Exceptions\InvalidValueDuringQueryCompilation;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ComparisonExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
@@ -20,14 +20,14 @@ class ComparisonCompiler extends AbstractCompiler
         /** @var ComparisonExpression $expression */
         $field = $expression->getField();
 
-        if ($field instanceof ExpressionInterface) {
+        if ($field instanceof Expression) {
             $field = $this->compiler->compile($field, $binder);
         }
 
         if ($expression->getValue() instanceof IdentifierExpression) {
             $template = '%s %s %s';
             $value = $this->compiler->compile($expression->getValue(), $binder);
-        } elseif ($expression->getValue() instanceof ExpressionInterface) {
+        } elseif ($expression->getValue() instanceof Expression) {
             $template = '%s %s (%s)';
             $value = $this->compiler->compile($expression->getValue(), $binder);
         } else {
@@ -44,7 +44,7 @@ class ComparisonCompiler extends AbstractCompiler
         $template = '%s ';
         $field = $expression->getField();
 
-        if ($field instanceof ExpressionInterface && !$field instanceof IdentifierExpression) {
+        if ($field instanceof Expression && !$field instanceof IdentifierExpression) {
             $template = '(%s) ';
         }
 
@@ -60,7 +60,7 @@ class ComparisonCompiler extends AbstractCompiler
 
             // To avoid SQL errors when comparing a field to a list of empty values, better just throw an exception here
             if ($value === '') {
-                $field = $field instanceof ExpressionInterface ? $this->compiler->compile($field, $binder) : $field;
+                $field = $field instanceof Expression ? $this->compiler->compile($field, $binder) : $field;
                 /** @psalm-suppress PossiblyInvalidCast */
                 throw InvalidValueDuringQueryCompilation::emptyValueForField($field);
             }

@@ -2,7 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Behaviours;
 
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
 trait CompileExpressionsToString
@@ -21,7 +21,7 @@ trait CompileExpressionsToString
         $result = [];
 
         foreach ($expressions as $k => $expression) {
-            if ($expression instanceof ExpressionInterface) {
+            if ($expression instanceof Expression) {
                 $value = $this->compiler->compile($expression, $binder);
                 $expression = $wrap ? '(' . $value . ')' : $value;
             }

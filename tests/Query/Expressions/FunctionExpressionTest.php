@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Tests\Query\Expressions;
 
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FunctionExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
@@ -15,7 +15,7 @@ class FunctionExpressionTest extends TestCase
     use QueryCompilerBuilderTrait;
 
     protected string $expressionClass = FunctionExpression::class;
-    protected ?CompilerInterface $compiler = null;
+    protected ?Compiler $compiler = null;
 
     protected function setUp(): void
     {

@@ -5,7 +5,7 @@ namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listener
 use RuntimeException;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreDeleteQueryCompile;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreUpdateQueryCompile;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ComparisonExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 
@@ -21,7 +21,7 @@ class StripAliasesFromConditions
 
         $conditions = $event->query->clause('where');
 
-        assert($conditions === null || $conditions instanceof ExpressionInterface);
+        assert($conditions === null || $conditions instanceof Expression);
 
         $conditions?->traverse(function ($expression) {
             if ($expression instanceof ComparisonExpression) {

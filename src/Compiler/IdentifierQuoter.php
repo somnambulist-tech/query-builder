@@ -2,7 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler;
 
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FieldClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FieldExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FromExpression;
@@ -14,7 +14,7 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\OrderByExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\SelectClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\TableClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\UpdateClauseExpression;
-use Somnambulist\Components\QueryBuilder\Query\FieldInterface;
+use Somnambulist\Components\QueryBuilder\Query\Field;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\Query\Type\DeleteQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\InsertQuery;
@@ -109,12 +109,12 @@ class IdentifierQuoter
         return $query;
     }
 
-    protected function quoteExpression(ExpressionInterface $expression): void
+    protected function quoteExpression(Expression $expression): void
     {
         match (true) {
             $expression instanceof SelectClauseExpression => $this->quoteExpression($expression->fields()),
             $expression instanceof FromExpression => $this->quoteFrom($expression),
-            $expression instanceof FieldInterface => $this->quoteComparison($expression),
+            $expression instanceof Field => $this->quoteComparison($expression),
             $expression instanceof OrderByExpression => $this->quoteOrderBy($expression),
             $expression instanceof IdentifierExpression => $this->quoteIdentifierExpression($expression),
             $expression instanceof FieldExpression => $this->quoteFields($expression),
@@ -142,7 +142,7 @@ class IdentifierQuoter
             if (is_string($field->getField())) {
                 $field->field($this->quoteIdentifier($field->getField()));
             }
-            if ($field->getField() instanceof ExpressionInterface) {
+            if ($field->getField() instanceof Expression) {
                 $this->quoteExpression($field->getField());
             }
         }
@@ -237,7 +237,7 @@ class IdentifierQuoter
         }
     }
 
-    protected function quoteComparison(FieldInterface $expression): void
+    protected function quoteComparison(Field $expression): void
     {
         $field = $expression->getField();
         if (is_string($field)) {

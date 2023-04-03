@@ -4,7 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Query\Query;
 
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Type\DeleteQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
@@ -21,7 +21,7 @@ class DeleteQueryTest extends TestCase
     use QueryAssertsTrait;
     use QueryCompilerBuilderTrait;
 
-    protected ?CompilerInterface $compiler = null;
+    protected ?Compiler $compiler = null;
 
     public function setUp(): void
     {

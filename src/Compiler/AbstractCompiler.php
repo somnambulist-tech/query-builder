@@ -7,7 +7,7 @@ use Somnambulist\Components\QueryBuilder\Exceptions\UnsupportedExpressionType;
 use function get_debug_type;
 use function is_string;
 
-abstract class AbstractCompiler implements CompilerInterface, CompilerAwareInterface
+abstract class AbstractCompiler implements Compiler, CompilerAware
 {
     use CompilerAwareTrait;
 

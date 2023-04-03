@@ -3,9 +3,9 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 
-class NamedWindowClauseExpression implements ExpressionInterface
+class NamedWindowClauseExpression implements Expression
 {
     public function __construct(
         protected IdentifierExpression $name,

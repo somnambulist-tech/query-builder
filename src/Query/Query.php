@@ -32,7 +32,7 @@ use function is_string;
  * the base methods for common functionality that is extended by specific implementations. The query
  * object should then be compiled to SQL via a specific dialect compiler for execution.
  */
-abstract class Query implements ExpressionInterface
+abstract class Query implements Expression
 {
     protected ValueBinder $binder;
     protected FunctionsBuilder $functions;
@@ -189,7 +189,7 @@ abstract class Query implements ExpressionInterface
             return;
         }
 
-        if ($expression instanceof ExpressionInterface) {
+        if ($expression instanceof Expression) {
             $expression->traverse(fn ($exp) => $this->expressionsVisitor($exp, $callback));
 
             if (!$expression instanceof self) {
@@ -268,11 +268,11 @@ abstract class Query implements ExpressionInterface
      *
      * See your database SQL documentation for the available modifiers that you may use.
      *
-     * @param ExpressionInterface|string ...$modifiers modifiers to be applied to the query
+     * @param Expression|string ...$modifiers modifiers to be applied to the query
      *
      * @return $this
      */
-    public function modifier(ExpressionInterface|string ...$modifiers): static
+    public function modifier(Expression|string ...$modifiers): static
     {
         $modifier = $this->parts['modifier'] ??= new ModifierExpression();
         $modifier->add(...$modifiers);
@@ -295,12 +295,12 @@ abstract class Query implements ExpressionInterface
      * $query->from($countQuery, 'sub'); // FROM (SELECT ...) sub
      * ```
      *
-     * @param ExpressionInterface|string $table
+     * @param Expression|string $table
      * @param string|null $as the alias for the table/expression
      *
      * @return $this
      */
-    public function from(ExpressionInterface|string $table, string $as = null): static
+    public function from(Expression|string $table, string $as = null): static
     {
         $from = $this->parts['from'] ??= new FromExpression();
         $from->add($table, $as);
@@ -359,9 +359,9 @@ abstract class Query implements ExpressionInterface
      * @return $this
      */
     public function join(
-        ExpressionInterface|string $table,
+        Expression|string $table,
         string $as = '',
-        ExpressionInterface|Closure|array|string $on = [],
+        Expression|Closure|array|string $on = [],
         JoinType $type = JoinType::INNER,
         array $types = []
     ): static
@@ -374,7 +374,7 @@ abstract class Query implements ExpressionInterface
             $on = $on($this->newExpr(), $this);
         }
 
-        if (!$on instanceof ExpressionInterface) {
+        if (!$on instanceof Expression) {
             $on = $this->newExpr()->add($on, $types);
         }
 
@@ -426,9 +426,9 @@ abstract class Query implements ExpressionInterface
      * @return $this
      */
     public function leftJoin(
-        ExpressionInterface|string $table,
+        Expression|string $table,
         string $as = '',
-        ExpressionInterface|Closure|array|string $on = [],
+        Expression|Closure|array|string $on = [],
         array $types = []
     ): static
     {
@@ -447,9 +447,9 @@ abstract class Query implements ExpressionInterface
      * @return $this
      */
     public function rightJoin(
-        ExpressionInterface|string $table,
+        Expression|string $table,
         string $as = '',
-        ExpressionInterface|Closure|array|string $on = [],
+        Expression|Closure|array|string $on = [],
         array $types = []
     ): static
     {
@@ -468,9 +468,9 @@ abstract class Query implements ExpressionInterface
      * @return $this
      */
     public function innerJoin(
-        ExpressionInterface|string $table,
+        Expression|string $table,
         string $as = '',
-        ExpressionInterface|Closure|array|string $on = [],
+        Expression|Closure|array|string $on = [],
         array $types = []
     ): static
     {
@@ -595,12 +595,12 @@ abstract class Query implements ExpressionInterface
      * If you use string conditions make sure that your values are correctly quoted.
      * The safest thing you can do is to never use string conditions.
      *
-     * @param ExpressionInterface|Closure|array|string|null $conditions
+     * @param Expression|Closure|array|string|null $conditions
      * @param array<string, string> $types
      *
      * @return $this
      */
-    public function where(ExpressionInterface|Closure|array|string|null $conditions = null, array $types = []): static
+    public function where(Expression|Closure|array|string|null $conditions = null, array $types = []): static
     {
         $this->conjugate('where', $conditions, 'AND', $types);
 
@@ -610,11 +610,11 @@ abstract class Query implements ExpressionInterface
     /**
      * Convenience method that adds a NOT NULL condition to the query for the given fields or expression
      *
-     * @param ExpressionInterface|array|string $fields
+     * @param Expression|array|string $fields
      *
      * @return $this
      */
-    public function whereNotNull(ExpressionInterface|array|string $fields): static
+    public function whereNotNull(Expression|array|string $fields): static
     {
         if (!is_array($fields)) {
             $fields = [$fields];
@@ -632,11 +632,11 @@ abstract class Query implements ExpressionInterface
     /**
      * Convenience method that adds an IS NULL condition to the query
      *
-     * @param ExpressionInterface|array|string $fields
+     * @param Expression|array|string $fields
      *
      * @return $this
      */
-    public function whereNull(ExpressionInterface|array|string $fields): static
+    public function whereNull(Expression|array|string $fields): static
     {
         if (!is_array($fields)) {
             $fields = [$fields];
@@ -790,12 +790,12 @@ abstract class Query implements ExpressionInterface
      *
      * `WHERE (title = 'Foo') AND (author_id = 1 OR author_id = 2)`
      *
-     * @param ExpressionInterface|Closure|array|string $conditions
+     * @param Expression|Closure|array|string $conditions
      * @param array<string, string> $types
      *
      * @return $this
      */
-    public function andWhere(ExpressionInterface|Closure|array|string $conditions, array $types = []): static
+    public function andWhere(Expression|Closure|array|string $conditions, array $types = []): static
     {
         $this->conjugate('where', $conditions, 'AND', $types);
 
@@ -807,12 +807,12 @@ abstract class Query implements ExpressionInterface
      *
      * See `andWhere()` for examples.
      *
-     * @param ExpressionInterface|Closure|array|string $conditions
+     * @param Expression|Closure|array|string $conditions
      * @param array $types
      *
      * @return $this
      */
-    public function orWhere(ExpressionInterface|Closure|array|string $conditions, array $types = []): static
+    public function orWhere(Expression|Closure|array|string $conditions, array $types = []): static
     {
         $this->conjugate('where', $conditions, 'OR', $types);
 
@@ -870,12 +870,12 @@ abstract class Query implements ExpressionInterface
      * You should use an allowed list of fields/directions when passing
      * in user-supplied data to `order()`.
      *
-     * @param ExpressionInterface|Closure|array|string $field
+     * @param Expression|Closure|array|string $field
      * @param null|OrderDirection $dir
      *
      * @return $this
      */
-    public function orderBy(ExpressionInterface|Closure|array|string $field, ?OrderDirection $dir = null): static
+    public function orderBy(Expression|Closure|array|string $field, ?OrderDirection $dir = null): static
     {
         if (!$field) {
             return $this;
@@ -911,11 +911,11 @@ abstract class Query implements ExpressionInterface
      * $query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
      * ```
      *
-     * @param ExpressionInterface|int|null $limit number of records to be returned
+     * @param Expression|int|null $limit number of records to be returned
      *
      * @return $this
      */
-    public function limit(ExpressionInterface|int|null $limit): static
+    public function limit(Expression|int|null $limit): static
     {
         $this->parts['limit'] = $limit;
 
@@ -937,11 +937,11 @@ abstract class Query implements ExpressionInterface
      * $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
      * ```
      *
-     * @param ExpressionInterface|int|null $offset number of records to be skipped
+     * @param Expression|int|null $offset number of records to be skipped
      *
      * @return $this
      */
-    public function offset(ExpressionInterface|int|null $offset): static
+    public function offset(Expression|int|null $offset): static
     {
         $this->parts['offset'] = $offset;
 
@@ -963,9 +963,9 @@ abstract class Query implements ExpressionInterface
      *
      * @param string $identifier The identifier for an expression
      *
-     * @return ExpressionInterface
+     * @return Expression
      */
-    public function identifier(string $identifier): ExpressionInterface
+    public function identifier(string $identifier): Expression
     {
         return new IdentifierExpression($identifier);
     }
@@ -984,11 +984,11 @@ abstract class Query implements ExpressionInterface
      *
      * Epliog content is raw SQL and not suitable for use with user supplied data.
      *
-     * @param ExpressionInterface|string|null $expression The expression to be appended
+     * @param Expression|string|null $expression The expression to be appended
      *
      * @return $this
      */
-    public function epilog(ExpressionInterface|string|null $expression = null): static
+    public function epilog(Expression|string|null $expression = null): static
     {
         $this->parts['epilog'] = $expression;
 
@@ -1030,12 +1030,12 @@ abstract class Query implements ExpressionInterface
      * $expression = $query->expr('Table.column = Table2.column'); // Return a raw SQL expression
      * ```
      *
-     * @param ExpressionInterface|array|string|null $rawExpression A string, array or anything you want
+     * @param Expression|array|string|null $rawExpression A string, array or anything you want
      *     wrapped in an expression object
      *
      * @return QueryExpression
      */
-    public function newExpr(ExpressionInterface|array|string|null $rawExpression = null): QueryExpression
+    public function newExpr(Expression|array|string|null $rawExpression = null): QueryExpression
     {
         return $this->expr($rawExpression);
     }
@@ -1054,12 +1054,12 @@ abstract class Query implements ExpressionInterface
      * $expression = $query->expr('Table.column = Table2.column'); // Return a raw SQL expression
      * ```
      *
-     * @param ExpressionInterface|array|string|null $rawExpression A string, array or anything you want
+     * @param Expression|array|string|null $rawExpression A string, array or anything you want
      *     wrapped in an expression object
      *
      * @return QueryExpression
      */
-    public function expr(ExpressionInterface|array|string|null $rawExpression = null): QueryExpression
+    public function expr(Expression|array|string|null $rawExpression = null): QueryExpression
     {
         $expression = new QueryExpression([], $this->getTypes());
 
@@ -1192,7 +1192,7 @@ abstract class Query implements ExpressionInterface
         return $this;
     }
 
-    protected function conjugate(string $part, ExpressionInterface|Closure|array|string|null $append, string $conjunction, array $types): void
+    protected function conjugate(string $part, Expression|Closure|array|string|null $append, string $conjunction, array $types): void
     {
         $expression = $this->parts[$part] ?: $this->newExpr();
 
@@ -1232,18 +1232,18 @@ abstract class Query implements ExpressionInterface
                 foreach ($part as $i => $piece) {
                     if (is_array($piece)) {
                         foreach ($piece as $j => $value) {
-                            if ($value instanceof ExpressionInterface) {
+                            if ($value instanceof Expression) {
                                 /** @psalm-suppress PossiblyUndefinedMethod */
                                 $this->parts[$name][$i][$j] = clone $value;
                             }
                         }
-                    } elseif ($piece instanceof ExpressionInterface) {
+                    } elseif ($piece instanceof Expression) {
                         /** @psalm-suppress PossiblyUndefinedMethod */
                         $this->parts[$name][$i] = clone $piece;
                     }
                 }
             }
-            if ($part instanceof ExpressionInterface) {
+            if ($part instanceof Expression) {
                 $this->parts[$name] = clone $part;
             }
         }

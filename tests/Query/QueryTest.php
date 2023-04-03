@@ -4,7 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Query;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FromExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
@@ -77,7 +77,7 @@ class QueryTest extends TestCase
     {
         $identifier = $this->query->identifier('description');
 
-        $this->assertInstanceOf(ExpressionInterface::class, $identifier);
+        $this->assertInstanceOf(Expression::class, $identifier);
         $this->assertSame('description', $identifier->getIdentifier());
 
         $identifier->identifier('title');
@@ -170,7 +170,7 @@ class QueryTest extends TestCase
         $clause = $this->query->clause('where');
         $clauseClone = (clone $this->query)->clause('where');
 
-        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+        $this->assertInstanceOf(Expression::class, $clause);
 
         $this->assertEquals($clause, $clauseClone);
         $this->assertNotSame($clause, $clauseClone);
@@ -186,7 +186,7 @@ class QueryTest extends TestCase
         $clause = $this->query->clause('order');
         $clauseClone = (clone $this->query)->clause('order');
 
-        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+        $this->assertInstanceOf(Expression::class, $clause);
 
         $this->assertEquals($clause, $clauseClone);
         $this->assertNotSame($clause, $clauseClone);
@@ -199,7 +199,7 @@ class QueryTest extends TestCase
         $clause = $this->query->clause('limit');
         $clauseClone = (clone $this->query)->clause('limit');
 
-        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+        $this->assertInstanceOf(Expression::class, $clause);
 
         $this->assertEquals($clause, $clauseClone);
         $this->assertNotSame($clause, $clauseClone);
@@ -212,7 +212,7 @@ class QueryTest extends TestCase
         $clause = $this->query->clause('offset');
         $clauseClone = (clone $this->query)->clause('offset');
 
-        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+        $this->assertInstanceOf(Expression::class, $clause);
 
         $this->assertEquals($clause, $clauseClone);
         $this->assertNotSame($clause, $clauseClone);
@@ -225,7 +225,7 @@ class QueryTest extends TestCase
         $clause = $this->query->clause('epilog');
         $clauseClone = (clone $this->query)->clause('epilog');
 
-        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+        $this->assertInstanceOf(Expression::class, $clause);
 
         $this->assertEquals($clause, $clauseClone);
         $this->assertNotSame($clause, $clauseClone);

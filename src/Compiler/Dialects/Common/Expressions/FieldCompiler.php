@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions;
 
 use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FieldClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FieldExpression;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
@@ -20,7 +20,7 @@ class FieldCompiler extends AbstractCompiler
 
         foreach ($expression->all() as $field) {
             /** @var FieldClauseExpression $field */
-            if ($field->getField() instanceof ExpressionInterface) {
+            if ($field->getField() instanceof Expression) {
                 $f = sprintf('(%s)', $this->compiler->compile($field->getField(), $binder));
             } else {
                 $f = $field->getField();

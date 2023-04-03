@@ -7,12 +7,12 @@ use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\DispatchCompilerEvents;
 use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\GetCompilerForExpression;
 use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\IsCompilable;
-use Somnambulist\Components\QueryBuilder\Compiler\DispatchesCompilerEventsInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\DispatchesCompilerEvents;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-class AbstractQueryCompiler extends AbstractCompiler implements DispatchesCompilerEventsInterface
+class AbstractQueryCompiler extends AbstractCompiler implements DispatchesCompilerEvents
 {
     use IsCompilable;
     use DispatchCompilerEvents;

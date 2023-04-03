@@ -7,15 +7,15 @@ use InvalidArgumentException;
 use LogicException;
 use Somnambulist\Components\QueryBuilder\Exceptions\ExpectedWhenThenExpressionFromClosure;
 use Somnambulist\Components\QueryBuilder\Exceptions\InvalidCaseUsageBuildingStatement;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Query\HasReturnTypeInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
+use Somnambulist\Components\QueryBuilder\Query\HasReturnType;
 use Somnambulist\Components\QueryBuilder\TypeMap;
 use function func_num_args;
 
 /**
  * Represents a SQL CASE statement with a fluid API
  */
-class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInterface
+class CaseStatementExpression implements Expression, HasReturnType
 {
     use CaseExpressionTrait;
 
@@ -40,7 +40,7 @@ class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInter
     /**
      * The case value.
      *
-     * @var ExpressionInterface|object|scalar|null
+     * @var Expression|object|scalar|null
      */
     protected mixed $value = null;
 
@@ -68,7 +68,7 @@ class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInter
     /**
      * The else part result value.
      *
-     * @var ExpressionInterface|object|scalar|null
+     * @var Expression|object|scalar|null
      */
     protected mixed $else = null;
 
@@ -98,7 +98,7 @@ class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInter
      * Note that `null` is a valid case value, and thus should only be passed if you actually want to create
      * the simple case expression variant!
      *
-     * @param ExpressionInterface|object|scalar|null $value The case value.
+     * @param Expression|object|scalar|null $value The case value.
      * @param string|null $type The case value type.
      */
     public function __construct(mixed $value = null, ?string $type = null)
@@ -107,14 +107,14 @@ class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInter
             if (!is_null($value) && !is_scalar($value) && !(is_object($value) && !($value instanceof Closure))) {
                 throw new InvalidArgumentException(sprintf(
                     'The "$value" argument must be either "null", a scalar value, an object, or an instance of "%s", "%s" given.',
-                    ExpressionInterface::class,
+                    Expression::class,
                     get_debug_type($value)
                 ));
             }
 
             $this->value = $value;
 
-            if ($value !== null && $type === null && !($value instanceof ExpressionInterface)) {
+            if ($value !== null && $type === null && !($value instanceof Expression)) {
                 $type = $this->inferType($value);
             }
 
@@ -297,7 +297,7 @@ class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInter
      *      ->bind(':userData', $userData, 'integer')
      * ```
      *
-     * @param ExpressionInterface|Closure|object|array|scalar $when The `WHEN` value. When using an
+     * @param Expression|Closure|object|array|scalar $when The `WHEN` value. When using an
      *  array of conditions, it must be compatible with `Query::where()`. Note that this argument is
      *  _not_ completely safe for use with user data, as a user supplied array would allow for raw SQL to slip in! If
      *  you plan to use user data, either pass a single type for the `$type` argument (which forces the `$when` value
@@ -381,7 +381,7 @@ class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInter
      *     // ...
      * ```
      *
-     * @param ExpressionInterface|object|scalar|null $result The result value.
+     * @param Expression|object|scalar|null $result The result value.
      * @param string|null $type The result type, will be inferred during compilation if missing
      *
      * @return $this
@@ -409,7 +409,7 @@ class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInter
     /**
      * Sets the `ELSE` result value.
      *
-     * @param ExpressionInterface|object|scalar|null $result The result value.
+     * @param Expression|object|scalar|null $result The result value.
      * @param string|null $type The result type. If no type is provided, the type will be tried to be inferred from the
      *  value.
      *
@@ -427,7 +427,7 @@ class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInter
         if ($result !== null && !is_scalar($result) && !(is_object($result) && !($result instanceof Closure))) {
             throw new InvalidArgumentException(sprintf(
                 'The "$result" argument must be either "null", a scalar value, an object, or an instance of "%s", "%s" given.',
-                ExpressionInterface::class,
+                Expression::class,
                 get_debug_type($result)
             ));
         }
@@ -511,7 +511,7 @@ class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInter
      *
      * @param string $clause The name of the clause to obtain.
      *
-     * @return ExpressionInterface|object|array<WhenThenExpression>|scalar|null
+     * @return Expression|object|array<WhenThenExpression>|scalar|null
      * @throws InvalidArgumentException In case the given clause name is invalid.
      */
     public function clause(string $clause): mixed
@@ -535,7 +535,7 @@ class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInter
             throw InvalidCaseUsageBuildingStatement::incomplete();
         }
 
-        if ($this->value instanceof ExpressionInterface) {
+        if ($this->value instanceof Expression) {
             $callback($this->value);
             $this->value->traverse($callback);
         }
@@ -545,7 +545,7 @@ class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInter
             $when->traverse($callback);
         }
 
-        if ($this->else instanceof ExpressionInterface) {
+        if ($this->else instanceof Expression) {
             $callback($this->else);
             $this->else->traverse($callback);
         }
@@ -559,7 +559,7 @@ class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInter
             throw InvalidCaseUsageBuildingStatement::incomplete();
         }
 
-        if ($this->value instanceof ExpressionInterface) {
+        if ($this->value instanceof Expression) {
             $this->value = clone $this->value;
         }
 
@@ -567,7 +567,7 @@ class CaseStatementExpression implements ExpressionInterface, HasReturnTypeInter
             $this->when[$key] = clone $this->when[$key];
         }
 
-        if ($this->else instanceof ExpressionInterface) {
+        if ($this->else instanceof Expression) {
             $this->else = clone $this->else;
         }
     }

@@ -5,9 +5,9 @@ namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 use Closure;
 use Exception;
 use Somnambulist\Components\QueryBuilder\Exceptions\InvalidValueForExpression;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
-use Somnambulist\Components\QueryBuilder\TypeCaster;
+use Somnambulist\Components\QueryBuilder\TypeCasterManager;
 use Somnambulist\Components\QueryBuilder\TypeMap;
 use function is_int;
 use function is_string;
@@ -19,7 +19,7 @@ use function trim;
  * Helps generate SQL with the correct number of placeholders and bind
  * values correctly into the statement.
  */
-class ValuesExpression implements ExpressionInterface
+class ValuesExpression implements Expression
 {
     /**
      * Array of values to insert.
@@ -191,14 +191,14 @@ class ValuesExpression implements ExpressionInterface
         $this->processExpressions();
 
         foreach ($this->values as $v) {
-            if ($v instanceof ExpressionInterface) {
+            if ($v instanceof Expression) {
                 $v->traverse($callback);
             }
             if (!is_array($v)) {
                 continue;
             }
             foreach ($v as $field) {
-                if ($field instanceof ExpressionInterface) {
+                if ($field instanceof Expression) {
                     $callback($field);
                     $field->traverse($callback);
                 }
@@ -227,7 +227,7 @@ class ValuesExpression implements ExpressionInterface
 
         foreach ($this->values as $row => $values) {
             foreach ($types as $col => $type) {
-                $this->values[$row][$col] = TypeCaster::castTo($values[$col] ?? null, $type);
+                $this->values[$row][$col] = TypeCasterManager::castTo($values[$col] ?? null, $type);
             }
         }
 

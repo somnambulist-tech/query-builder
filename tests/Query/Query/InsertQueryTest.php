@@ -5,8 +5,8 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Query\Query;
 use Exception;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Type\InsertQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
@@ -21,7 +21,7 @@ class InsertQueryTest extends TestCase
     use QueryAssertsTrait;
     use QueryCompilerBuilderTrait;
 
-    protected ?CompilerInterface $compiler = null;
+    protected ?Compiler $compiler = null;
 
     public function setUp(): void
     {
@@ -298,7 +298,7 @@ class InsertQueryTest extends TestCase
         $clause = $query->clause('values');
         $clauseClone = (clone $query)->clause('values');
 
-        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+        $this->assertInstanceOf(Expression::class, $clause);
 
         $this->assertEquals($clause, $clauseClone);
         $this->assertNotSame($clause, $clauseClone);

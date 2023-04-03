@@ -3,11 +3,11 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Somnambulist\Components\QueryBuilder\Exceptions\QueryException;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionSet;
 
 /**
- * @property array<int, ExpressionInterface|string> $expressions
+ * @property array<int, Expression|string> $expressions
  */
 class DistinctExpression extends ExpressionSet
 {
@@ -25,21 +25,21 @@ class DistinctExpression extends ExpressionSet
         return $this->row;
     }
 
-    public function on(ExpressionInterface|string ...$expression): static
+    public function on(Expression|string ...$expression): static
     {
         $this->add(...$expression);
 
         return $this;
     }
 
-    public function add(ExpressionInterface|string ...$expression): static
+    public function add(Expression|string ...$expression): static
     {
         $this->expressions = array_merge($this->expressions, $expression);
 
         return $this;
     }
 
-    public function get(int|string $key): ExpressionInterface|string
+    public function get(int|string $key): Expression|string
     {
         return $this->expressions[$key] ?? throw QueryException::noExpressionFor($key);
     }

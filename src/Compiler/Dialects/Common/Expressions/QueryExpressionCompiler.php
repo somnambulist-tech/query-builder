@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions;
 
 use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
@@ -28,7 +28,7 @@ class QueryExpressionCompiler extends AbstractCompiler
         foreach ($expression->getConditions() as $part) {
             if ($part instanceof Query) {
                 $part = sprintf('(%s)', $this->compiler->compile($part, $binder));
-            } elseif ($part instanceof ExpressionInterface) {
+            } elseif ($part instanceof Expression) {
                 $part = $this->compiler->compile($part, $binder);
             }
 

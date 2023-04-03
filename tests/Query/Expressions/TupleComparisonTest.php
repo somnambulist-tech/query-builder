@@ -4,7 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Query\Expressions;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\TupleComparison;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
@@ -17,7 +17,7 @@ class TupleComparisonTest extends TestCase
 {
     use QueryCompilerBuilderTrait;
 
-    protected ?CompilerInterface $compiler = null;
+    protected ?Compiler $compiler = null;
 
     protected function setUp(): void
     {

@@ -5,8 +5,8 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Query\Query;
 use DateTime;
 use Exception;
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\UpdateClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
@@ -23,7 +23,7 @@ class UpdateQueryTest extends TestCase
     use QueryAssertsTrait;
     use QueryCompilerBuilderTrait;
 
-    protected ?CompilerInterface $compiler = null;
+    protected ?Compiler $compiler = null;
 
     public function setUp(): void
     {
@@ -282,7 +282,7 @@ class UpdateQueryTest extends TestCase
         $clause = $query->clause('set');
         $clauseClone = (clone $query)->clause('set');
 
-        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+        $this->assertInstanceOf(Expression::class, $clause);
 
         $this->assertEquals($clause, $clauseClone);
         $this->assertNotSame($clause, $clauseClone);

@@ -3,18 +3,18 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
-use Somnambulist\Components\QueryBuilder\Query\WindowInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
+use Somnambulist\Components\QueryBuilder\Query\Window;
 
 /**
  * This represents a SQL window expression used by aggregate and window functions.
  */
-class WindowExpression implements ExpressionInterface, WindowInterface
+class WindowExpression implements Expression, Window
 {
     protected IdentifierExpression $name;
 
     /**
-     * @var array<ExpressionInterface>
+     * @var array<Expression>
      */
     protected array $partitions = [];
 
@@ -46,7 +46,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         return $this;
     }
 
-    public function partition(ExpressionInterface|Closure|array|string $partitions): self
+    public function partition(Expression|Closure|array|string $partitions): self
     {
         if (!$partitions) {
             return $this;
@@ -71,7 +71,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         return $this;
     }
 
-    public function orderBy(ExpressionInterface|Closure|array|string $fields): self
+    public function orderBy(Expression|Closure|array|string $fields): self
     {
         if (!$fields) {
             return $this;
@@ -88,7 +88,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         return $this;
     }
 
-    public function range(ExpressionInterface|string|int|null $start, ExpressionInterface|string|int|null $end = 0): self
+    public function range(Expression|string|int|null $start, Expression|string|int|null $end = 0): self
     {
         return $this->frame(self::RANGE, $start, self::PRECEDING, $end, self::FOLLOWING);
     }
@@ -108,9 +108,9 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function frame(
         string $type,
-        ExpressionInterface|string|int|null $startOffset,
+        Expression|string|int|null $startOffset,
         string $startDirection,
-        ExpressionInterface|string|int|null $endOffset,
+        Expression|string|int|null $endOffset,
         string $endDirection
     ): self
     {
@@ -190,12 +190,12 @@ class WindowExpression implements ExpressionInterface, WindowInterface
 
         if ($this->frame !== null) {
             $offset = $this->frame['start']['offset'];
-            if ($offset instanceof ExpressionInterface) {
+            if ($offset instanceof Expression) {
                 $callback($offset);
                 $offset->traverse($callback);
             }
             $offset = $this->frame['end']['offset'] ?? null;
-            if ($offset instanceof ExpressionInterface) {
+            if ($offset instanceof Expression) {
                 $callback($offset);
                 $offset->traverse($callback);
             }

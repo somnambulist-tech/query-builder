@@ -4,7 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
 use InvalidArgumentException;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 
 /**
  * This expression represents SQL fragments that are used for comparing one tuple
@@ -21,8 +21,8 @@ class TupleComparison extends ComparisonExpression
     protected array $types;
 
     public function __construct(
-        ExpressionInterface|array|string $fields,
-        ExpressionInterface|array $values,
+        Expression|array|string $fields,
+        Expression|array $values,
         array $types = [],
         string $conjunction = '='
     ) {
@@ -71,7 +71,7 @@ class TupleComparison extends ComparisonExpression
 
         $value = $this->getValue();
 
-        if ($value instanceof ExpressionInterface) {
+        if ($value instanceof Expression) {
             $callback($value);
             $value->traverse($callback);
 
@@ -101,7 +101,7 @@ class TupleComparison extends ComparisonExpression
      */
     protected function traverseValue(mixed $value, Closure $callback): void
     {
-        if ($value instanceof ExpressionInterface) {
+        if ($value instanceof Expression) {
             $callback($value);
             $value->traverse($callback);
         }

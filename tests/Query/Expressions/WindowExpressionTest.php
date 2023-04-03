@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Tests\Query\Expressions;
 
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\AggregateExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\OrderByExpression;
@@ -23,7 +23,7 @@ class WindowExpressionTest extends TestCase
     use QueryAssertsTrait;
     use QueryCompilerBuilderTrait;
 
-    protected ?CompilerInterface $compiler = null;
+    protected ?Compiler $compiler = null;
 
     protected function setUp(): void
     {

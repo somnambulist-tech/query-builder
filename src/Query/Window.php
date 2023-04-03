@@ -8,7 +8,7 @@ use InvalidArgumentException;
 /**
  * This defines the functions used for building window expressions.
  */
-interface WindowInterface
+interface Window
 {
     /**
      * @var string
@@ -38,20 +38,20 @@ interface WindowInterface
     /**
      * Adds one or more partition expressions to the window.
      *
-     * @param ExpressionInterface|Closure|array<ExpressionInterface|string>|string $partitions Partition expressions
+     * @param Expression|Closure|array<Expression|string>|string $partitions Partition expressions
      *
      * @return $this
      */
-    public function partition(ExpressionInterface|Closure|array|string $partitions): self;
+    public function partition(Expression|Closure|array|string $partitions): self;
 
     /**
      * Adds one or more order by clauses to the window.
      *
-     * @param ExpressionInterface|Closure|array<ExpressionInterface|string>|string $fields Order expressions
+     * @param Expression|Closure|array<Expression|string>|string $fields Order expressions
      *
      * @return $this
      */
-    public function orderBy(ExpressionInterface|Closure|array|string $fields): self;
+    public function orderBy(Expression|Closure|array|string $fields): self;
 
     /**
      * Adds a simple range frame to the window.
@@ -69,13 +69,13 @@ interface WindowInterface
      * If you need to use 'FOLLOWING' with frame start or
      * 'PRECEDING' with frame end, use `frame()` instead.
      *
-     * @param ExpressionInterface|string|int|null $start Frame start
-     * @param ExpressionInterface|string|int|null $end Frame end
+     * @param Expression|string|int|null $start Frame start
+     * @param Expression|string|int|null $end Frame end
      *  If not passed in, only frame start SQL will be generated.
      *
      * @return $this
      */
-    public function range(ExpressionInterface|string|int|null $start, ExpressionInterface|string|int|null $end = 0): self;
+    public function range(Expression|string|int|null $start, Expression|string|int|null $end = 0): self;
 
     /**
      * Adds a simple rows frame to the window.
@@ -116,9 +116,9 @@ interface WindowInterface
      *  - `null` - 'UNBOUNDED'
      *
      * @param string $type Frame type
-     * @param ExpressionInterface|string|int|null $startOffset Frame start offset
+     * @param Expression|string|int|null $startOffset Frame start offset
      * @param string $startDirection Frame start direction
-     * @param ExpressionInterface|string|int|null $endOffset Frame end offset
+     * @param Expression|string|int|null $endOffset Frame end offset
      * @param string $endDirection Frame end direction
      *
      * @return $this
@@ -129,9 +129,9 @@ interface WindowInterface
      */
     public function frame(
         string $type,
-        ExpressionInterface|string|int|null $startOffset,
+        Expression|string|int|null $startOffset,
         string $startDirection,
-        ExpressionInterface|string|int|null $endOffset,
+        Expression|string|int|null $endOffset,
         string $endDirection
     ): self;
 

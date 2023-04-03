@@ -4,12 +4,12 @@ namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
 use Somnambulist\Components\QueryBuilder\Exceptions\ExpectedExpressionInterfaceFromClosure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 
 /**
  * An expression that represents a common table expression definition.
  */
-class CommonTableExpression implements ExpressionInterface
+class CommonTableExpression implements Expression
 {
     protected IdentifierExpression $name;
 
@@ -18,7 +18,7 @@ class CommonTableExpression implements ExpressionInterface
      */
     protected array $fields = [];
 
-    protected ?ExpressionInterface $query = null;
+    protected ?Expression $query = null;
 
     /**
      * Whether the CTE is materialized or not materialized.
@@ -29,7 +29,7 @@ class CommonTableExpression implements ExpressionInterface
 
     protected bool $recursive = false;
 
-    public function __construct(string $name = '', ExpressionInterface|Closure|null $query = null)
+    public function __construct(string $name = '', Expression|Closure|null $query = null)
     {
         $this->name = new IdentifierExpression($name);
 
@@ -65,16 +65,16 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * Sets the query for this CTE.
      *
-     * @param ExpressionInterface|Closure $query CTE query
+     * @param Expression|Closure $query CTE query
      *
      * @return $this
      */
-    public function query(ExpressionInterface|Closure $query): self
+    public function query(Expression|Closure $query): self
     {
         if ($query instanceof Closure) {
             $query = $query();
 
-            if (!$query instanceof ExpressionInterface) {
+            if (!$query instanceof Expression) {
                 throw ExpectedExpressionInterfaceFromClosure::create($query);
             }
         }
@@ -160,7 +160,7 @@ class CommonTableExpression implements ExpressionInterface
         return $this->fields;
     }
 
-    public function getQuery(): ?ExpressionInterface
+    public function getQuery(): ?Expression
     {
         return $this->query;
     }

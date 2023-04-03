@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions;
 
 use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ValuesExpression;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function array_fill_keys;
@@ -37,7 +37,7 @@ class ValuesCompiler extends AbstractCompiler
             foreach ($columns as $column) {
                 $value = $row[$column];
 
-                if ($value instanceof ExpressionInterface) {
+                if ($value instanceof Expression) {
                     $rowPlaceholders[] = sprintf('(%s)', $this->compiler->compile($value, $binder));
                     continue;
                 }

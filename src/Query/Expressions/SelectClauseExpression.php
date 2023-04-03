@@ -3,9 +3,9 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 
-class SelectClauseExpression implements ExpressionInterface
+class SelectClauseExpression implements Expression
 {
     private FieldExpression $fields;
     private DistinctExpression $distinct;
@@ -42,7 +42,7 @@ class SelectClauseExpression implements ExpressionInterface
         return $this;
     }
 
-    public function traverse(Closure $callback): ExpressionInterface
+    public function traverse(Closure $callback): Expression
     {
         $callback($this->fields);
         $this->fields->traverse($callback);

@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Exceptions;
 
 use InvalidArgumentException;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use function get_debug_type;
 use function sprintf;
@@ -32,7 +32,7 @@ class InvalidValueForExpression extends InvalidArgumentException
         return new self(
             sprintf(
                 'The argument must be either "null", scalar, an object, or an instance of "%s", "%s" given.',
-                ExpressionInterface::class,
+                Expression::class,
                 get_debug_type($result)
             )
         );

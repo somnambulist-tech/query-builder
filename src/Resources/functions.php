@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Resources;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use Somnambulist\Components\QueryBuilder\Query\FunctionsBuilder;
@@ -16,15 +16,15 @@ use function array_keys;
 /**
  * Create a new SELECT query
  *
- * @param ExpressionInterface|Closure|array|string|float|int $fields
- * @param ExpressionInterface|string|null $from
+ * @param Expression|Closure|array|string|float|int $fields
+ * @param Expression|string|null $from
  * @param array $types
  *
  * @return SelectQuery
  */
 function select(
-    ExpressionInterface|Closure|array|string|float|int $fields = [],
-    ExpressionInterface|string $from = null,
+    Expression|Closure|array|string|float|int $fields = [],
+    Expression|string $from = null,
     array $types = []
 ): SelectQuery
 {
@@ -73,7 +73,7 @@ function insert(?string $into = null, array $values = [], array $types = []): In
 /**
  * Create a new UPDATE query
  *
- * @param ExpressionInterface|string|null $table
+ * @param Expression|string|null $table
  * @param array $values
  * @param array $where
  * @param array<string, string> $types
@@ -81,7 +81,7 @@ function insert(?string $into = null, array $values = [], array $types = []): In
  * @return UpdateQuery
  */
 function update(
-    ExpressionInterface|string|null $table = null,
+    Expression|string|null $table = null,
     array $values = [],
     array $where = [],
     array $types = []

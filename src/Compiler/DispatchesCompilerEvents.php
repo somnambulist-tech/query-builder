@@ -4,7 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Compiler;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-interface DispatchesCompilerEventsInterface
+interface DispatchesCompilerEvents
 {
     public function setDispatcher(EventDispatcherInterface $dispatcher): void;
 }

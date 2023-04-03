@@ -5,7 +5,7 @@ namespace Somnambulist\Components\QueryBuilder\Query\Type;
 use Closure;
 use InvalidArgumentException;
 use Somnambulist\Components\QueryBuilder\Exceptions\ExpectedWindowExpressionFromClosure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ExceptClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ExceptExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FieldClauseExpression;
@@ -85,11 +85,11 @@ class SelectQuery extends Query
      *
      * By default no fields are selected.
      *
-     * @param ExpressionInterface|Closure|array|string|float|int $fields fields to be added to the list.
+     * @param Expression|Closure|array|string|float|int $fields fields to be added to the list.
      *
      * @return $this
      */
-    public function select(ExpressionInterface|Closure|array|string|float|int $fields = []): static
+    public function select(Expression|Closure|array|string|float|int $fields = []): static
     {
         if ($fields instanceof Closure) {
             $fields = $fields($this);
@@ -137,12 +137,12 @@ class SelectQuery extends Query
      * $query->distinct('name', true);
      * ```
      *
-     * @param ExpressionInterface|array|string|bool $on Enable/disable distinct class
+     * @param Expression|array|string|bool $on Enable/disable distinct class
      * or list of fields to be filtered on
      *
      * @return $this
      */
-    public function distinct(ExpressionInterface|string ...$on): static
+    public function distinct(Expression|string ...$on): static
     {
         $select = $this->parts['select'] ??= new SelectClauseExpression();
 
@@ -175,11 +175,11 @@ class SelectQuery extends Query
      * Group fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param ExpressionInterface|string ...$fields
+     * @param Expression|string ...$fields
      *
      * @return $this
      */
-    public function groupBy(ExpressionInterface|string ...$fields): static
+    public function groupBy(Expression|string ...$fields): static
     {
         $groupBy = $this->parts['group'] ??= new GroupByExpression();
         $groupBy->add(...$fields);
@@ -196,13 +196,13 @@ class SelectQuery extends Query
      * Having fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param ExpressionInterface|Closure|array|string|null $conditions The having conditions.
+     * @param Expression|Closure|array|string|null $conditions The having conditions.
      * @param array<string, string> $types Associative array of type names used to bind values to query
      *
      * @return $this
      * @see Query::where()
      */
-    public function having(ExpressionInterface|Closure|array|string|null $conditions = null, array $types = []): static
+    public function having(Expression|Closure|array|string|null $conditions = null, array $types = []): static
     {
         $this->conjugate('having', $conditions, 'AND', $types);
 
@@ -218,13 +218,13 @@ class SelectQuery extends Query
      * Having fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param ExpressionInterface|Closure|array|string $conditions The AND conditions for HAVING.
+     * @param Expression|Closure|array|string $conditions The AND conditions for HAVING.
      * @param array<string, string> $types Associative array of type names used to bind values to query
      *
      * @return $this
      * @see Query::andWhere()
      */
-    public function andHaving(ExpressionInterface|Closure|array|string $conditions, array $types = []): static
+    public function andHaving(Expression|Closure|array|string $conditions, array $types = []): static
     {
         $this->conjugate('having', $conditions, 'AND', $types);
 
@@ -436,7 +436,7 @@ class SelectQuery extends Query
         return $this;
     }
 
-    public function modifier(ExpressionInterface|string ...$modifiers): static
+    public function modifier(Expression|string ...$modifiers): static
     {
         $select = $this->parts['select'] ??= new SelectClauseExpression();
         $select->modifier()->add(...$modifiers);

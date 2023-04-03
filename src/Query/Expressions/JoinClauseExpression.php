@@ -3,25 +3,25 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\JoinType;
 
-class JoinClauseExpression implements ExpressionInterface
+class JoinClauseExpression implements Expression
 {
     public function __construct(
-        protected ExpressionInterface $table,
+        protected Expression $table,
         protected string $as,
-        protected ExpressionInterface $on,
+        protected Expression $on,
         protected JoinType $type,
     ) {
     }
 
-    public function getTable(): ExpressionInterface
+    public function getTable(): Expression
     {
         return $this->table;
     }
 
-    public function table(ExpressionInterface $table): self
+    public function table(Expression $table): self
     {
         $this->table = $table;
 
@@ -35,7 +35,7 @@ class JoinClauseExpression implements ExpressionInterface
         return $this;
     }
 
-    public function on(ExpressionInterface $on): self
+    public function on(Expression $on): self
     {
         $this->on = $on;
 
@@ -54,7 +54,7 @@ class JoinClauseExpression implements ExpressionInterface
         return $this->as;
     }
 
-    public function getConditions(): ExpressionInterface
+    public function getConditions(): Expression
     {
         return $this->on;
     }

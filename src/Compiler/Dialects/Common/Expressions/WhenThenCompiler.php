@@ -5,10 +5,10 @@ namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressi
 use LogicException;
 use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\CompileNullableValue;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WhenThenExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
-use Somnambulist\Components\QueryBuilder\TypeCaster;
+use Somnambulist\Components\QueryBuilder\TypeCasterManager;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function is_string;
 use function sprintf;
@@ -31,13 +31,13 @@ class WhenThenCompiler extends AbstractCompiler
         $when = $expression->getWhen();
         $whenType = $expression->getWhenType();
 
-        if (is_string($whenType) && !$when instanceof ExpressionInterface) {
-            $when = TypeCaster::castTo($when, $whenType);
+        if (is_string($whenType) && !$when instanceof Expression) {
+            $when = TypeCasterManager::castTo($when, $whenType);
         }
 
         if ($when instanceof Query) {
             $when = sprintf('(%s)', $this->compiler->compile($when, $binder));
-        } elseif ($when instanceof ExpressionInterface) {
+        } elseif ($when instanceof Expression) {
             $when = $this->compiler->compile($when, $binder);
         } else {
             $placeholder = $binder->placeholder('c');

@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions;
 
 use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function implode;
@@ -52,13 +52,13 @@ class WindowCompiler extends AbstractCompiler
         return implode(' ', $clauses);
     }
 
-    protected function buildOffsetSql(ValueBinder $binder, ExpressionInterface|string|int|null $offset, string $direction): string
+    protected function buildOffsetSql(ValueBinder $binder, Expression|string|int|null $offset, string $direction): string
     {
         if ($offset === 0) {
             return 'CURRENT ROW';
         }
 
-        if ($offset instanceof ExpressionInterface) {
+        if ($offset instanceof Expression) {
             $offset = $this->compiler->compile($offset, $binder);
         }
 

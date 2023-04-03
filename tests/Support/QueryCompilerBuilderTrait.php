@@ -3,8 +3,8 @@
 namespace Somnambulist\Components\QueryBuilder\Tests\Support;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
-use Somnambulist\Components\QueryBuilder\Compiler\DelegatingCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
+use Somnambulist\Components\QueryBuilder\Compiler\DelegatingSqlCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\AggregateCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\BetweenCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\CaseStatementCompiler;
@@ -56,7 +56,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\Events\PreDeleteQueryCompile;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreUpdateQueryCompile;
 use Somnambulist\Components\QueryBuilder\Query\Expressions;
 use Somnambulist\Components\QueryBuilder\Query\Type;
-use Somnambulist\Components\QueryBuilder\TypeCaster;
+use Somnambulist\Components\QueryBuilder\TypeCasterManager;
 use Somnambulist\Components\QueryBuilder\TypeCasters\DbalTypeCaster;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -68,7 +68,7 @@ trait QueryCompilerBuilderTrait
 
     protected function registerTypeCaster(): void
     {
-        TypeCaster::register(new DbalTypeCaster());
+        TypeCasterManager::register(new DbalTypeCaster());
     }
 
     protected function buildEventDispatcher(array $events = []): EventDispatcherInterface
@@ -102,14 +102,14 @@ trait QueryCompilerBuilderTrait
         return $evt;
     }
 
-    protected function buildCompiler(array $compilers = [], array $events = []): CompilerInterface
+    protected function buildCompiler(array $compilers = [], array $events = []): Compiler
     {
         $this->registerTypeCaster();
 
         return $this->buildDelegatingCompiler($this->buildEventDispatcher($events), $compilers);
     }
 
-    protected function buildDelegatingCompiler(EventDispatcherInterface $evt = null, array $compilers = []): DelegatingCompiler
+    protected function buildDelegatingCompiler(EventDispatcherInterface $evt = null, array $compilers = []): DelegatingSqlCompiler
     {
         if (empty($compilers)) {
             $compilers = [
@@ -161,6 +161,6 @@ trait QueryCompilerBuilderTrait
             ];
         }
 
-        return new DelegatingCompiler($evt ?? $this->buildEventDispatcher(), $compilers);
+        return new DelegatingSqlCompiler($evt ?? $this->buildEventDispatcher(), $compilers);
     }
 }

@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Type;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\UpdateClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
@@ -36,11 +36,11 @@ class UpdateQuery extends Query
      *
      * Can be combined with set() and where() methods to create update queries.
      *
-     * @param ExpressionInterface|string $table The table you want to update.
+     * @param Expression|string $table The table you want to update.
      *
      * @return $this
      */
-    public function update(ExpressionInterface|string $table): static
+    public function update(Expression|string $table): static
     {
         $update = $this->parts['update'] ??= new UpdateClauseExpression();
         $update->table($table);
@@ -93,7 +93,7 @@ class UpdateQuery extends Query
             return $this;
         }
 
-        if (is_array($key) || $key instanceof ExpressionInterface) {
+        if (is_array($key) || $key instanceof Expression) {
             $set->add($key, $types);
 
             return $this;
@@ -107,7 +107,7 @@ class UpdateQuery extends Query
         return $this;
     }
 
-    public function modifier(ExpressionInterface|string ...$modifiers): static
+    public function modifier(Expression|string ...$modifiers): static
     {
         $update = $this->parts['update'] ??= new UpdateClauseExpression();
         $update->modifier()->add(...$modifiers);

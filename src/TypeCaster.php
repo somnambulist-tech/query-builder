@@ -2,28 +2,18 @@
 
 namespace Somnambulist\Components\QueryBuilder;
 
-use Somnambulist\Components\QueryBuilder\Exceptions\TypeCasterException;
-
-class TypeCaster
+/**
+ * Interface to allow using DB driver engine type casting
+ *
+ * Various type systems can be used with the QueryBuilder allowing integration with e.g. Doctrine,
+ * Laminas DB etc. The types can return ExpressionInterface objects if the value should be a query
+ * object.
+ *
+ * For example: you may wish to cast a string to another format via SUBSTR() instead of using the
+ * value directly. In this case, the type mapper should return the appropriate ExpressionInterface
+ * instance to accomplish this with the value that was bound.
+ */
+interface TypeCaster
 {
-    private static ?TypeCasterInterface $instance = null;
-
-    public static function register(TypeCasterInterface $caster): void
-    {
-        self::$instance = $caster;
-    }
-
-    public static function instance(): TypeCasterInterface
-    {
-        if (!self::$instance instanceof TypeCasterInterface) {
-            throw TypeCasterException::isNotRegistered();
-        }
-
-        return self::$instance;
-    }
-
-    public static function castTo(mixed $value, ?string $type = null): mixed
-    {
-        return self::instance()->castTo($value, $type);
-    }
+    public function castTo(mixed $value, ?string $type = null): mixed;
 }

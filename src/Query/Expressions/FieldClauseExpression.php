@@ -3,17 +3,17 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 
-class FieldClauseExpression implements ExpressionInterface
+class FieldClauseExpression implements Expression
 {
     public function __construct(
-        protected ExpressionInterface|string|float|int $field,
+        protected Expression|string|float|int $field,
         protected ?string $as = null,
     ) {
     }
 
-    public function field(ExpressionInterface|string|float|int $field): self
+    public function field(Expression|string|float|int $field): self
     {
         $this->field = $field;
 
@@ -27,7 +27,7 @@ class FieldClauseExpression implements ExpressionInterface
         return $this;
     }
 
-    public function getField(): ExpressionInterface|string|float|int
+    public function getField(): Expression|string|float|int
     {
         return $this->field;
     }
@@ -39,7 +39,7 @@ class FieldClauseExpression implements ExpressionInterface
 
     public function traverse(Closure $callback): self
     {
-        if ($this->field instanceof ExpressionInterface) {
+        if ($this->field instanceof Expression) {
             $callback($this->field);
             $this->field->traverse($callback);
         }
@@ -49,7 +49,7 @@ class FieldClauseExpression implements ExpressionInterface
 
     public function __clone(): void
     {
-        if ($this->field instanceof ExpressionInterface) {
+        if ($this->field instanceof Expression) {
             $this->field = clone $this->field;
         }
     }

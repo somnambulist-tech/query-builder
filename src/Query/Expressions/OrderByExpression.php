@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Somnambulist\Components\QueryBuilder\Exceptions\InvalidValueForExpression;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\OrderDirection;
 use Somnambulist\Components\QueryBuilder\TypeMap;
 
@@ -13,12 +13,12 @@ use Somnambulist\Components\QueryBuilder\TypeMap;
 class OrderByExpression extends QueryExpression
 {
     /**
-     * @param ExpressionInterface|array|string $conditions The sort columns
+     * @param Expression|array|string $conditions The sort columns
      * @param TypeMap|null $types The types for each column.
      * @param string $conjunction The glue used to join conditions together.
      */
     public function __construct(
-        ExpressionInterface|array|string $conditions = [],
+        Expression|array|string $conditions = [],
         TypeMap $types = null,
         string $conjunction = ''
     ) {

@@ -3,20 +3,20 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 
-class UpdateClauseExpression implements ExpressionInterface
+class UpdateClauseExpression implements Expression
 {
-    protected ExpressionInterface|string $table;
+    protected Expression|string $table;
     protected ModifierExpression $modifier;
 
-    public function __construct(ExpressionInterface|string $table = null, ModifierExpression $modifier = null)
+    public function __construct(Expression|string $table = null, ModifierExpression $modifier = null)
     {
         $this->table = $table ?? '';
         $this->modifier = $modifier ?? new ModifierExpression();
     }
 
-    public function table(ExpressionInterface|string $table): self
+    public function table(Expression|string $table): self
     {
         $this->table = $table;
 
@@ -28,14 +28,14 @@ class UpdateClauseExpression implements ExpressionInterface
         return $this->modifier;
     }
 
-    public function getTable(): ExpressionInterface|string
+    public function getTable(): Expression|string
     {
         return $this->table;
     }
 
-    public function traverse(Closure $callback): ExpressionInterface
+    public function traverse(Closure $callback): Expression
     {
-        if ($this->table instanceof ExpressionInterface) {
+        if ($this->table instanceof Expression) {
             $callback($this->table);
             $this->table->traverse($callback);
         }
@@ -48,7 +48,7 @@ class UpdateClauseExpression implements ExpressionInterface
 
     public function __clone(): void
     {
-        if ($this->table instanceof ExpressionInterface) {
+        if ($this->table instanceof Expression) {
             $this->table = clone $this->table;
         }
 

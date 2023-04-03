@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions;
 
 use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\BetweenExpression;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function assert;
@@ -22,12 +22,12 @@ class BetweenCompiler extends AbstractCompiler
 
         $field = $expression->getField();
 
-        if ($field instanceof ExpressionInterface) {
+        if ($field instanceof Expression) {
             $field = $this->compiler->compile($field, $binder);
         }
 
         foreach ($parts as $name => $part) {
-            if ($part instanceof ExpressionInterface) {
+            if ($part instanceof Expression) {
                 $parts[$name] = $this->compiler->compile($part, $binder);
                 continue;
             }

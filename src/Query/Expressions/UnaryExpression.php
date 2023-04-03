@@ -3,12 +3,12 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 
 /**
  * An expression object that represents an expression with only a single operand.
  */
-class UnaryExpression implements ExpressionInterface
+class UnaryExpression implements Expression
 {
     /**
      * Indicates that the operation is in pre-order
@@ -74,7 +74,7 @@ class UnaryExpression implements ExpressionInterface
 
     public function traverse(Closure $callback): self
     {
-        if ($this->value instanceof ExpressionInterface) {
+        if ($this->value instanceof Expression) {
             $callback($this->value);
             $this->value->traverse($callback);
         }
@@ -84,7 +84,7 @@ class UnaryExpression implements ExpressionInterface
 
     public function __clone()
     {
-        if ($this->value instanceof ExpressionInterface) {
+        if ($this->value instanceof Expression) {
             $this->value = clone $this->value;
         }
     }

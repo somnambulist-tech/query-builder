@@ -3,22 +3,22 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 
-class InsertClauseExpression implements ExpressionInterface
+class InsertClauseExpression implements Expression
 {
-    protected ExpressionInterface|string $table;
+    protected Expression|string $table;
     protected ModifierExpression $modifier;
     protected array $columns;
 
-    public function __construct(ExpressionInterface|string $table = null, array $columns = [])
+    public function __construct(Expression|string $table = null, array $columns = [])
     {
         $this->table = $table ?? '';
         $this->columns = $columns;
         $this->modifier = new ModifierExpression();
     }
 
-    public function into(ExpressionInterface|string $table): self
+    public function into(Expression|string $table): self
     {
         $this->table = $table;
 
@@ -37,7 +37,7 @@ class InsertClauseExpression implements ExpressionInterface
         return $this->modifier;
     }
 
-    public function getTable(): ExpressionInterface|string
+    public function getTable(): Expression|string
     {
         return $this->table;
     }
@@ -47,9 +47,9 @@ class InsertClauseExpression implements ExpressionInterface
         return $this->columns;
     }
 
-    public function traverse(Closure $callback): ExpressionInterface
+    public function traverse(Closure $callback): Expression
     {
-        if ($this->table instanceof ExpressionInterface) {
+        if ($this->table instanceof Expression) {
             $callback($this->table);
             $this->table->traverse($callback);
         }
@@ -59,7 +59,7 @@ class InsertClauseExpression implements ExpressionInterface
 
     public function __clone(): void
     {
-        if ($this->table instanceof ExpressionInterface) {
+        if ($this->table instanceof Expression) {
             $this->table = clone $this->table;
         }
     }

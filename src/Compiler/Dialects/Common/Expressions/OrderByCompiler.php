@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions;
 
 use Somnambulist\Components\QueryBuilder\Compiler\AbstractCompiler;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\OrderByExpression;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
@@ -15,7 +15,7 @@ class OrderByCompiler extends AbstractCompiler
         $order = [];
 
         foreach ($expression->getConditions() as $k => $direction) {
-            if ($direction instanceof ExpressionInterface) {
+            if ($direction instanceof Expression) {
                 $direction = $this->compiler->compile($direction, $binder);
             }
 

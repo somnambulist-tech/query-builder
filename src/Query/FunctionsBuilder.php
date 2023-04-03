@@ -17,7 +17,7 @@ class FunctionsBuilder
         return new FunctionExpression('RAND', [], [], 'float');
     }
 
-    public function sum(ExpressionInterface|string $expression, array $types = []): AggregateExpression
+    public function sum(Expression|string $expression, array $types = []): AggregateExpression
     {
         $returnType = 'float';
 
@@ -28,22 +28,22 @@ class FunctionsBuilder
         return $this->aggregate('SUM', $this->toLiteralParam($expression), $types, $returnType);
     }
 
-    public function avg(ExpressionInterface|string $expression, array $types = []): AggregateExpression
+    public function avg(Expression|string $expression, array $types = []): AggregateExpression
     {
         return $this->aggregate('AVG', $this->toLiteralParam($expression), $types);
     }
 
-    public function max(ExpressionInterface|string $expression, array $types = []): AggregateExpression
+    public function max(Expression|string $expression, array $types = []): AggregateExpression
     {
         return $this->aggregate('MAX', $this->toLiteralParam($expression), $types, current($types) ?: 'float');
     }
 
-    public function min(ExpressionInterface|string $expression, array $types = []): AggregateExpression
+    public function min(Expression|string $expression, array $types = []): AggregateExpression
     {
         return $this->aggregate('MIN', $this->toLiteralParam($expression), $types, current($types) ?: 'float');
     }
 
-    public function count(ExpressionInterface|string $expression, array $types = []): AggregateExpression
+    public function count(Expression|string $expression, array $types = []): AggregateExpression
     {
         return $this->aggregate('COUNT', $this->toLiteralParam($expression), $types, 'integer');
     }
@@ -64,7 +64,7 @@ class FunctionsBuilder
      * The `$dataType` parameter is a SQL type. The return type for the returned expression
      * is the default type name. Use `setReturnType()` to change it.
      */
-    public function cast(ExpressionInterface|string $field, string $dataType): FunctionExpression
+    public function cast(Expression|string $field, string $dataType): FunctionExpression
     {
         $expression = new FunctionExpression('CAST', $this->toLiteralParam($field));
         $expression->useConjunction(' AS')->add([$dataType => 'literal']);
@@ -77,12 +77,12 @@ class FunctionsBuilder
         return new FunctionExpression('DATEDIFF', $args, $types, 'integer');
     }
 
-    public function datePart(string $part, ExpressionInterface|string $expression, array $types = []): FunctionExpression
+    public function datePart(string $part, Expression|string $expression, array $types = []): FunctionExpression
     {
         return $this->extract($part, $expression, $types);
     }
 
-    public function extract(string $part, ExpressionInterface|string $expression, array $types = []): FunctionExpression
+    public function extract(string $part, Expression|string $expression, array $types = []): FunctionExpression
     {
         $expression = new FunctionExpression('EXTRACT', $this->toLiteralParam($expression), $types, 'integer');
         $expression->useConjunction(' FROM')->add([strtoupper($part) => 'literal'], [], true);
@@ -90,7 +90,7 @@ class FunctionsBuilder
         return $expression;
     }
 
-    public function dateAdd(ExpressionInterface|string $expression, string|int $value, string $unit, array $types = []): FunctionExpression
+    public function dateAdd(Expression|string $expression, string|int $value, string $unit, array $types = []): FunctionExpression
     {
         if (!is_numeric($value)) {
             $value = 0;
@@ -108,7 +108,7 @@ class FunctionsBuilder
      *
      * 1 - Sunday, 2 - Monday, 3 - Tuesday...
      */
-    public function dayOfWeek(ExpressionInterface|string $expression, array $types = []): FunctionExpression
+    public function dayOfWeek(Expression|string $expression, array $types = []): FunctionExpression
     {
         return new FunctionExpression('DAYOFWEEK', $this->toLiteralParam($expression), $types, 'integer');
     }
@@ -118,7 +118,7 @@ class FunctionsBuilder
      *
      * 1 - Sunday, 2 - Monday, 3 - Tuesday...
      */
-    public function weekday(ExpressionInterface|string $expression, array $types = []): FunctionExpression
+    public function weekday(Expression|string $expression, array $types = []): FunctionExpression
     {
         return $this->dayOfWeek($expression, $types);
     }
@@ -148,7 +148,7 @@ class FunctionsBuilder
         return (new AggregateExpression('ROW_NUMBER', [], [], 'integer'))->over();
     }
 
-    public function lag(ExpressionInterface|string $expression, int $offset, mixed $default = null, ?string $type = null): AggregateExpression
+    public function lag(Expression|string $expression, int $offset, mixed $default = null, ?string $type = null): AggregateExpression
     {
         $params = $this->toLiteralParam($expression) + [$offset => 'literal'];
 
@@ -164,7 +164,7 @@ class FunctionsBuilder
         return (new AggregateExpression('LAG', $params, $types, $type ?? 'float'))->over();
     }
 
-    public function lead(ExpressionInterface|string $expression, int $offset, mixed $default = null, ?string $type = null): AggregateExpression
+    public function lead(Expression|string $expression, int $offset, mixed $default = null, ?string $type = null): AggregateExpression
     {
         $params = $this->toLiteralParam($expression) + [$offset => 'literal'];
 
@@ -212,7 +212,7 @@ class FunctionsBuilder
         return new FunctionExpression($name, ...$args);
     }
 
-    protected function toLiteralParam(ExpressionInterface|string $expression): array
+    protected function toLiteralParam(Expression|string $expression): array
     {
         if (is_string($expression)) {
             return [$expression => 'literal'];

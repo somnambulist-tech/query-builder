@@ -5,13 +5,13 @@ namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 use Closure;
 use InvalidArgumentException;
 use Somnambulist\Components\QueryBuilder\Exceptions\InvalidValueForExpression;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\TypeMap;
 
 /**
  * Represents a SQL when/then clause with a fluid API
  */
-class WhenThenExpression implements ExpressionInterface
+class WhenThenExpression implements Expression
 {
     use CaseExpressionTrait;
 
@@ -30,7 +30,7 @@ class WhenThenExpression implements ExpressionInterface
     /**
      * Then `WHEN` value.
      *
-     * @var ExpressionInterface|object|scalar|null
+     * @var Expression|object|scalar|null
      */
     protected mixed $when = null;
 
@@ -44,7 +44,7 @@ class WhenThenExpression implements ExpressionInterface
     /**
      * The `THEN` value.
      *
-     * @var ExpressionInterface|object|scalar|null
+     * @var Expression|object|scalar|null
      */
     protected mixed $then = null;
 
@@ -117,7 +117,7 @@ class WhenThenExpression implements ExpressionInterface
                 ));
             }
 
-            if ($type === null && !$when instanceof ExpressionInterface) {
+            if ($type === null && !$when instanceof Expression) {
                 $type = $this->inferType($when);
             }
         }
@@ -131,7 +131,7 @@ class WhenThenExpression implements ExpressionInterface
     /**
      * Sets the `THEN` result value.
      *
-     * @param ExpressionInterface|object|scalar|null $result The result value.
+     * @param Expression|object|scalar|null $result The result value.
      * @param string|null $type The result type. If no type is provided, the type will be inferred from the given
      *  result value.
      *
@@ -174,7 +174,7 @@ class WhenThenExpression implements ExpressionInterface
      *
      * @param string $clause The name of the clause to obtain.
      *
-     * @return ExpressionInterface|object|scalar|null
+     * @return Expression|object|scalar|null
      * @throws InvalidArgumentException In case the given clause name is invalid.
      */
     public function clause(string $clause): mixed
@@ -224,12 +224,12 @@ class WhenThenExpression implements ExpressionInterface
 
     public function traverse(Closure $callback): self
     {
-        if ($this->when instanceof ExpressionInterface) {
+        if ($this->when instanceof Expression) {
             $callback($this->when);
             $this->when->traverse($callback);
         }
 
-        if ($this->then instanceof ExpressionInterface) {
+        if ($this->then instanceof Expression) {
             $callback($this->then);
             $this->then->traverse($callback);
         }
@@ -239,11 +239,11 @@ class WhenThenExpression implements ExpressionInterface
 
     public function __clone()
     {
-        if ($this->when instanceof ExpressionInterface) {
+        if ($this->when instanceof Expression) {
             $this->when = clone $this->when;
         }
 
-        if ($this->then instanceof ExpressionInterface) {
+        if ($this->then instanceof Expression) {
             $this->then = clone $this->then;
         }
     }

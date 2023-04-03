@@ -3,17 +3,17 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 
-class TableClauseExpression implements ExpressionInterface
+class TableClauseExpression implements Expression
 {
     public function __construct(
-        protected ExpressionInterface $table,
+        protected Expression $table,
         protected ?string $as = null,
     ) {
     }
 
-    public function table(ExpressionInterface $table): self
+    public function table(Expression $table): self
     {
         $this->table = $table;
 
@@ -27,7 +27,7 @@ class TableClauseExpression implements ExpressionInterface
         return $this;
     }
 
-    public function getTable(): ExpressionInterface
+    public function getTable(): Expression
     {
         return $this->table;
     }

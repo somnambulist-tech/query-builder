@@ -3,9 +3,9 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
-use Somnambulist\Components\QueryBuilder\Query\WindowInterface;
+use Somnambulist\Components\QueryBuilder\Query\Window;
 
 /**
  * This represents an SQL aggregate function expression in an SQL statement.
@@ -14,7 +14,7 @@ use Somnambulist\Components\QueryBuilder\Query\WindowInterface;
  * For security reasons, all params passed are quoted by default unless explicitly
  * told otherwise.
  */
-class AggregateExpression extends FunctionExpression implements WindowInterface
+class AggregateExpression extends FunctionExpression implements Window
 {
     protected ?QueryExpression $filter = null;
     protected ?WindowExpression $window = null;
@@ -22,13 +22,13 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * Adds conditions to the FILTER clause. The conditions are the same format as `Query::where()`.
      *
-     * @param ExpressionInterface|Closure|array|string $conditions
+     * @param Expression|Closure|array|string $conditions
      * @param array<string, string> $types
      *
      * @return $this
      * @see Query::where()
      */
-    public function filter(ExpressionInterface|Closure|array|string $conditions, array $types = []): self
+    public function filter(Expression|Closure|array|string $conditions, array $types = []): self
     {
         $this->filter ??= new QueryExpression();
 
@@ -59,21 +59,21 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
         return $this;
     }
 
-    public function partition(ExpressionInterface|Closure|array|string $partitions): self
+    public function partition(Expression|Closure|array|string $partitions): self
     {
         $this->window()->partition($partitions);
 
         return $this;
     }
 
-    public function orderBy(ExpressionInterface|Closure|array|string $fields): self
+    public function orderBy(Expression|Closure|array|string $fields): self
     {
         $this->window()->orderBy($fields);
 
         return $this;
     }
 
-    public function range(ExpressionInterface|string|int|null $start, ExpressionInterface|string|int|null $end = 0): self
+    public function range(Expression|string|int|null $start, Expression|string|int|null $end = 0): self
     {
         $this->window()->range($start, $end);
 
@@ -96,9 +96,9 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
 
     public function frame(
         string $type,
-        ExpressionInterface|string|int|null $startOffset,
+        Expression|string|int|null $startOffset,
         string $startDirection,
-        ExpressionInterface|string|int|null $endOffset,
+        Expression|string|int|null $endOffset,
         string $endDirection
     ): self
     {

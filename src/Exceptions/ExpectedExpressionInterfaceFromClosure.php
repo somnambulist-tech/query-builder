@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Exceptions;
 
 use InvalidArgumentException;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use function get_debug_type;
 
 class ExpectedExpressionInterfaceFromClosure extends InvalidArgumentException
@@ -13,7 +13,7 @@ class ExpectedExpressionInterfaceFromClosure extends InvalidArgumentException
         return new self(
             sprintf(
                 'You must return an "%s" from a Closure passed to "query()", "%s" given.',
-                ExpressionInterface::class,
+                Expression::class,
                 get_debug_type($query)
             )
         );

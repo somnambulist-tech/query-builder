@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use DateTimeInterface;
-use Somnambulist\Components\QueryBuilder\Query\HasReturnTypeInterface;
+use Somnambulist\Components\QueryBuilder\Query\HasReturnType;
 use Stringable;
 
 /**
@@ -39,7 +39,7 @@ trait CaseExpressionTrait
             $type = 'string';
         } elseif ($value instanceof IdentifierExpression) {
             $type = $this->typeMap->type($value->getIdentifier());
-        } elseif ($value instanceof HasReturnTypeInterface) {
+        } elseif ($value instanceof HasReturnType) {
             $type = $value->getReturnType();
         }
 

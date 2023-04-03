@@ -2,13 +2,13 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Behaviours;
 
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
 
 trait CompilerAwareTrait
 {
-    protected ?CompilerInterface $compiler = null;
+    protected ?Compiler $compiler = null;
 
-    public function setCompiler(CompilerInterface $compiler): self
+    public function setCompiler(Compiler $compiler): self
     {
         $this->compiler = $compiler;
 

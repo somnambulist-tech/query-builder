@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Somnambulist\Components\QueryBuilder\Exceptions\QueryException;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\ExpressionSet;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use function array_key_exists;
@@ -15,7 +15,7 @@ use function is_string;
  */
 class FromExpression extends ExpressionSet
 {
-    public function add(ExpressionInterface|string $table, string $as = null): self
+    public function add(Expression|string $table, string $as = null): self
     {
         if ($table instanceof Query && is_null($as)) {
             throw QueryException::fromQueryRequiresAlias();

@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Query\Expressions;
 
 use Closure;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 
 /**
@@ -13,7 +13,7 @@ use Somnambulist\Components\QueryBuilder\Query\Query;
  *
  * @see Query::identifier()
  */
-class IdentifierExpression implements ExpressionInterface
+class IdentifierExpression implements Expression
 {
     public function __construct(
         protected string $identifier,

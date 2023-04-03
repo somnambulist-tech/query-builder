@@ -4,7 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Compiler;
 
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\BetweenExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ComparisonExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FunctionExpression;
@@ -23,7 +23,7 @@ class ExpressionTypeCastingTest extends TestCase
 {
     use QueryCompilerBuilderTrait;
 
-    private ?CompilerInterface $compiler = null;
+    private ?Compiler $compiler = null;
 
     public function setUp(): void
     {

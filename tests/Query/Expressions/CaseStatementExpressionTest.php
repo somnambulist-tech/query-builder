@@ -7,8 +7,8 @@ use InvalidArgumentException;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\Models\Types\DateTime\DateTime;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
-use Somnambulist\Components\QueryBuilder\Query\ExpressionInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
+use Somnambulist\Components\QueryBuilder\Query\Expression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CaseStatementExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\ComparisonExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FunctionExpression;
@@ -31,7 +31,7 @@ class CaseStatementExpressionTest extends TestCase
     use QueryCompilerBuilderTrait;
     use ValueBinderContainsTrait;
 
-    protected ?CompilerInterface $compiler = null;
+    protected ?Compiler $compiler = null;
 
     protected function setUp(): void
     {
@@ -1517,7 +1517,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectExceptionMessage(
             sprintf(
                 'The "$value" argument must be either "null", a scalar value, an object, or an instance of "%s", "%s" given.',
-                ExpressionInterface::class,
+                Expression::class,
                 $typeName
             )
         );
@@ -1566,7 +1566,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectExceptionMessage(
             sprintf(
                 'The argument must be either "null", scalar, an object, or an instance of "%s", "%s" given.',
-                ExpressionInterface::class,
+                Expression::class,
                 $typeName
             )
         );
@@ -1637,7 +1637,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectExceptionMessage(
             sprintf(
                 'The "$result" argument must be either "null", a scalar value, an object, or an instance of "%s", "%s" given.',
-                ExpressionInterface::class,
+                Expression::class,
                 $typeName
             )
         );

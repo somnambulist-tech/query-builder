@@ -49,9 +49,9 @@ __Note:__ the StringTypeCaster is extremely basic and will only cast everything 
 register an anonymous class that only returns the value back:
 
 ```php
-use Somnambulist\Components\QueryBuilder\TypeCasterInterface;
+use Somnambulist\Components\QueryBuilder\TypeCaster;
 
-TypeCaster::register(new class implements TypeCasterInterface {
+TypeCaster::register(new class implements TypeCaster {
     public function castTo(mixed $value, ?string $type = null): mixed
     {
         return $value;
@@ -62,10 +62,10 @@ TypeCaster::register(new class implements TypeCasterInterface {
 To register a type caster, you must add to your applications bootstrap:
 
 ```php
-use Somnambulist\Components\QueryBuilder\TypeCaster;
+use Somnambulist\Components\QueryBuilder\TypeCasterManager;
 use Somnambulist\Components\QueryBuilder\TypeCasters\DbalTypeCaster;
 
-TypeCaster::register(new DbalTypeCaster());
+TypeCasterManager::register(new DbalTypeCaster());
 ```
 
 Next: the compiler needs configuring for your chosen database dialect. You can create multiple compilers for
@@ -78,7 +78,7 @@ classes. You can use these to provide a configured `Compiler`, or wire what you 
 An example for Postgres would be (missing many use statements for various classes):
 
 ```php
-use Somnambulist\Components\QueryBuilder\Compiler\DelegatingCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\DelegatingSqlCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners\StripAliasesFromDeleteFrom;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners\StripAliasesFromConditions;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type as QueryHandler;
@@ -101,7 +101,7 @@ $dispatcher->addListener(PreSelectQueryCompile::class, [new IdentifierQuoter(), 
 // re-writes HAVING clauses so they will work in Postgres
 $dispatcher->addListener(PreHavingExpressionCompile::class, new HavingPreProcessor());
 
-$compiler = new DelegatingCompiler(
+$compiler = new DelegatingSqlCompiler(
     $dispatcher,
     [
         Type\SelectQuery::class => new QueryHandler\SelectCompiler(),

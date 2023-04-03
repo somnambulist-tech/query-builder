@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Tests\Query\QueryTests;
 
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
 use Somnambulist\Components\QueryBuilder\Query\OrderDirection;
 use Somnambulist\Components\QueryBuilder\Query\Query;
@@ -17,7 +17,7 @@ class CaseExpressionQueryTest extends TestCase
     use QueryCompilerBuilderTrait;
 
     protected ?SelectQuery $query = null;
-    protected ?CompilerInterface $compiler = null;
+    protected ?Compiler $compiler = null;
 
     public function setUp(): void
     {

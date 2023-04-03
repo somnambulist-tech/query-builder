@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Postgres\Listeners;
 
 use Somnambulist\Components\QueryBuilder\Compiler\Behaviours\CompilerAwareTrait;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerAwareInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\CompilerAware;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreHavingExpressionCompile;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FieldClauseExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\FunctionExpression;
@@ -15,7 +15,7 @@ use function preg_replace;
 use function sprintf;
 use function trim;
 
-class HavingPreProcessor implements CompilerAwareInterface
+class HavingPreProcessor implements CompilerAware
 {
     use CompilerAwareTrait;
 

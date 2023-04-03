@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Tests\Compiler\Dialects;
 
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Postgres\Listeners\HavingPreProcessor;
 use Somnambulist\Components\QueryBuilder\Compiler\Events\PreHavingExpressionCompile;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
@@ -17,7 +17,7 @@ class PostgresTest extends TestCase
     use QueryAssertsTrait;
     use QueryCompilerBuilderTrait;
 
-    protected ?CompilerInterface $compiler = null;
+    protected ?Compiler $compiler = null;
 
     protected function setUp(): void
     {

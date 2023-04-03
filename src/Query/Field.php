@@ -6,9 +6,9 @@ namespace Somnambulist\Components\QueryBuilder\Query;
  * Identifies the expression as using a field property. Useful for expressions
  * that contain an identifier to compare against.
  */
-interface FieldInterface
+interface Field
 {
-    public function getField(): ExpressionInterface|array|string;
+    public function getField(): Expression|array|string;
 
-    public function field(ExpressionInterface|array|string $field): self;
+    public function field(Expression|array|string $field): self;
 }

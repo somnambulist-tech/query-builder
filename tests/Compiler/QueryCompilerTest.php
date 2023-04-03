@@ -3,7 +3,7 @@
 namespace Somnambulist\Components\QueryBuilder\Tests\Compiler;
 
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Components\QueryBuilder\Compiler\CompilerInterface;
+use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\Query\Type;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
@@ -18,7 +18,7 @@ class QueryCompilerTest extends TestCase
     use QueryAssertsTrait;
     use QueryCompilerBuilderTrait;
 
-    protected ?CompilerInterface $compiler = null;
+    protected ?Compiler $compiler = null;
     protected ?ValueBinder $binder = null;
 
     public function setUp(): void

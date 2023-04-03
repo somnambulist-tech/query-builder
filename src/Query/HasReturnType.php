@@ -5,7 +5,7 @@ namespace Somnambulist\Components\QueryBuilder\Query;
 /**
  * Used for expressions that explicitly provide a return type
  */
-interface HasReturnTypeInterface
+interface HasReturnType
 {
     public function getReturnType(): string;
 }
