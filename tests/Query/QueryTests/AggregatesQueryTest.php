@@ -7,9 +7,6 @@ use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-/**
- * Tests AggregateExpression queries
- */
 class AggregatesQueryTest extends TestCase
 {
     use QueryCompilerBuilderTrait;
@@ -22,9 +19,6 @@ class AggregatesQueryTest extends TestCase
     {
     }
 
-    /**
-     * Tests filtering aggregate function rows.
-     */
     public function testFilters(): void
     {
         $compiler = $this->buildCompiler();

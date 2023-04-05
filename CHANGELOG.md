@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+2023-04-05
+----------
+
+ * strip unnecessary docblocks from test methods
+ * update readme
+
 2023-03-02
 ----------
 

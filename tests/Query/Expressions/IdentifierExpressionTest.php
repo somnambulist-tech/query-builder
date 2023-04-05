@@ -7,9 +7,6 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\IdentifierExpression;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-/**
- * Tests IdentifierExpression class
- */
 class IdentifierExpressionTest extends TestCase
 {
     use QueryCompilerBuilderTrait;
@@ -19,9 +16,6 @@ class IdentifierExpressionTest extends TestCase
         $this->registerTypeCaster();
     }
 
-    /**
-     * Tests getting and setting the field
-     */
     public function testGetAndSet(): void
     {
         $expression = new IdentifierExpression('foo');
@@ -30,18 +24,12 @@ class IdentifierExpressionTest extends TestCase
         $this->assertSame('bar', $expression->getIdentifier());
     }
 
-    /**
-     * Tests converting to sql
-     */
     public function testSQL(): void
     {
         $expression = new IdentifierExpression('foo');
         $this->assertSame('foo', $this->buildDelegatingCompiler()->compile($expression, new ValueBinder()));
     }
 
-    /**
-     * Tests setting collation.
-     */
     public function testCollation(): void
     {
         $expresssion = new IdentifierExpression('test', 'utf8_general_ci');

@@ -1228,6 +1228,7 @@ abstract class Query implements Expression
             if (empty($part)) {
                 continue;
             }
+
             if (is_array($part)) {
                 foreach ($part as $i => $piece) {
                     if (is_array($piece)) {
@@ -1243,6 +1244,7 @@ abstract class Query implements Expression
                     }
                 }
             }
+
             if ($part instanceof Expression) {
                 $this->parts[$name] = clone $part;
             }

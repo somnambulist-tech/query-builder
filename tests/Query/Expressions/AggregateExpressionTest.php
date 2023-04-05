@@ -9,18 +9,12 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\WindowExpression;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-/**
- * Tests FunctionExpression class
- */
 class AggregateExpressionTest extends FunctionExpressionTest
 {
     use QueryAssertsTrait;
 
     protected string $expressionClass = AggregateExpression::class;
 
-    /**
-     * Tests annotating an aggregate with an empty window expression
-     */
     public function testEmptyWindow(): void
     {
         $f = (new AggregateExpression('MyFunction'))->over();
@@ -33,9 +27,6 @@ class AggregateExpressionTest extends FunctionExpressionTest
         );
     }
 
-    /**
-     * Tests filter() clauses.
-     */
     public function testFilter(): void
     {
         $f = (new AggregateExpression('MyFunction'))->filter(['this' => new IdentifierExpression('that')]);
@@ -59,9 +50,6 @@ class AggregateExpressionTest extends FunctionExpressionTest
         );
     }
 
-    /**
-     * Tests WindowInterface calls are passed to the WindowExpression
-     */
     public function testWindowInterface(): void
     {
         $binder = new ValueBinder();
@@ -150,9 +138,6 @@ class AggregateExpressionTest extends FunctionExpressionTest
         );
     }
 
-    /**
-     * Tests traversing aggregate expressions.
-     */
     public function testTraverse(): void
     {
         $w = (new AggregateExpression('MyFunction'))
@@ -168,9 +153,6 @@ class AggregateExpressionTest extends FunctionExpressionTest
         $this->assertEquals(new WindowExpression(), $expressions[2]);
     }
 
-    /**
-     * Tests cloning aggregate expressions
-     */
     public function testCloning(): void
     {
         $a1 = (new AggregateExpression('MyFunction'))->partition('test');

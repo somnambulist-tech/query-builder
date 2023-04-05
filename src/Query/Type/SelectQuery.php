@@ -89,26 +89,28 @@ class SelectQuery extends Query
      *
      * @return $this
      */
-    public function select(Expression|Closure|array|string|float|int $fields = []): static
+    public function select(Expression|Closure|array|string|float|int ...$fields): static
     {
-        if ($fields instanceof Closure) {
-            $fields = $fields($this);
-        }
-
-        if (!is_array($fields)) {
-            $fields = [$fields];
-        }
-
-        $select = $this->parts['select'] ??= new SelectClauseExpression();
-
-        foreach ($fields as $k => $v) {
-            if (is_string($v) && str_contains(strtolower($v), ' as ')) {
-                // look for the last AS; this should ignore CAST(x AS y) strings
-                $k = trim(substr($v, strripos($v, ' as ') + 4));
-                $v = trim(substr($v, 0, strripos($v, ' as ')));
+        foreach ($fields as $field) {
+            if ($field instanceof Closure) {
+                $field = $field($this);
             }
 
-            $select->fields()->add(new FieldClauseExpression($v, is_numeric($k) ? null : $k));
+            if (!is_array($field)) {
+                $field = [$field];
+            }
+
+            $select = $this->parts['select'] ??= new SelectClauseExpression();
+
+            foreach ($field as $k => $v) {
+                if (is_string($v) && str_contains(strtolower($v), ' as ')) {
+                    // look for the last AS; this should ignore CAST(x AS y) strings
+                    $k = trim(substr($v, strripos($v, ' as ') + 4));
+                    $v = trim(substr($v, 0, strripos($v, ' as ')));
+                }
+
+                $select->fields()->add(new FieldClauseExpression($v, is_numeric($k) ? null : $k));
+            }
         }
 
         return $this;

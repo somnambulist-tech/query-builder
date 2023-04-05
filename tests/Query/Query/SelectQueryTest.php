@@ -31,9 +31,6 @@ use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function is_null;
 use function Somnambulist\Components\QueryBuilder\Resources\select;
 
-/**
- * Tests SelectQuery class
- */
 class SelectQueryTest extends TestCase
 {
     use QueryAssertsTrait;
@@ -51,9 +48,6 @@ class SelectQueryTest extends TestCase
         $this->compiler = null;
     }
 
-    /**
-     * Tests that it is possible to obtain expression results from a query
-     */
     public function testSelectFieldsOnly(): void
     {
         $query = new SelectQuery();
@@ -63,9 +57,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT 1 + 1', $sql);
     }
 
-    /**
-     * Tests that it is possible to pass a closure as fields in select()
-     */
     public function testSelectClosure(): void
     {
         $query = new SelectQuery();
@@ -80,9 +71,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT 1 + 2, 1 + 5', $sql);
     }
 
-    /**
-     * Tests it is possible to select fields from tables with no conditions
-     */
     public function testSelectFieldsFromTable(): void
     {
         $query = new SelectQuery();
@@ -107,9 +95,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT name FROM authors ORDER BY name DESC', $sql);
     }
 
-    /**
-     * Tests it is possible to select aliased fields
-     */
     public function testSelectAliasedFieldsFromTable(): void
     {
         $query = new SelectQuery();
@@ -160,9 +145,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT cast(to_char(reporting_month, \'YYYY\') AS integer) AS quarter FROM reports', $sql);
     }
 
-    /**
-     * Tests that tables can also be aliased and referenced in the select clause using such alias
-     */
     public function testSelectAliasedTables(): void
     {
         $query = new SelectQuery();
@@ -173,9 +155,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT a.body AS text, a.author_id FROM articles a', $sql);
     }
 
-    /**
-     * Tests it is possible to add joins to a select query
-     */
     public function testSelectWithJoins(): void
     {
         $query = new SelectQuery();
@@ -203,9 +182,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT title, name FROM articles INNER JOIN authors ON author_id = authors.id ORDER BY title ASC', $sql);
     }
 
-    /**
-     * Tests it is possible to add joins to a select query using array or expression as conditions
-     */
     public function testSelectWithJoinsConditions(): void
     {
         $query = new SelectQuery();
@@ -223,9 +199,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT title, c.comment AS comment FROM articles INNER JOIN comments c ON created = :c_0', $sql);
     }
 
-    /**
-     * Tests that joins can be aliased using array keys
-     */
     public function testSelectAliasedJoins(): void
     {
         $query = select(['title', 'comment' => 'c.comment'])
@@ -238,9 +211,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT title, c.comment AS comment FROM articles INNER JOIN comments c ON 1 = 1', $sql);
     }
 
-    /**
-     * Tests the leftJoin method
-     */
     public function testSelectLeftJoin(): void
     {
         $query = select(['title', 'comment' => 'c.comment'])
@@ -253,9 +223,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT title, c.comment AS comment FROM articles LEFT JOIN comments c ON 1 = 1', $sql);
     }
 
-    /**
-     * Tests the innerJoin method
-     */
     public function testSelectInnerJoin(): void
     {
         $query = select(['title', 'comment' => 'c.comment'])
@@ -268,9 +235,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT title, c.comment AS comment FROM articles INNER JOIN comments c ON 1 = 1', $sql);
     }
 
-    /**
-     * Tests the rightJoin method
-     */
     public function testSelectRightJoin(): void
     {
         $query = select(['title', 'comment' => 'c.comment'])
@@ -283,9 +247,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT title, c.comment AS comment FROM articles RIGHT JOIN comments c ON 1 = 1', $sql);
     }
 
-    /**
-     * Tests that it is possible to pass a callable as conditions for a join
-     */
     public function testSelectJoinWithCallback(): void
     {
         $query = new SelectQuery();
@@ -305,9 +266,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT title, c.comment AS name FROM articles INNER JOIN comments c ON created < :c_0', $sql);
     }
 
-    /**
-     * Tests that it is possible to pass a callable as conditions for a join
-     */
     public function testSelectJoinWithCallback2(): void
     {
         $query = new SelectQuery();
@@ -328,9 +286,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT name, comments.comment AS commentary FROM authors INNER JOIN comments ON created = :c_0', $sql);
     }
 
-    /**
-     * Tests it is possible to filter a query by using simple AND joined conditions
-     */
     public function testSelectSimpleWhere(): void
     {
         $query = new SelectQuery();
@@ -356,9 +311,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT title FROM articles WHERE id = :c_0', $sql);
     }
 
-    /**
-     * Tests using where conditions with operators and scalar values works
-     */
     public function testSelectWhereOperatorMoreThan(): void
     {
         $query = new SelectQuery();
@@ -373,9 +325,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT comment FROM comments WHERE id > :c_0', $sql);
     }
 
-    /**
-     * Tests using where conditions with operators and scalar values works
-     */
     public function testSelectWhereOperatorLessThan(): void
     {
         $query = new SelectQuery();
@@ -390,9 +339,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT comment FROM comments WHERE id < :c_0', $sql);
     }
 
-    /**
-     * Tests using where conditions with operators and scalar values works
-     */
     public function testSelectWhereOperatorLessThanEqual(): void
     {
         $query = new SelectQuery();
@@ -407,9 +353,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT comment FROM comments WHERE id <= :c_0', $sql);
     }
 
-    /**
-     * Tests using where conditions with operators and scalar values works
-     */
     public function testSelectWhereOperatorMoreThanEqual(): void
     {
         $query = new SelectQuery();
@@ -424,9 +367,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT comment FROM comments WHERE id >= :c_0', $sql);
     }
 
-    /**
-     * Tests using where conditions with operators and scalar values works
-     */
     public function testSelectWhereOperatorNotEqual(): void
     {
         $query = new SelectQuery();
@@ -441,9 +381,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT comment FROM comments WHERE id != :c_0', $sql);
     }
 
-    /**
-     * Tests using where conditions with operators and scalar values works
-     */
     public function testSelectWhereOperatorLike(): void
     {
         $query = new SelectQuery();
@@ -458,9 +395,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT title FROM articles WHERE title LIKE :c_0', $sql);
     }
 
-    /**
-     * Tests using where conditions with operators and scalar values works
-     */
     public function testSelectWhereOperatorLikeExpansion(): void
     {
         $query = new SelectQuery();
@@ -475,9 +409,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT title FROM articles WHERE title LIKE :c_0', $sql);
     }
 
-    /**
-     * Tests using where conditions with operators and scalar values works
-     */
     public function testSelectWhereOperatorNotLike(): void
     {
         $query = new SelectQuery();
@@ -492,9 +423,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT title FROM articles WHERE title NOT LIKE :c_0', $sql);
     }
 
-    /**
-     * Test that unary expressions in selects are built correctly.
-     */
     public function testSelectWhereUnary(): void
     {
         $query = new SelectQuery();
@@ -515,9 +443,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests selecting with conditions and specifying types for those
-     */
     public function testSelectWhereTypes(): void
     {
         $query = new SelectQuery();
@@ -539,9 +464,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE (created > :c_0 AND created < :c_1)', $sql);
     }
 
-    /**
-     * Tests Query::whereNull()
-     */
     public function testSelectWhereNull(): void
     {
         $query = new SelectQuery();
@@ -578,9 +500,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id, parent_id FROM menu_link_trees WHERE (parent_id) IS NULL', $sql);
     }
 
-    /**
-     * Tests Query::whereNotNull()
-     */
     public function testSelectWhereNotNull(): void
     {
         $query = new SelectQuery();
@@ -617,10 +536,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM menu_link_trees WHERE (parent_id) IS NOT NULL', $sql);
     }
 
-    /**
-     * Tests that passing an array type to any where condition will replace
-     * the passed array accordingly as a proper IN condition
-     */
     public function testSelectWhereArrayType(): void
     {
         $query = new SelectQuery();
@@ -635,11 +550,7 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE id IN (:c_0,:c_1)', $sql);
     }
 
-    /**
-     * Tests that passing an empty array type to any where condition will not
-     * result in a SQL error, but an internal exception
-     */
-    public function testSelectWhereArrayTypeEmpty(): void
+    public function testSelectWhereArrayTypeEmptyRaisesException(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Impossible to generate condition with empty list of values for field');
@@ -654,9 +565,6 @@ class SelectQueryTest extends TestCase
         $this->compiler->compile($query, new ValueBinder());
     }
 
-    /**
-     * Tests exception message for impossible condition when using an expression
-     */
     public function testSelectWhereArrayTypeEmptyWithExpression(): void
     {
         $this->expectException(Exception::class);
@@ -674,9 +582,6 @@ class SelectQueryTest extends TestCase
         $this->compiler->compile($query, new ValueBinder());
     }
 
-    /**
-     * Tests that Query::andWhere() can be used to concatenate conditions with AND
-     */
     public function testSelectAndWhere(): void
     {
         $query = new SelectQuery();
@@ -704,9 +609,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE (created = :c_0 AND id = :c_1)', $sql);
     }
 
-    /**
-     * Tests that Query::andWhere() can be used to concatenate conditions with AND
-     */
     public function testSelectOrWhere(): void
     {
         $query = new SelectQuery();
@@ -734,9 +636,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE (created = :c_0 OR id = :c_1)', $sql);
     }
 
-    /**
-     * Tests that Query::andWhere() can be used without calling where() before
-     */
     public function testSelectAndWhereNoPreviousCondition(): void
     {
         $query = new SelectQuery();
@@ -752,9 +651,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE (created = :c_0 AND id = :c_1)', $sql);
     }
 
-    /**
-     * Tests that Query::andWhere() can be used without calling where() before
-     */
     public function testSelectOrWhereNoPreviousCondition(): void
     {
         $query = new SelectQuery();
@@ -770,10 +666,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE (created = :c_0 OR id = :c_1)', $sql);
     }
 
-    /**
-     * Tests that it is possible to pass a closure to where() to build a set of
-     * conditions and return the expression to be used
-     */
     public function testSelectWhereUsingClosure(): void
     {
         $query = new SelectQuery();
@@ -822,9 +714,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE (id = :c_0 AND created = :c_1)', $sql);
     }
 
-    /**
-     * Tests generating tuples in the values side containing closure expressions
-     */
     public function testTupleWithClosureExpression(): void
     {
         $query = new SelectQuery();
@@ -847,10 +736,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests that it is possible to pass a closure to andWhere() to build a set of
-     * conditions and return the expression to be used
-     */
     public function testSelectAndWhereUsingClosure(): void
     {
         $query = new SelectQuery();
@@ -882,10 +767,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE (id = :c_0 AND created = :c_1)', $sql);
     }
 
-    /**
-     * Tests that expression objects can be used as the field in a comparison
-     * and the values will be bound correctly to the query
-     */
     public function testSelectWhereUsingExpressionInField(): void
     {
         $query = new SelectQuery();
@@ -924,8 +805,6 @@ class SelectQueryTest extends TestCase
     }
 
     /**
-     * Tests using where conditions with operator methods
-     *
      * @dataProvider methodProvider
      */
     public function testSelectWhereOperatorMethods(string $method, string $operator, mixed $value): void
@@ -947,9 +826,6 @@ class SelectQueryTest extends TestCase
         $this->assertQueryStartsWith(sprintf('SELECT title FROM articles WHERE %s %s', $field, $operator), $sql);
     }
 
-    /**
-     * Tests that IN clauses generate correct placeholders
-     */
     public function testInClausePlaceholderGeneration(): void
     {
         $query = new SelectQuery();
@@ -968,9 +844,6 @@ class SelectQueryTest extends TestCase
         $this->assertSame('c_1', $bindings[':c_1']->placeholder);
     }
 
-    /**
-     * Tests where() with callable types.
-     */
     public function testWhereCallables(): void
     {
         $query = new SelectQuery();
@@ -992,9 +865,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests that empty values don't set where clauses.
-     */
     public function testWhereEmptyValues(): void
     {
         $query = new SelectQuery();
@@ -1006,9 +876,6 @@ class SelectQueryTest extends TestCase
         $this->assertCount(0, $query->clause('where'));
     }
 
-    /**
-     * Tests that it is possible to use a between expression in a where condition
-     */
     public function testWhereWithBetween(): void
     {
         $query = new SelectQuery();
@@ -1025,9 +892,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE id BETWEEN :c_0 AND :c_1', $sql);
     }
 
-    /**
-     * Tests that it is possible to use a between expression in a where condition with a complex data type
-     */
     public function testWhereWithBetweenComplex(): void
     {
         $query = new SelectQuery();
@@ -1047,9 +911,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE created BETWEEN :c_0 AND :c_1', $sql);
     }
 
-    /**
-     * Tests that it is possible to use an expression object as the field for a between expression
-     */
     public function testWhereWithBetweenWithExpressionField(): void
     {
         $query = new SelectQuery();
@@ -1068,9 +929,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE COALESCE(id, 1) BETWEEN :c_0 AND :c_1', $sql);
     }
 
-    /**
-     * Tests that it is possible to use an expression object as any of the parts of the between expression
-     */
     public function testWhereWithBetweenWithExpressionParts(): void
     {
         $query = new SelectQuery();
@@ -1090,9 +948,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE created BETWEEN \'2007-03-18 10:51:00\' AND \'2007-03-18 10:54:00\'', $sql);
     }
 
-    /**
-     * Tests nesting query expressions both using arrays and closures
-     */
     public function testSelectExpressionComposition(): void
     {
         $query = new SelectQuery();
@@ -1159,10 +1014,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE (id = :c_0 OR id = :c_1)', $sql);
     }
 
-    /**
-     * Tests that conditions can be nested with a unary operator using the array notation
-     * and the not() method
-     */
     public function testSelectWhereNot(): void
     {
         $query = new SelectQuery();
@@ -1196,10 +1047,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM comments WHERE NOT ((id = :c_0 AND created = :c_1))', $sql);
     }
 
-    /**
-     * Tests that conditions can be nested with a unary operator using the array notation
-     * and the not() method
-     */
     public function testSelectWhereNot2(): void
     {
         $query = new SelectQuery();
@@ -1216,9 +1063,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM articles WHERE NOT (((id = :c_0 OR id > :c_1) AND id = :c_2))', $sql);
     }
 
-    /**
-     * Tests whereInArray() and its input types.
-     */
     public function testWhereInArray(): void
     {
         $query = new SelectQuery();
@@ -1236,9 +1080,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests whereInArray() and empty array input.
-     */
     public function testWhereInArrayEmpty(): void
     {
         $query = new SelectQuery();
@@ -1254,9 +1095,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests whereNotInList() and its input types.
-     */
     public function testWhereNotInList(): void
     {
         $query = new SelectQuery();
@@ -1272,9 +1110,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests whereNotInList() and empty array input.
-     */
     public function testWhereNotInListEmpty(): void
     {
         $query = new SelectQuery();
@@ -1290,9 +1125,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests whereNotInListOrNull() and its input types.
-     */
     public function testWhereNotInListOrNull(): void
     {
         $query = new SelectQuery();
@@ -1308,9 +1140,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests whereNotInListOrNull() and empty array input.
-     */
     public function testWhereNotInListOrNullEmpty(): void
     {
         $query = new SelectQuery();
@@ -1326,9 +1155,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests orderBy() method both with simple fields and expressions
-     */
     public function testSelectOrderBy(): void
     {
         $query = new SelectQuery();
@@ -1369,9 +1195,6 @@ class SelectQueryTest extends TestCase
         $this->assertQueryContains('ORDER BY \(id \+ \:offset\) % 2, id desc$', $sql);
     }
 
-    /**
-     * Test that orderBy() being a string works.
-     */
     public function testSelectOrderByString(): void
     {
         $query = new SelectQuery();
@@ -1386,9 +1209,6 @@ class SelectQueryTest extends TestCase
         $this->assertQueryContains('ORDER BY id asc', $sql);
     }
 
-    /**
-     * Test exception for orderBy() with an associative array which contains extra values.
-     */
     public function testSelectOrderByAssociativeArrayContainingExtraExpressions(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -1411,9 +1231,6 @@ class SelectQueryTest extends TestCase
         ;
     }
 
-    /**
-     * Tests that orderBy() works with closures.
-     */
     public function testSelectOrderByClosure(): void
     {
         $query = new SelectQuery();
@@ -1499,10 +1316,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests that group by fields can be passed similar to select fields
-     * and that it sends the correct query to the database
-     */
     public function testSelectGroupBy(): void
     {
         $query = new SelectQuery();
@@ -1519,9 +1332,6 @@ class SelectQueryTest extends TestCase
         $this->assertQueryContains('GROUP BY author_id ORDER BY total desc$', $sql);
     }
 
-    /**
-     * Tests that it is possible to select distinct rows
-     */
     public function testSelectDistinct(): void
     {
         $query = new SelectQuery();
@@ -1536,9 +1346,6 @@ class SelectQueryTest extends TestCase
         $this->assertQueryContains('SELECT DISTINCT author_id', $sql);
     }
 
-    /**
-     * Tests distinct on a specific column reduces rows based on that column.
-     */
     public function testSelectDistinctON(): void
     {
         $query = new SelectQuery();
@@ -1554,9 +1361,6 @@ class SelectQueryTest extends TestCase
         $this->assertQueryContains('SELECT DISTINCT ON \(author_id\)', $sql);
     }
 
-    /**
-     * Test use of modifiers in the query
-     */
     public function testSelectModifiers(): void
     {
         $query = new SelectQuery();
@@ -1621,9 +1425,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests that having() behaves pretty much the same as the where() method
-     */
     public function testSelectHaving(): void
     {
         $query = new SelectQuery();
@@ -1651,10 +1452,6 @@ class SelectQueryTest extends TestCase
         $this->assertQueryContains('HAVING count\(author_id\) \= 1 \+ 1', $sql);
     }
 
-    /**
-     * Tests that Query::andHaving() can be used to concatenate conditions with AND
-     * in the having clause
-     */
     public function testSelectAndHaving(): void
     {
         $query = new SelectQuery();
@@ -1683,9 +1480,6 @@ class SelectQueryTest extends TestCase
         $this->assertStringEndsWith('HAVING count(author_id) = 2 - 1', $sql);
     }
 
-    /**
-     * Test having casing with string expressions
-     */
     public function testHavingAliasCasingStringExpression(): void
     {
         $query = new SelectQuery();
@@ -1707,9 +1501,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests selecting rows using a limit clause
-     */
     public function testSelectLimit(): void
     {
         $query = new SelectQuery();
@@ -1718,9 +1509,6 @@ class SelectQueryTest extends TestCase
         $this->assertStringEndsWith('LIMIT 1', $sql);
     }
 
-    /**
-     * Tests selecting rows combining a limit and offset clause
-     */
     public function testSelectOffset(): void
     {
         $query = new SelectQuery();
@@ -1729,9 +1517,6 @@ class SelectQueryTest extends TestCase
         $this->assertStringEndsWith('LIMIT 1 OFFSET 0', $sql);
     }
 
-    /**
-     * Test Pages number.
-     */
     public function testPageShouldStartAtOne(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -1741,9 +1526,6 @@ class SelectQueryTest extends TestCase
         $query->from('comments')->page(0);
     }
 
-    /**
-     * Test selecting rows using the page() method.
-     */
     public function testSelectPage(): void
     {
         $query = new SelectQuery();
@@ -1771,10 +1553,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals(25, $query->clause('offset'));
     }
 
-    /**
-     * Tests that Query objects can be included inside the select clause
-     * and be used as a normal field, including binding any passed parameter
-     */
     public function testSubqueryInSelect(): void
     {
         $query = new SelectQuery();
@@ -1792,10 +1570,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id, (SELECT name FROM authors b WHERE b.id = a.id) AS name FROM comments a', $sql);
     }
 
-    /**
-     * Tests that Query objects can be included inside the from clause
-     * and be used as a normal table, including binding any passed parameter
-     */
     public function testSuqueryInFrom(): void
     {
         $query = new SelectQuery();
@@ -1815,10 +1589,6 @@ class SelectQueryTest extends TestCase
         $this->assertCount(2, $b);
     }
 
-    /**
-     * Tests that Query objects can be included inside the where clause
-     * and be used as a normal condition, including binding any passed parameter
-     */
     public function testSubqueryInWhere(): void
     {
         $query = new SelectQuery();
@@ -1854,10 +1624,6 @@ class SelectQueryTest extends TestCase
         $this->assertCount(1, $b);
     }
 
-    /**
-     * Tests that Query objects can be included inside the where clause
-     * and be used as a EXISTS and NOT EXISTS conditions
-     */
     public function testSubqueryExistsWhere(): void
     {
         $query = new SelectQuery();
@@ -1899,9 +1665,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT id FROM authors WHERE NOT EXISTS (SELECT id FROM articles WHERE authors.id = articles.author_id)', $sql);
     }
 
-    /**
-     * Tests that it is possible to use a subquery in a join clause
-     */
     public function testSubqueryInJoin(): void
     {
         $subquery = (new SelectQuery())->select('*')->from('authors');
@@ -1923,9 +1686,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT title, name FROM articles INNER JOIN (SELECT * FROM authors) a ON b.id = articles.id', $sql);
     }
 
-    /**
-     * Tests that it is possible to one or multiple UNION statements in a query
-     */
     public function testUnion(): void
     {
         $union = (new SelectQuery())->select(['id', 'title'])->from('articles', 'a');
@@ -1967,9 +1727,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals("(SELECT id, comment FROM comments c)\nUNION (SELECT id, title FROM articles c)", $sql);
     }
 
-    /**
-     * Tests that it is possible to add one or multiple INTERSECT statements in a query
-     */
     public function testIntersect(): void
     {
         $intersect = (new SelectQuery())->select(['id', 'title'])->from('articles', 'a');
@@ -2011,9 +1768,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals("(SELECT id, comment FROM comments c)\nINTERSECT (SELECT id, title FROM articles c)", $sql);
     }
 
-    /**
-     * Tests that it is possible to add one or multiple EXCEPT statements in a query
-     */
     public function testExcept(): void
     {
         $except = (new SelectQuery())->select(['id', 'title'])->from('articles', 'a');
@@ -2055,9 +1809,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals("(SELECT id, comment FROM comments c)\nEXCEPT (SELECT id, title FROM articles c)", $sql);
     }
 
-    /**
-     * Tests that it is possible to run unions with order by statements
-     */
     public function testUnionOrderBy(): void
     {
         $union = (new SelectQuery())
@@ -2077,9 +1828,6 @@ class SelectQueryTest extends TestCase
         $this->assertQueryContains('ORDER BY c.id', $sql);
     }
 
-    /**
-     * Tests that UNION ALL can be built
-     */
     public function testUnionAll(): void
     {
         $union = (new SelectQuery())->select(['id', 'title'])->from('articles', 'a');
@@ -2105,8 +1853,6 @@ class SelectQueryTest extends TestCase
     }
 
     /**
-     * Tests that functions are correctly transformed and their parameters are bound
-     *
      * @group FunctionExpression
      */
     public function testSQLFunctions(): void
@@ -2184,9 +1930,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests parameter binding
-     */
     public function testBind(): void
     {
         $query = new SelectQuery();
@@ -2203,9 +1946,6 @@ class SelectQueryTest extends TestCase
         $this->assertArrayHasKey(':bar', $query->getBinder()->bindings());
     }
 
-    /**
-     * Test that epilog() will actually append a string to a select query
-     */
     public function testAppendSelect(): void
     {
         $query = new SelectQuery();
@@ -2223,9 +1963,6 @@ class SelectQueryTest extends TestCase
         $this->assertSame(' FOR UPDATE', substr($sql, -11));
     }
 
-    /**
-     * Tests that it is possible to pass ExpressionInterface to isNull and isNotNull
-     */
     public function testIsNullWithExpressions(): void
     {
         $query = new SelectQuery();
@@ -2256,10 +1993,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals('SELECT name FROM authors WHERE (SELECT id FROM authors WHERE id = :c_0) IS NULL', $sql);
     }
 
-    /**
-     * Tests that using the IS operator will automatically translate to the best
-     * possible operator depending on the passed value
-     */
     public function testDirectIsNull(): void
     {
         $query = (new SelectQuery())
@@ -2280,10 +2013,6 @@ class SelectQueryTest extends TestCase
         $this->assertQueryContains('WHERE name = :c_0', $sql);
     }
 
-    /**
-     * Tests that using the wrong NULL operator will throw meaningful exception instead of
-     * cloaking as always-empty result set.
-     */
     public function testIsNullInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -2297,10 +2026,6 @@ class SelectQueryTest extends TestCase
         $this->compiler->compile($query, new ValueBinder());
     }
 
-    /**
-     * Tests that using the wrong NULL operator will throw meaningful exception instead of
-     * cloaking as always-empty result set.
-     */
     public function testIsNotNullInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -2312,10 +2037,6 @@ class SelectQueryTest extends TestCase
         ;
     }
 
-    /**
-     * Tests that using the IS NOT operator will automatically translate to the best
-     * possible operator depending on the passed value
-     */
     public function testDirectIsNotNull(): void
     {
         $query = (new SelectQuery())
@@ -2596,9 +2317,6 @@ class SelectQueryTest extends TestCase
         $this->assertNotSame($clause, $clauseClone);
     }
 
-    /**
-     * Test that cloning goes deep.
-     */
     public function testDeepClone(): void
     {
         $query = new SelectQuery();
@@ -2627,9 +2345,6 @@ class SelectQueryTest extends TestCase
         $this->assertNotEquals($query->clause('order'), $dupe->clause('order'));
     }
 
-    /**
-     * Test removeJoin().
-     */
     public function testRemoveJoin(): void
     {
         $query = new SelectQuery();
@@ -2644,9 +2359,6 @@ class SelectQueryTest extends TestCase
         $this->assertFalse($query->clause('join')->has('authors'));
     }
 
-    /**
-     * Tests that query expressions can be used for ordering.
-     */
     public function testOrderBySubquery(): void
     {
         $subquery = new SelectQuery();
@@ -2677,9 +2389,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Test that reusing expressions will duplicate bindings
-     */
     public function testReusingExpressions(): void
     {
         $query = new SelectQuery();
@@ -2732,9 +2441,6 @@ class SelectQueryTest extends TestCase
         $this->assertArrayHasKey(':c_2', $b->bindings());
     }
 
-    /**
-     * Tests creating StringExpression.
-     */
     public function testStringExpression(): void
     {
         $collation = 'en_US.utf8';
@@ -2747,9 +2453,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals($expected, $this->compiler->compile($query, new ValueBinder()));
     }
 
-    /**
-     * Tests setting identifier collation.
-     */
     public function testIdentifierCollation(): void
     {
         $collation = 'en_US.utf8';
@@ -2765,10 +2468,6 @@ class SelectQueryTest extends TestCase
         $this->assertQueryContains($expected, $this->compiler->compile($query, new ValueBinder()));
     }
 
-    /**
-     * Simple expressions from the point of view of the query expression
-     * object are expressions where the field contains one space at most.
-     */
     public function testOperatorsInSimpleConditionsAreCaseInsensitive(): void
     {
         $query = (new SelectQuery())
@@ -2794,10 +2493,6 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    /**
-     * Complex expressions from the point of view of the query expression
-     * object are expressions where the field contains multiple spaces.
-     */
     public function testOperatorsInComplexConditionsAreCaseInsensitive(): void
     {
         $query = (new SelectQuery())

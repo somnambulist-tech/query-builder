@@ -22,9 +22,6 @@ class FunctionsBuilderTest extends TestCase
         $this->functions = new FunctionsBuilder();
     }
 
-    /**
-     * Tests generating a generic function call
-     */
     public function testArbitrary(): void
     {
         $function = $this->functions->MyFunc(['b' => 'literal']);
@@ -35,9 +32,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('integer', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a generic aggregate call
-     */
     public function testArbitraryAggregate(): void
     {
         $function = $this->functions->aggregate('MyFunc', ['b' => 'literal']);
@@ -48,9 +42,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('integer', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a SUM() function
-     */
     public function testSum(): void
     {
         $function = $this->functions->sum('total');
@@ -62,9 +53,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('integer', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a AVG() function
-     */
     public function testAvg(): void
     {
         $function = $this->functions->avg('salary');
@@ -72,9 +60,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('float', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a MAX() function
-     */
     public function testMax(): void
     {
         $function = $this->functions->max('total');
@@ -86,9 +71,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('datetime', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a MIN() function
-     */
     public function testMin(): void
     {
         $function = $this->functions->min('created', ['date']);
@@ -96,9 +78,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('date', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a COUNT() function
-     */
     public function testCount(): void
     {
         $function = $this->functions->count('*');
@@ -106,9 +85,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('integer', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a CONCAT() function
-     */
     public function testConcat(): void
     {
         $function = $this->functions->concat(['title' => 'literal', ' is a string']);
@@ -116,9 +92,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('string', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a COALESCE() function
-     */
     public function testCoalesce(): void
     {
         $function = $this->functions->coalesce(['NULL' => 'literal', '1', 'a'], ['a' => 'date']);
@@ -126,9 +99,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('date', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a CAST() function
-     */
     public function testCast(): void
     {
         $function = $this->functions->cast('field', 'varchar');
@@ -140,9 +110,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('string', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a NOW(), CURRENT_TIME() and CURRENT_DATE() function
-     */
     public function testNow(): void
     {
         $function = $this->functions->now();
@@ -158,9 +125,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('time', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a EXTRACT() function
-     */
     public function testExtract(): void
     {
         $function = $this->functions->extract('day', 'created');
@@ -172,9 +136,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('integer', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a DATE_ADD() function
-     */
     public function testDateAdd(): void
     {
         $function = $this->functions->dateAdd('created', -3, 'day');
@@ -185,9 +146,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertInstanceOf(FunctionExpression::class, $function);
     }
 
-    /**
-     * Tests generating a DAYOFWEEK() function
-     */
     public function testDayOfWeek(): void
     {
         $function = $this->functions->dayOfWeek('created');
@@ -199,9 +157,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('integer', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a RAND() function
-     */
     public function testRand(): void
     {
         $function = $this->functions->rand();
@@ -209,9 +164,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('float', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a ROW_NUMBER() window function
-     */
     public function testRowNumber(): void
     {
         $function = $this->functions->rowNumber();
@@ -219,9 +171,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('integer', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a LAG() window function
-     */
     public function testLag(): void
     {
         $function = $this->functions->lag('field', 1);
@@ -233,9 +182,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('integer', $function->getReturnType());
     }
 
-    /**
-     * Tests generating a LEAD() window function
-     */
     public function testLead(): void
     {
         $function = $this->functions->lead('field', 1);

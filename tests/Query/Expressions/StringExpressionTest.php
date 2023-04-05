@@ -7,9 +7,6 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\StringExpression;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-/**
- * Tests StringExpression class
- */
 class StringExpressionTest extends TestCase
 {
     use QueryCompilerBuilderTrait;

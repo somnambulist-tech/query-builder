@@ -10,9 +10,6 @@ use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-/**
- * Tests Query class
- */
 class QueryCompilerTest extends TestCase
 {
     use QueryAssertsTrait;

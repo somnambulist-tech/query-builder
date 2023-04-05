@@ -10,17 +10,11 @@ use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-/**
- * Tests Comparison class
- */
 class ComparisonExpressionTest extends TestCase
 {
     use QueryAssertsTrait;
     use QueryCompilerBuilderTrait;
     
-    /**
-     * Test sql generation using IdentifierExpression
-     */
     public function testIdentifiers(): void
     {
         $this->registerTypeCaster();
@@ -42,9 +36,6 @@ class ComparisonExpressionTest extends TestCase
         $this->assertEqualsSql('field = other_field', $compiler->compile($expr, new ValueBinder()));
     }
 
-    /**
-     * Tests that cloning Comparison instance clones value and field expressions.
-     */
     public function testClone(): void
     {
         $exp = new ComparisonExpression(new QueryExpression('field1'), 1, 'integer', '<');

@@ -28,9 +28,6 @@ class CommonTableExpressionTest extends TestCase
         $this->compiler = null;
     }
 
-    /**
-     * Tests constructing CommonTableExpressions.
-     */
     public function testCteConstructor(): void
     {
         $cte = new CommonTableExpression('test', select());
@@ -42,9 +39,6 @@ class CommonTableExpressionTest extends TestCase
         $this->assertEqualsSql('test AS ()', $this->compiler->compile($cte, new ValueBinder()));
     }
 
-    /**
-     * Tests setting fields.
-     */
     public function testFields(): void
     {
         $cte = (new CommonTableExpression('test', select()))
@@ -53,9 +47,6 @@ class CommonTableExpressionTest extends TestCase
         $this->assertEqualsSql('test(col1, col2) AS ()', $this->compiler->compile($cte, new ValueBinder()));
     }
 
-    /**
-     * Tests setting CTE materialized
-     */
     public function testMaterialized(): void
     {
         $cte = (new CommonTableExpression('test', select()))
@@ -66,9 +57,6 @@ class CommonTableExpressionTest extends TestCase
         $this->assertEqualsSql('test AS NOT MATERIALIZED ()', $this->compiler->compile($cte, new ValueBinder()));
     }
 
-    /**
-     * Tests setting CTE as recursive.
-     */
     public function testRecursive(): void
     {
         $cte = (new CommonTableExpression('test', select()))
@@ -76,9 +64,6 @@ class CommonTableExpressionTest extends TestCase
         $this->assertTrue($cte->isRecursive());
     }
 
-    /**
-     * Tests setting query using closures.
-     */
     public function testQueryClosures(): void
     {
         $cte = new CommonTableExpression('test', function () {
@@ -92,9 +77,6 @@ class CommonTableExpressionTest extends TestCase
         $this->assertEqualsSql('test AS (SELECT 1)', $this->compiler->compile($cte, new ValueBinder()));
     }
 
-    /**
-     * Tests traversing CommonTableExpression.
-     */
     public function testTraverse(): void
     {
         $query = select('1');
@@ -110,9 +92,6 @@ class CommonTableExpressionTest extends TestCase
         $this->assertEquals($query, $expressions[2]);
     }
 
-    /**
-     * Tests cloning CommonTableExpression
-     */
     public function testClone(): void
     {
         $cte = new CommonTableExpression('test', function () {

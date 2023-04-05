@@ -10,9 +10,6 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\TupleComparison;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-/**
- * Tests TupleComparison class
- */
 class TupleComparisonTest extends TestCase
 {
     use QueryCompilerBuilderTrait;
@@ -31,9 +28,6 @@ class TupleComparisonTest extends TestCase
         $this->compiler = null;
     }
 
-    /**
-     * Tests generating a function with no arguments
-     */
     public function testsSimpleTuple(): void
     {
         $f = new TupleComparison(['field1', 'field2'], [1, 2], ['integer', 'integer'], '=');
@@ -45,9 +39,6 @@ class TupleComparisonTest extends TestCase
         $this->assertSame('integer', $binder->bindings()[':tuple_1']->type);
     }
 
-    /**
-     * Tests generating tuples in the fields side containing expressions
-     */
     public function testTupleWithExpressionFields(): void
     {
         $field1 = new QueryExpression(['a' => 1]);
@@ -59,9 +50,6 @@ class TupleComparisonTest extends TestCase
         $this->assertSame(5, $binder->bindings()[':tuple_2']->value);
     }
 
-    /**
-     * Tests generating tuples in the values side containing expressions
-     */
     public function testTupleWithExpressionValues(): void
     {
         $value1 = new QueryExpression(['a' => 1]);
@@ -72,9 +60,6 @@ class TupleComparisonTest extends TestCase
         $this->assertSame(2, $binder->bindings()[':tuple_1']->value);
     }
 
-    /**
-     * Tests generating tuples using the IN conjunction
-     */
     public function testTupleWithInComparison(): void
     {
         $f = new TupleComparison(
@@ -91,9 +76,6 @@ class TupleComparisonTest extends TestCase
         $this->assertSame(4, $binder->bindings()[':tuple_3']->value);
     }
 
-    /**
-     * Tests traversing
-     */
     public function testTraverse(): void
     {
         $value1 = new QueryExpression(['a' => 1]);
@@ -123,10 +105,6 @@ class TupleComparisonTest extends TestCase
         $this->assertSame($value1, $expressions[2]);
     }
 
-    /**
-     * Tests that a single ExpressionInterface can be used as the value for
-     * comparison
-     */
     public function testValueAsSingleExpression(): void
     {
         $value = new QueryExpression('SELECT 1, 1');
@@ -135,10 +113,6 @@ class TupleComparisonTest extends TestCase
         $this->assertSame('(field1, field2) = (SELECT 1, 1)', $this->compiler->compile($f, $binder));
     }
 
-    /**
-     * Tests that a single ExpressionInterface can be used as the field for
-     * comparison
-     */
     public function testFieldAsSingleExpression(): void
     {
         $value = [1, 1];

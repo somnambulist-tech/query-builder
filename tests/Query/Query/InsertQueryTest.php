@@ -13,9 +13,6 @@ use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-/**
- * Tests InsertQuery class
- */
 class InsertQueryTest extends TestCase
 {
     use QueryAssertsTrait;
@@ -33,9 +30,6 @@ class InsertQueryTest extends TestCase
         $this->compiler = null;
     }
 
-    /**
-     * You cannot call values() before insert() it causes all sorts of pain.
-     */
     public function testInsertValuesBeforeInsertFailure(): void
     {
         $this->expectException(Exception::class);
@@ -47,9 +41,6 @@ class InsertQueryTest extends TestCase
         ]);
     }
 
-    /**
-     * Inserting nothing should not generate an error.
-     */
     public function testInsertNothing(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -58,9 +49,6 @@ class InsertQueryTest extends TestCase
         $query->insert([]);
     }
 
-    /**
-     * Test insert() with no into()
-     */
     public function testInsertNoInto(): void
     {
         $this->expectException(Exception::class);
@@ -71,9 +59,6 @@ class InsertQueryTest extends TestCase
         $this->compiler->compile($query, new ValueBinder());
     }
 
-    /**
-     * Test insert overwrites values
-     */
     public function testInsertOverwritesValues(): void
     {
         $query = new InsertQuery();
@@ -95,9 +80,6 @@ class InsertQueryTest extends TestCase
         );
     }
 
-    /**
-     * Test inserting a single row.
-     */
     public function testInsertSimple(): void
     {
         $query = new InsertQuery();
@@ -115,9 +97,6 @@ class InsertQueryTest extends TestCase
         );
     }
 
-    /**
-     * Test insert queries quote integer column names
-     */
     public function testInsertQuoteColumns(): void
     {
         $query = new InsertQuery();
@@ -134,10 +113,6 @@ class InsertQueryTest extends TestCase
         );
     }
 
-    /**
-     * Test an insert when not all the listed fields are provided.
-     * Columns should be matched up where possible.
-     */
     public function testInsertSparseRow(): void
     {
         $query = new InsertQuery();
@@ -154,9 +129,6 @@ class InsertQueryTest extends TestCase
         );
     }
 
-    /**
-     * Test inserting multiple rows with sparse data.
-     */
     public function testInsertMultipleRowsSparse(): void
     {
         $query = new InsertQuery();
@@ -175,9 +147,6 @@ class InsertQueryTest extends TestCase
         $this->assertCount(4, $v);
     }
 
-    /**
-     * Test that INSERT INTO ... SELECT works.
-     */
     public function testInsertFromSelect(): void
     {
         $select = (new SelectQuery())->select(['name', "'some text'", 99])
@@ -204,9 +173,6 @@ class InsertQueryTest extends TestCase
         );
     }
 
-    /**
-     * Test that an exception is raised when mixing query + array types.
-     */
     public function testInsertFailureMixingTypesArrayFirst(): void
     {
         $this->expectException(Exception::class);
@@ -219,9 +185,6 @@ class InsertQueryTest extends TestCase
         ;
     }
 
-    /**
-     * Test that an exception is raised when mixing query + array types.
-     */
     public function testInsertFailureMixingTypesQueryFirst(): void
     {
         $this->expectException(Exception::class);
@@ -234,9 +197,6 @@ class InsertQueryTest extends TestCase
         ;
     }
 
-    /**
-     * Test that insert can use expression objects as values.
-     */
     public function testInsertExpressionValues(): void
     {
         $query = new InsertQuery();
@@ -249,11 +209,6 @@ class InsertQueryTest extends TestCase
         $this->assertQueryContains('\(SELECT \'jose\'\)', $sql);
     }
 
-    /**
-     * Test use of modifiers in a INSERT query
-     *
-     * Testing the generated SQL since the modifiers are usually different per driver
-     */
     public function testInsertModifiers(): void
     {
         $query = new InsertQuery();
@@ -304,9 +259,6 @@ class InsertQueryTest extends TestCase
         $this->assertNotSame($clause, $clauseClone);
     }
 
-    /**
-     * Test that epilog() will actually append a string to an insert query
-     */
     public function testAppendInsert(): void
     {
         $query = new InsertQuery();

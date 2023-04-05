@@ -8,9 +8,6 @@ use Somnambulist\Components\QueryBuilder\ValueBinder;
 
 class ValueBinderTest extends TestCase
 {
-    /**
-     * test the bind method
-     */
     public function testBind(): void
     {
         $valueBinder = new ValueBinder();
@@ -30,9 +27,6 @@ class ValueBinderTest extends TestCase
         $this->assertEquals($expected, $bindings);
     }
 
-    /**
-     * test the placeholder method
-     */
     public function testPlaceholder(): void
     {
         $valueBinder = new ValueBinder();
@@ -69,9 +63,6 @@ class ValueBinderTest extends TestCase
         $this->assertEquals($expected, $placeholders);
     }
 
-    /**
-     * test the reset method
-     */
     public function testReset(): void
     {
         $valueBinder = new ValueBinder();
@@ -86,9 +77,6 @@ class ValueBinderTest extends TestCase
         $this->assertSame(':c_0', $placeholder);
     }
 
-    /**
-     * test the resetCount method
-     */
     public function testResetCount(): void
     {
         $valueBinder = new ValueBinder();

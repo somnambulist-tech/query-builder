@@ -33,9 +33,6 @@ class CommonTableExpressionQueryTest extends TestCase
         $this->compiler = null;
     }
 
-    /**
-     * Tests with() sql generation.
-     */
     public function testWithCte(): void
     {
         $query = select()
@@ -51,9 +48,6 @@ class CommonTableExpressionQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests recursive CTE.
-     */
     public function testWithRecursiveCte(): void
     {
         $query = select()
@@ -87,9 +81,6 @@ class CommonTableExpressionQueryTest extends TestCase
         );
     }
 
-    /**
-     * Test inserting from CTE.
-     */
     public function testWithInsertQuery(): void
     {
         $query = insert()
@@ -112,9 +103,6 @@ class CommonTableExpressionQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests inserting from CTE as values list.
-     */
     public function testWithInInsertWithValuesQuery(): void
     {
         $query = insert(into: 'articles')
@@ -138,9 +126,6 @@ class CommonTableExpressionQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests updating from CTE.
-     */
     public function testWithInUpdateQuery(): void
     {
         $query = update()
@@ -170,9 +155,6 @@ class CommonTableExpressionQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests deleting from CTE.
-     */
     public function testWithInDeleteQuery(): void
     {
         $query = delete()

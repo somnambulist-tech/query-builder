@@ -36,9 +36,6 @@ class ExpressionTypeCastingTest extends TestCase
         $this->compiler = $this->buildCompiler();
     }
 
-    /**
-     * Tests that the Comparison expression can handle values convertible to expressions
-     */
     public function testComparisonSimple(): void
     {
         $comparison = new ComparisonExpression('field', 'the thing', 'test_type', '=');
@@ -55,9 +52,6 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertTrue($found, 'The expression is not included in the tree');
     }
 
-    /**
-     * Tests that the Comparison expression can handle values convertible to expressions
-     */
     public function testComparisonMultiple(): void
     {
         $comparison = new ComparisonExpression('field', ['2', '3'], 'test_type[]', 'IN');
@@ -74,9 +68,6 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertTrue($found, 'The expression is not included in the tree');
     }
 
-    /**
-     * Tests that the Between expression casts values to expressions correctly
-     */
     public function testBetween(): void
     {
         $between = new BetweenExpression('field', 'from', 'to', 'test_type');
@@ -95,9 +86,6 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertSame(2, $result, 'Missing expressions in the tree');
     }
 
-    /**
-     * Tests that values in FunctionExpressions are converted to expressions correctly
-     */
     public function testFunctionExpression(): void
     {
         $function = new FunctionExpression('DATE', ['2016-01'], ['test_type']);
@@ -115,9 +103,6 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertSame(1, $result, 'Missing expressions in the tree');
     }
 
-    /**
-     * Tests that values in ValuesExpression are converted to expressions correctly
-     */
     public function testValuesExpression(): void
     {
         $values = new ValuesExpression(['title'], new TypeMap(['title' => 'test_type']));

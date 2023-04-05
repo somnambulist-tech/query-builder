@@ -29,6 +29,7 @@ trait QueryAssertsTrait
      * @param string $expected The expected sql
      * @param string $actual The sql to compare
      * @param string $message The message to display on failure
+     *
      * @return void
      */
     public function assertEqualsSql(string $expected, string $actual, string $message = ''): void

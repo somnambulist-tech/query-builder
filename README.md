@@ -1,13 +1,9 @@
 # Somnambulist Query Builder
 
-[//]: # ([![GitHub Actions Build Status]&#40;https://img.shields.io/github/workflow/status/somnambulist-tech/query-builder/tests?logo=github&#41;]&#40;https://github.com/somnambulist-tech/query-builder/actions?query=workflow%3Atests&#41;)
-
+[//]: # ([![GitHub Actions Build Status]&#40;https://img.shields.io/github/actions/workflow/status/somnambulist-tech/query-builder/tests.yml?logo=github&branch=main&#41;]&#40;https://github.com/somnambulist-tech/query-builder/actions?query=workflow%3Atests&#41;)
 [//]: # ([![Issues]&#40;https://img.shields.io/github/issues/somnambulist-tech/query-builder?logo=github&#41;]&#40;https://github.com/somnambulist-tech/query-builder/issues&#41;)
-
-[//]: # ([![License]&#40;https://img.shields.io/github/license/somnambulist-tech/query-builder?logo=github&#41;]&#40;https://github.com/somnambulist-tech/query-builder/blob/main/LICENSE&#41;)
-
+[//]: # ([![License]&#40;https://img.shields.io/github/license/somnambulist-tech/query-builder?logo=github&#41;]&#40;https://github.com/somnambulist-tech/query-builder/blob/master/LICENSE&#41;)
 [//]: # ([![PHP Version]&#40;https://img.shields.io/packagist/php-v/somnambulist/query-builder?logo=php&logoColor=white&#41;]&#40;https://packagist.org/packages/somnambulist/query-builder&#41;)
-
 [//]: # ([![Current Version]&#40;https://img.shields.io/packagist/v/somnambulist/query-builder?logo=packagist&logoColor=white&#41;]&#40;https://packagist.org/packages/somnambulist/query-builder&#41;)
 
 An SQL query builder implementation for building SQL queries programmatically. Primarily focused
@@ -39,7 +35,7 @@ Install using composer, or checkout / pull the files from github.com.
 
 Before this library can be used a `TypeCaster` must be registered with the `TypeCaster` manager. Type casting
 is used to convert values to data types suitable for use in queries. Specifically: it is used to handle
-custom data types that should be converted to `ExpressionInterface` instances during query compilation.
+custom data types that should be converted to `Expression` instances during query compilation.
 
 A Doctrine DBAL caster is included (this library is intended to be used with Doctrine DBAL), allowing DBAL types
 to be used with the query builder and compiler. For other DB drivers, you will need to implement your own type
@@ -49,9 +45,10 @@ __Note:__ the StringTypeCaster is extremely basic and will only cast everything 
 register an anonymous class that only returns the value back:
 
 ```php
-use Somnambulist\Components\QueryBuilder\TypeCaster;
+use Somnambulist\Components\QueryBuilder\TypeCasterManager;
 
-TypeCaster::register(new class implements TypeCaster {
+TypeCasterManager::register(new class implements TypeCaster
+{
     public function castTo(mixed $value, ?string $type = null): mixed
     {
         return $value;

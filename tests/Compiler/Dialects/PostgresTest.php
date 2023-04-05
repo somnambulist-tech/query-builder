@@ -54,9 +54,6 @@ class PostgresTest extends TestCase
         $this->assertSame($expected, $sql);
     }
 
-    /**
-     * Test that having queries replaces nothing if no alias is used.
-     */
     public function testHavingWhenNoAliasIsUsed(): void
     {
         $query = new SelectQuery();

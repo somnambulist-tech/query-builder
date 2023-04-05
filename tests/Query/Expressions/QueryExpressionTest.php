@@ -11,9 +11,6 @@ use Somnambulist\Components\QueryBuilder\Tests\Support\ValueBinderContainsTrait;
 use Somnambulist\Components\QueryBuilder\TypeMap;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-/**
- * Tests QueryExpression class
- */
 class QueryExpressionTest extends TestCase
 {
     use QueryAssertsTrait;
@@ -33,9 +30,6 @@ class QueryExpressionTest extends TestCase
         $this->compiler = null;
     }
 
-    /**
-     * Test setConjunction()/getConjunction() works.
-     */
     public function testConjunction(): void
     {
         $expr = new QueryExpression(['1', '2']);
@@ -48,11 +42,6 @@ class QueryExpressionTest extends TestCase
         $this->assertSame('(1 + 2)', $result);
     }
 
-    /**
-     * Tests conditions with multi-word operators.
-     *
-     * @return void
-     */
     public function testMultiWordOperators(): void
     {
         $expr = new QueryExpression(['FUNC(Users.first + Users.last) is not' => 'me']);
@@ -62,11 +51,6 @@ class QueryExpressionTest extends TestCase
         $this->assertSame('FUNC(Users.name + Users.id) NOT SIMILAR TO :c_0', $this->compiler->compile($expr, new ValueBinder()));
     }
 
-    /**
-     * Tests conditions with symbol operators.
-     *
-     * @return void
-     */
     public function testSymbolOperators(): void
     {
         $expr = new QueryExpression(['Users.name =' => 'pattern']);
@@ -100,9 +84,6 @@ class QueryExpressionTest extends TestCase
         $this->assertSame('Users.name @> :c_0', $this->compiler->compile($expr, new ValueBinder()));
     }
 
-    /**
-     * Test and() and or() calls work transparently
-     */
     public function testAndOrCalls(): void
     {
         $expr = new QueryExpression();
@@ -111,9 +92,6 @@ class QueryExpressionTest extends TestCase
         $this->assertInstanceOf($expected, $expr->or([]));
     }
 
-    /**
-     * Test SQL generation with one element
-     */
     public function testSqlGenerationOneClause(): void
     {
         $expr = new QueryExpression();
@@ -124,9 +102,6 @@ class QueryExpressionTest extends TestCase
         $this->assertSame('Users.username = :c_0', $result);
     }
 
-    /**
-     * Test SQL generation with many elements
-     */
     public function testSqlGenerationMultipleClauses(): void
     {
         $expr = new QueryExpression();
@@ -146,9 +121,6 @@ class QueryExpressionTest extends TestCase
         $this->assertSame('(Users.username = :c_0 AND Users.active = :c_1)', $result);
     }
 
-    /**
-     * Test that empty expressions don't emit invalid SQL.
-     */
     public function testSqlWhenEmpty(): void
     {
         $expr = new QueryExpression();
@@ -157,9 +129,6 @@ class QueryExpressionTest extends TestCase
         $this->assertSame('', $result);
     }
 
-    /**
-     * Test deep cloning of expression trees.
-     */
     public function testDeepCloning(): void
     {
         $expr = new QueryExpression();
@@ -179,9 +148,6 @@ class QueryExpressionTest extends TestCase
         });
     }
 
-    /**
-     * Tests the hasNestedExpression() function
-     */
     public function testHasNestedExpression(): void
     {
         $expr = new QueryExpression();
@@ -198,9 +164,6 @@ class QueryExpressionTest extends TestCase
         $this->assertTrue($expr->hasNestedExpression());
     }
 
-    /**
-     * Returns the list of specific comparison methods
-     */
     public static function methodsProvider(): array
     {
         return [
@@ -210,8 +173,6 @@ class QueryExpressionTest extends TestCase
     }
 
     /**
-     * Tests that the query expression uses the type map when the specific comparison functions are used.
-     *
      * @dataProvider methodsProvider
      */
     public function testTypeMapUsage(string $method): void
@@ -231,12 +192,7 @@ class QueryExpressionTest extends TestCase
         $this->assertSame('date', $type);
     }
 
-    /**
-     * Tests that creating query expressions with either the
-     * array notation or using the combinators will produce a
-     * zero-count expression object.
-     */
-    public function testEmptyOr(): void
+    public function testEmptyExpressionsProducesEmptyExpression(): void
     {
         $expr = new QueryExpression();
         $expr = $expr->or([]);
@@ -247,9 +203,6 @@ class QueryExpressionTest extends TestCase
         $this->assertCount(0, $expr);
     }
 
-    /**
-     * Tests that both conditions are generated for notInOrNull().
-     */
     public function testNotInOrNull(): void
     {
         $expr = new QueryExpression();

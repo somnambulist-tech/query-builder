@@ -15,9 +15,6 @@ use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-/**
- * Tests UpdateQuery class
- */
 class UpdateQueryTest extends TestCase
 {
     use QueryAssertsTrait;
@@ -35,9 +32,6 @@ class UpdateQueryTest extends TestCase
         $this->compiler = null;
     }
 
-    /**
-     * Test a simple update.
-     */
     public function testUpdateSimple(): void
     {
         $query = new UpdateQuery();
@@ -48,9 +42,6 @@ class UpdateQueryTest extends TestCase
         $this->assertQueryContains('UPDATE authors SET name = :', $result);
     }
 
-    /**
-     * Test update with multiple fields.
-     */
     public function testUpdateMultipleFields(): void
     {
         $query = new UpdateQuery();
@@ -68,9 +59,6 @@ class UpdateQueryTest extends TestCase
         $this->assertQueryContains(' WHERE id = :c_2$', $result);
     }
 
-    /**
-     * Test updating multiple fields with an array.
-     */
     public function testUpdateMultipleFieldsArray(): void
     {
         $query = new UpdateQuery();
@@ -89,9 +77,6 @@ class UpdateQueryTest extends TestCase
         $this->assertQueryContains('WHERE id = :', $result);
     }
 
-    /**
-     * Test updates with an expression.
-     */
     public function testUpdateWithExpression(): void
     {
         $query = new UpdateQuery();
@@ -109,9 +94,6 @@ class UpdateQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests update with subquery that references itself
-     */
     public function testUpdateSubquery(): void
     {
         $subquery = new SelectQuery();
@@ -132,9 +114,6 @@ class UpdateQueryTest extends TestCase
         );
     }
 
-    /**
-     * Test update with array fields and types.
-     */
     public function testUpdateArrayFields(): void
     {
         $query = new UpdateQuery();
@@ -152,9 +131,6 @@ class UpdateQueryTest extends TestCase
         $this->assertQueryContains(' WHERE id = :c_2$', $result);
     }
 
-    /**
-     * Test update with callable in set
-     */
     public function testUpdateSetCallable(): void
     {
         $query = new UpdateQuery();
@@ -176,10 +152,6 @@ class UpdateQueryTest extends TestCase
         $this->assertQueryContains(' WHERE id = :c_2$', $result);
     }
 
-    /**
-     * Tests that aliases are stripped from update query conditions
-     * where possible.
-     */
     public function testUpdateStripAliasesFromConditions(): void
     {
         $query = new UpdateQuery();
@@ -217,11 +189,6 @@ class UpdateQueryTest extends TestCase
         );
     }
 
-    /**
-     * Tests that update queries that contain joins do trigger a notice,
-     * warning about possible incompatibilities with aliases being removed
-     * from the conditions.
-     */
     public function testUpdateRemovingAliasesCanBreakJoins(): void
     {
         $this->expectException(Exception::class);
@@ -237,9 +204,6 @@ class UpdateQueryTest extends TestCase
         $this->compiler->compile($query, new ValueBinder());
     }
 
-    /**
-     * Test that epilog() will actually append a string to an update query
-     */
     public function testAppendUpdate(): void
     {
         $query = new UpdateQuery();
@@ -288,11 +252,6 @@ class UpdateQueryTest extends TestCase
         $this->assertNotSame($clause, $clauseClone);
     }
 
-    /**
-     * Test use of modifiers in a UPDATE query
-     *
-     * Testing the generated SQL since the modifiers are usually different per driver
-     */
     public function testUpdateModifiers(): void
     {
         $query = new UpdateQuery();

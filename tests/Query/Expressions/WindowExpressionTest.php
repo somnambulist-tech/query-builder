@@ -15,9 +15,6 @@ use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-/**
- * Tests WindowExpression class
- */
 class WindowExpressionTest extends TestCase
 {
     use QueryAssertsTrait;
@@ -37,9 +34,6 @@ class WindowExpressionTest extends TestCase
         $this->compiler = null;
     }
 
-    /**
-     * Tests an empty window expression
-     */
     public function testEmptyWindow(): void
     {
         $w = new WindowExpression();
@@ -49,9 +43,6 @@ class WindowExpressionTest extends TestCase
         $this->assertSame('', $this->compiler->compile($w, new ValueBinder()));
     }
 
-    /**
-     * Tests windows with partitions
-     */
     public function testPartitions(): void
     {
         $w = (new WindowExpression())->partition('test');
@@ -81,9 +72,6 @@ class WindowExpressionTest extends TestCase
         );
     }
 
-    /**
-     * Tests windows with order by
-     */
     public function testOrderBy(): void
     {
         $w = (new WindowExpression())->orderBy('test');
@@ -127,9 +115,6 @@ class WindowExpressionTest extends TestCase
         );
     }
 
-    /**
-     * Tests windows with range frames
-     */
     public function testRange(): void
     {
         $w = (new WindowExpression())->range(null);
@@ -199,9 +184,6 @@ class WindowExpressionTest extends TestCase
         );
     }
 
-    /**
-     * Tests windows with rows frames
-     */
     public function testRows(): void
     {
         $w = (new WindowExpression())->rows(null);
@@ -260,9 +242,6 @@ class WindowExpressionTest extends TestCase
         );
     }
 
-    /**
-     * Tests windows with groups frames
-     */
     public function testGroups(): void
     {
         $w = (new WindowExpression())->groups(null);
@@ -321,9 +300,6 @@ class WindowExpressionTest extends TestCase
         );
     }
 
-    /**
-     * Tests windows with frame exclusion
-     */
     public function testExclusion(): void
     {
         $w = (new WindowExpression())->excludeCurrent();
@@ -351,9 +327,6 @@ class WindowExpressionTest extends TestCase
         );
     }
 
-    /**
-     * Tests windows with partition, order and frames
-     */
     public function testCombined(): void
     {
         $w = (new WindowExpression())->partition('test')->range(null);
@@ -381,9 +354,6 @@ class WindowExpressionTest extends TestCase
         );
     }
 
-    /**
-     * Tests named windows
-     */
     public function testNamedWindow(): void
     {
         $w = new WindowExpression();
@@ -410,9 +380,6 @@ class WindowExpressionTest extends TestCase
         );
     }
 
-    /**
-     * Tests traversing window expressions.
-     */
     public function testTraverse(): void
     {
         $w = (new WindowExpression('test1'))
@@ -442,9 +409,6 @@ class WindowExpressionTest extends TestCase
         $this->assertEquals(new QueryExpression("'10 days'"), $expressions[4]);
     }
 
-    /**
-     * Tests cloning window expressions
-     */
     public function testCloning(): void
     {
         $w1 = (new WindowExpression())->name('test');

@@ -12,9 +12,6 @@ use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-/**
- * Tests WindowExpression class
- */
 class WindowQueryTest extends TestCase
 {
     use QueryAssertsTrait;
@@ -32,9 +29,6 @@ class WindowQueryTest extends TestCase
         $this->compiler = null;
     }
 
-    /**
-     * Tests window sql generation.
-     */
     public function testWindowSql(): void
     {
         $query = new SelectQuery();
@@ -97,9 +91,6 @@ class WindowQueryTest extends TestCase
         $this->assertEquals('SELECT (COUNT(*) OVER (PARTITION BY article_id ORDER BY updated)) AS num_rows FROM comments ORDER BY updated', $sql);
     }
 
-    /**
-     * Tests adding named windows to the query.
-     */
     public function testNamedWindow(): void
     {
         $query = new SelectQuery();

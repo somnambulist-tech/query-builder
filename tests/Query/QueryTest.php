@@ -46,9 +46,6 @@ class QueryTest extends TestCase
         return $query;
     }
 
-    /**
-     * Tests that empty values don't set where clauses.
-     */
     public function testWhereEmptyValues(): void
     {
         $this->query->from('comments')->where('');
@@ -59,9 +56,6 @@ class QueryTest extends TestCase
         $this->assertCount(0, $this->query->clause('where'));
     }
 
-    /**
-     * Tests that the identifier method creates an expression object.
-     */
     public function testIdentifierExpression(): void
     {
         $identifier = $this->query->identifier('foo');
@@ -70,9 +64,6 @@ class QueryTest extends TestCase
         $this->assertSame('foo', $identifier->getIdentifier());
     }
 
-    /**
-     * Tests the interface contract of identifier
-     */
     public function testIdentifierInterface(): void
     {
         $identifier = $this->query->identifier('description');
@@ -231,17 +222,11 @@ class QueryTest extends TestCase
         $this->assertNotSame($clause, $clauseClone);
     }
 
-    /**
-     * Test getValueBinder()
-     */
     public function testGetValueBinder(): void
     {
         $this->assertInstanceOf(ValueBinder::class, $this->query->getBinder());
     }
 
-    /**
-     * Test that reading an undefined clause does not emit an error.
-     */
     public function testClauseUndefined(): void
     {
         $this->expectException(InvalidArgumentException::class);

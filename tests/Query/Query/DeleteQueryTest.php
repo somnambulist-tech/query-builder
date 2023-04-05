@@ -12,10 +12,6 @@ use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 
-
-/**
- * Tests DeleteQuery class
- */
 class DeleteQueryTest extends TestCase
 {
     use QueryAssertsTrait;
@@ -33,9 +29,6 @@ class DeleteQueryTest extends TestCase
         $this->compiler = null;
     }
 
-    /**
-     * Test a basic delete using from()
-     */
     public function testDeleteWithFrom(): void
     {
         $query = new DeleteQuery();
@@ -48,9 +41,6 @@ class DeleteQueryTest extends TestCase
         $this->assertQueryContains('DELETE FROM authors', $result);
     }
 
-    /**
-     * Test delete with from and alias.
-     */
     public function testDeleteWithAliasedFrom(): void
     {
         $query = new DeleteQuery();
@@ -63,9 +53,6 @@ class DeleteQueryTest extends TestCase
         $this->assertQueryContains('DELETE FROM authors WHERE id != :c_0', $result);
     }
 
-    /**
-     * Test a basic delete with no from() call.
-     */
     public function testDeleteNoFrom(): void
     {
         $query = new DeleteQuery();
@@ -77,11 +64,6 @@ class DeleteQueryTest extends TestCase
         $this->assertQueryContains('DELETE FROM authors', $result);
     }
 
-    /**
-     * Tests that delete queries that contain joins do trigger a notice,
-     * warning about possible incompatibilities with aliases being removed
-     * from the conditions.
-     */
     public function testDeleteRemovingAliasesCanBreakJoins(): void
     {
         $this->expectException(RuntimeException::class);
@@ -97,9 +79,6 @@ class DeleteQueryTest extends TestCase
         $this->compiler->compile($query, new ValueBinder());
     }
 
-    /**
-     * Tests that aliases are stripped from delete query conditions where possible.
-     */
     public function testDeleteStripAliasesFromConditions(): void
     {
         $query = new DeleteQuery();
@@ -137,9 +116,6 @@ class DeleteQueryTest extends TestCase
         );
     }
 
-    /**
-     * Test that epilog() will actually append a string to a delete query
-     */
     public function testAppendDelete(): void
     {
         $query = new DeleteQuery();
@@ -156,11 +132,6 @@ class DeleteQueryTest extends TestCase
         $this->assertSame(' RETURNING id', substr($sql, -13));
     }
 
-    /**
-     * Test use of modifiers in a DELETE query
-     *
-     * Testing the generated SQL since the modifiers are usually different per driver
-     */
     public function testDeleteModifiers(): void
     {
         $query = new DeleteQuery();
