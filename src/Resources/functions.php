@@ -139,7 +139,9 @@ function expr(): QueryExpression
  */
 function func(): FunctionsBuilder
 {
-    return new FunctionsBuilder();
+    static $func;
+
+    return $func ??= new FunctionsBuilder();
 }
 
 /**

@@ -5,8 +5,16 @@ Change Log
 ----------
 
  * strip unnecessary docblocks from test methods
- * update readme
  * use constants for query parts in query objects
+ * update readme
+ * add initial documentation for query builder and compiler
+
+2023-04-03
+----------
+
+ * remove `Interface` from interface class names
+ * rename `TypeCaster` to `TypeCasterManager`
+ * rename `DelegatingCompiler` to `DelegatingSqlCompiler`
 
 2023-03-02
 ----------

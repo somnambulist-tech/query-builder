@@ -15,7 +15,8 @@ given dialect. A driver implementation is required such as DBAL, Laminas etc. Pl
 query builder does not enforce any portability between database servers, a query built for one may
 not function if run on another. Default setups are included for SQlite, MySQL, and Postgres.
 
-This query builder is derived from the excellent work done by the [Cake Software Foundation](https://github.com/cakephp/database).
+> This query builder is derived from the excellent work done by the [Cake Software Foundation](https://github.com/cakephp/database).
+> See [Cake License](CAKE_LICENSE) for the original license notice.
 
 ## Requirements
 
@@ -41,20 +42,19 @@ A Doctrine DBAL caster is included (this library is intended to be used with Doc
 to be used with the query builder and compiler. For other DB drivers, you will need to implement your own type
 caster for that driver, or submit a request to have one added to the project.
 
-__Note:__ the StringTypeCaster is extremely basic and will only cast everything to strings. Alternatively:
-register an anonymous class that only returns the value back:
-
-```php
-use Somnambulist\Components\QueryBuilder\TypeCasterManager;
-
-TypeCasterManager::register(new class implements TypeCaster
-{
-    public function castTo(mixed $value, ?string $type = null): mixed
-    {
-        return $value;
-    }
-});
-```
+> The `StringTypeCaster` is extremely basic and will only cast everything to strings. Alternatively:
+  register an anonymous class that only returns the value back:
+  ```php
+  use Somnambulist\Components\QueryBuilder\TypeCasterManager;
+  
+  TypeCasterManager::register(new class implements TypeCaster
+  {
+      public function castTo(mixed $value, ?string $type = null): mixed
+      {
+          return $value;
+      }
+  });
+  ```
 
 To register a type caster, you must add to your applications bootstrap:
 
@@ -65,98 +65,18 @@ use Somnambulist\Components\QueryBuilder\TypeCasters\DbalTypeCaster;
 TypeCasterManager::register(new DbalTypeCaster());
 ```
 
-Next: the compiler needs configuring for your chosen database dialect. You can create multiple compilers for
-different databases, just be sure you know which one you are using as a query built using one set of
-compilers may not create a query that can run on another server.
-
-Defaults for the `Common`, `Postgres`, `MySQL`, and `SQlite` dialects are included as `CompilerConfigurator`
-classes. You can use these to provide a configured `Compiler`, or wire what you need together yourself.
-
-An example for Postgres would be (missing many use statements for various classes):
-
-```php
-use Somnambulist\Components\QueryBuilder\Compiler\DelegatingSqlCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners\StripAliasesFromDeleteFrom;
-use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners\StripAliasesFromConditions;
-use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type as QueryHandler;
-use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Postgres\Expressions\HavingCompiler;
-use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Postgres\Listeners\HavingPreProcessor;
-use Somnambulist\Components\QueryBuilder\Compiler\Events\PreHavingExpressionCompile;
-use Somnambulist\Components\QueryBuilder\Compiler\IdentifierQuoter;
-use Somnambulist\Components\QueryBuilder\Query\Type;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-
-$dispatcher = new EventDispatcher();
-$dispatcher->addListener(PreDeleteQueryCompile::class, $a = new StripAliasesFromDeleteFrom());
-$dispatcher->addListener(PreDeleteQueryCompile::class, $b = new StripAliasesFromConditions());
-$dispatcher->addListener(PreUpdateQueryCompile::class, $b);
-// Postgres like MySQL allows ORDER BY in a UNION clause provided that clause is wrapped in `()`
-// however: ordering like this may produce weird results and is not recommended.
-$dispatcher->addListener(PostSelectExpressionCompile::class, new WrapUnionSelectClauses());
-// add other PreXXXQueryCompile events to quote other types of query
-$dispatcher->addListener(PreSelectQueryCompile::class, [new IdentifierQuoter(), 'quote']);
-// re-writes HAVING clauses so they will work in Postgres
-$dispatcher->addListener(PreHavingExpressionCompile::class, new HavingPreProcessor());
-
-$compiler = new DelegatingSqlCompiler(
-    $dispatcher,
-    [
-        Type\SelectQuery::class => new QueryHandler\SelectCompiler(),
-        Type\InsertQuery::class => new QueryHandler\InsertCompiler(),
-        Type\UpdateQuery::class => new QueryHandler\UpdateCompiler(),
-        Type\DeleteQuery::class => new QueryHandler\DeleteCompiler(),
-        
-        'delete' => new DeleteClauseCompiler(),
-        'where' => new WhereCompiler(),
-        'limit' => new LimitCompiler(),
-        'offset' => new OffsetCompiler(),
-        'epilog' => new EpiLogCompiler(),
-        'comment' => new CommentCompiler(),
-        'set' => new UpdateSetValuesCompiler(),
-        'values' => new InsertValuesCompiler(),
-
-        Expressions\AggregateExpression::class => new AggregateCompiler(),
-        Expressions\BetweenExpression::class => new BetweenCompiler(),
-        Expressions\CaseStatementExpression::class => new CaseStatementCompiler(),
-        Expressions\CommonTableExpression::class => new CommonTableExpressionCompiler(),
-        Expressions\ComparisonExpression::class => new ComparisonCompiler(),
-        Expressions\FieldExpression::class => new FieldCompiler(),
-        Expressions\FromExpression::class => new FromCompiler(),
-        Expressions\FunctionExpression::class => new FunctionCompiler(),
-        Expressions\GroupByExpression::class => new GroupByCompiler(),
-        Expressions\IdentifierExpression::class => new IdentifierCompiler(),
-        Expressions\InsertClauseExpression::class => new InsertClauseCompiler(),
-        Expressions\JoinExpression::class => new JoinCompiler(),
-        Expressions\JoinClauseExpression::class => new JoinClauseCompiler(),
-        Expressions\ModifierExpression::class => new ModifierCompiler(),
-        Expressions\OrderByExpression::class => new OrderByCompiler(),
-        Expressions\OrderClauseExpression::class => new OrderClauseCompiler(),
-        Expressions\QueryExpression::class => new QueryExpressionCompiler(),
-        Expressions\SelectClauseExpression::class => new SelectClauseCompiler(),
-        Expressions\StringExpression::class => new StringCompiler(),
-        Expressions\TupleComparison::class => new TupleCompiler(),
-        Expressions\UnaryExpression::class => new UnaryCompiler(),
-        Expressions\UnionExpression::class => new UnionCompiler(),
-        Expressions\UpdateClauseExpression::class => new UpdateClauseCompiler(),
-        Expressions\ValuesExpression::class => new ValuesCompiler(),
-        Expressions\WhenThenExpression::class => new WhenThenCompiler(),
-        Expressions\WindowClauseExpression::class => new WindowClauseCompiler(),
-        Expressions\WindowExpression::class => new WindowCompiler(),
-        Expressions\WithExpression::class => new WithCompiler(),
-    ]
-);
-```
+To compile queries, the compiler must be configured. See [compiler setup](docs/query_compiler.md) for details.
 
 ### Querying
 
-The 4 main query types are supported: `SELECT`, `INSERT`, `UPDATE`, and `DELETE`. Each is represented by a query
+`SELECT`, `INSERT`, `UPDATE`, and `DELETE` queries can be created using this library. Each is represented by a query
 class e.g. `SelectQuery` from the `Query\Type` namespace. Queries are built up by adding object representations
 through the available methods. Not all methods or functions are compatible with each query type. You must know
 ahead of time which dialect you are targeting.
 
-__Note:__ the builder and compiler do not perform any checks for whether the query you create is valid.
-There is no guarantee that any particular combination will work for any given database. You must compile and run
-the query against your chosen database to avoid issues.
+> The builder and compiler do not perform any checks for whether the query you create is valid.
+  There is no guarantee that any particular combination will work for any given database. You must compile and run
+  the query against your chosen database to avoid issues.
 
 Helper functions are included to make it a little nice to create queries. For example:
 
@@ -182,6 +102,13 @@ $qb = select(
 ;
 ```
 
+See [query builder](docs/query_builder.md) for more details of using the query builder.
+
+### Compiling Queries
+
+Query objects must be compiled to SQL for execution. The compiler must be configured for a given database.
+See [query compiler](docs/query_compiler.md) for details and an example.
+
 ## Extending
 
 Queries and the compilers can be extended easily by either replacing classes, or components, or hooking into the
@@ -201,14 +128,14 @@ Note that individual expression compilers do not fire events.
 
 In the case of post events, the generated SQL is provided and may be revised as needed by the listener.
 For pre events, the execution flow can be early terminated by providing compiled SQL. This is useful when
-altering the main part for a given SQL dialect, for example: Postgres HAVINGs cannot work with  aliased fields.
+altering the main part for a given SQL dialect, for example: Postgres HAVINGs cannot work with aliased fields.
 The listener converts these and returns pre-built SQL avoiding the need for further processing.
 
 If you have multiple listeners per event, then you should consider using an event dispatcher that allows setting
 the priority to avoid collisions, or ensure that the listeners are registered in the correct order.
 
-One use case would be to add a Pre*QueryCompile listener to check for function usage for a given dialect and ensure
-that invalid or unsupported types are detected ahead of time. Another could be to add smarty join functionality
+One use case would be to add a `Pre*QueryCompile` listener to check for function usage for a given dialect and ensure
+that invalid or unsupported types are detected ahead of time. Another could be to add smart join functionality
 where a separate schema object is used to automatically resolve joins based on aliases etc.
 
 ### Tests

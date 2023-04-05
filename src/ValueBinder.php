@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Somnambulist\Components\QueryBuilder;
 
 use ArrayIterator;
+use Closure;
 use Countable;
 use IteratorAggregate;
 use Traversable;
@@ -23,6 +24,31 @@ class ValueBinder implements Countable, IteratorAggregate
     private array $bindings = [];
     private int $count = 0;
 
+    /**
+     * Iterates the bindings passing the param/value as arguments to the closure
+     *
+     * Use this method to associate any placeholders and values to a prepared statement when executing
+     * the query through e.g. PDO or Doctrine DBAL etc. The closure receives the prefixed placeholder
+     * name and a `VaLue` object instance of the value.
+     *
+     * @param Closure $closure
+     *
+     * @return void
+     */
+    public function associateTo(Closure $closure): void
+    {
+        foreach ($this->bindings as $p => $v) {
+            $closure($p, $v);
+        }
+    }
+
+    /**
+     * @param string $param The placeholder name including leading `:` e.g. `:name`
+     * @param mixed $value The value to be bound
+     * @param string|int|null $type The type of the value in SQL e.g. \PDO::PARAM_STR, etc
+     *
+     * @return void
+     */
     public function bind(string $param, mixed $value, string|int|null $type = null): void
     {
         $this->doBind($param, $value, $type);
