@@ -6,6 +6,7 @@ Change Log
 
  * strip unnecessary docblocks from test methods
  * update readme
+ * use constants for query parts in query objects
 
 2023-03-02
 ----------

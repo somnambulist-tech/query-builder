@@ -20,12 +20,12 @@ class InsertQuery extends Query
      * @var array<string, mixed>
      */
     protected array $parts = [
-        'comment'  => null,
-        'with'     => null,
-        'insert'   => null,
-        'modifier' => null,
-        'values'   => null,
-        'epilog'   => null,
+        self::COMMENT  => null,
+        self::WITH     => null,
+        self::INSERT   => null,
+        self::MODIFIER => null,
+        self::VALUES   => null,
+        self::EPILOG   => null,
     ];
 
     /**
@@ -46,13 +46,13 @@ class InsertQuery extends Query
             throw new InvalidArgumentException('At least 1 column is required to perform an insert.');
         }
 
-        $insert = $this->parts['insert'] ??= new InsertClauseExpression();
+        $insert = $this->parts[self::INSERT] ??= new InsertClauseExpression();
         $insert->columns($columns);
 
-        if (!$this->parts['values']) {
-            $this->parts['values'] = new ValuesExpression($columns, $this->getTypes()->setTypes($types));
+        if (!$this->parts[self::VALUES]) {
+            $this->parts[self::VALUES] = new ValuesExpression($columns, $this->getTypes()->setTypes($types));
         } else {
-            $this->parts['values']->setColumns($columns);
+            $this->parts[self::VALUES]->setColumns($columns);
         }
 
         return $this;
@@ -67,7 +67,7 @@ class InsertQuery extends Query
      */
     public function into(string $table): static
     {
-        $insert = $this->parts['insert'] ??= new InsertClauseExpression();
+        $insert = $this->parts[self::INSERT] ??= new InsertClauseExpression();
         $insert->into($table);
 
         return $this;
@@ -88,24 +88,24 @@ class InsertQuery extends Query
      */
     public function values(ValuesExpression|Query|array $data): static
     {
-        if (null === $this->parts['insert']) {
+        if (null === $this->parts[self::INSERT]) {
             throw new Exception('You cannot add values before defining columns to use.');
         }
 
         if ($data instanceof ValuesExpression) {
-            $this->parts['values'] = $data;
+            $this->parts[self::VALUES] = $data;
 
             return $this;
         }
 
-        $this->parts['values']->add($data);
+        $this->parts[self::VALUES]->add($data);
 
         return $this;
     }
 
     public function modifier(Expression|string ...$modifiers): static
     {
-        $update = $this->parts['insert'] ??= new InsertClauseExpression();
+        $update = $this->parts[self::INSERT] ??= new InsertClauseExpression();
         $update->modifier()->add(...$modifiers);
 
         return $this;
@@ -114,8 +114,8 @@ class InsertQuery extends Query
     public function reset(string ...$name): static
     {
         foreach ($name as $k => $n) {
-            if ('modifier' === $n) {
-                $this->parts['insert']?->modifier()->reset();
+            if (self::MODIFIER === $n) {
+                $this->parts[self::INSERT]?->modifier()->reset();
                 unset($name[$k]);
             }
         }

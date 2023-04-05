@@ -34,33 +34,56 @@ use function is_string;
  */
 abstract class Query implements Expression
 {
+    public const COMMENT = 'comment';
+    public const DELETE = 'delete';
+    public const UPDATE = 'update';
+    public const SET = 'set';
+    public const INSERT = 'insert';
+    public const VALUES = 'values';
+    public const WITH = 'with';
+    public const SELECT = 'select';
+    public const MODIFIER = 'modifier';
+    public const FROM = 'from';
+    public const JOIN = 'join';
+    public const WHERE = 'where';
+    public const GROUP = 'group';
+    public const HAVING = 'having';
+    public const WINDOW = 'window';
+    public const ORDER = 'order';
+    public const LIMIT = 'limit';
+    public const OFFSET = 'offset';
+    public const UNION = 'union';
+    public const INTERSECT = 'intersect';
+    public const EXCEPT = 'except';
+    public const EPILOG = 'epilog';
+
     protected ValueBinder $binder;
     protected FunctionsBuilder $functions;
     protected TypeMap $types;
 
     protected array $defaultParts = [
-        'comment' => null,
-        'delete' => true,
-        'update' => null,
-        'set' => null,
-        'insert' => null,
-        'values' => null,
-        'with' => null,
-        'select' => null,
-        'modifier' => null,
-        'from' => null,
-        'join' => null,
-        'where' => null,
-        'group' => null,
-        'having' => null,
-        'window' => null,
-        'order' => null,
-        'limit' => null,
-        'offset' => null,
-        'union' => null,
-        'intersect' => null,
-        'except' => null,
-        'epilog' => null,
+        self::COMMENT => null,
+        self::DELETE => true,
+        self::UPDATE => null,
+        self::SET => null,
+        self::INSERT => null,
+        self::VALUES => null,
+        self::WITH => null,
+        self::SELECT => null,
+        self::MODIFIER => null,
+        self::FROM => null,
+        self::JOIN => null,
+        self::WHERE => null,
+        self::GROUP => null,
+        self::HAVING => null,
+        self::WINDOW => null,
+        self::ORDER => null,
+        self::LIMIT => null,
+        self::OFFSET => null,
+        self::UNION => null,
+        self::INTERSECT => null,
+        self::EXCEPT => null,
+        self::EPILOG => null,
     ];
 
     protected array $parts = [];
@@ -236,7 +259,7 @@ abstract class Query implements Expression
      */
     public function with(CommonTableExpression|Closure $cte): static
     {
-        $with = $this->parts['with'] ??= new WithExpression();
+        $with = $this->parts[self::WITH] ??= new WithExpression();
 
         if ($cte instanceof Closure) {
             $cte = $cte(new CommonTableExpression(), new SelectQuery());
@@ -274,7 +297,7 @@ abstract class Query implements Expression
      */
     public function modifier(Expression|string ...$modifiers): static
     {
-        $modifier = $this->parts['modifier'] ??= new ModifierExpression();
+        $modifier = $this->parts[self::MODIFIER] ??= new ModifierExpression();
         $modifier->add(...$modifiers);
 
         return $this;
@@ -302,7 +325,7 @@ abstract class Query implements Expression
      */
     public function from(Expression|string $table, string $as = null): static
     {
-        $from = $this->parts['from'] ??= new FromExpression();
+        $from = $this->parts[self::FROM] ??= new FromExpression();
         $from->add($table, $as);
 
         return $this;
@@ -378,7 +401,7 @@ abstract class Query implements Expression
             $on = $this->newExpr()->add($on, $types);
         }
 
-        $joins = $this->parts['join'] ??= new JoinExpression();
+        $joins = $this->parts[self::JOIN] ??= new JoinExpression();
         $joins->add(new JoinClauseExpression($table, $as, $on, $type));
 
         return $this;
@@ -395,7 +418,7 @@ abstract class Query implements Expression
      */
     public function removeJoin(string $name): static
     {
-        $joins = $this->parts['join'] ??= new JoinExpression();
+        $joins = $this->parts[self::JOIN] ??= new JoinExpression();
         $joins->remove($name);
 
         return $this;
@@ -602,7 +625,7 @@ abstract class Query implements Expression
      */
     public function where(Expression|Closure|array|string|null $conditions = null, array $types = []): static
     {
-        $this->conjugate('where', $conditions, 'AND', $types);
+        $this->conjugate(self::WHERE, $conditions, 'AND', $types);
 
         return $this;
     }
@@ -797,7 +820,7 @@ abstract class Query implements Expression
      */
     public function andWhere(Expression|Closure|array|string $conditions, array $types = []): static
     {
-        $this->conjugate('where', $conditions, 'AND', $types);
+        $this->conjugate(self::WHERE, $conditions, 'AND', $types);
 
         return $this;
     }
@@ -814,7 +837,7 @@ abstract class Query implements Expression
      */
     public function orWhere(Expression|Closure|array|string $conditions, array $types = []): static
     {
-        $this->conjugate('where', $conditions, 'OR', $types);
+        $this->conjugate(self::WHERE, $conditions, 'OR', $types);
 
         return $this;
     }
@@ -885,14 +908,14 @@ abstract class Query implements Expression
             $field = $field($this->newExpr(), $this);
         }
 
-        if (!$this->parts['order']) {
-            $this->parts['order'] = new OrderByExpression();
+        if (!$this->parts[self::ORDER]) {
+            $this->parts[self::ORDER] = new OrderByExpression();
         }
 
         if (is_array($field)) {
-            $this->conjugate('order', $field, '', []);
+            $this->conjugate(self::ORDER, $field, '', []);
         } else {
-            $this->parts['order']->add(new OrderClauseExpression($field, $dir ?? OrderDirection::ASC));
+            $this->parts[self::ORDER]->add(new OrderClauseExpression($field, $dir ?? OrderDirection::ASC));
         }
 
         return $this;
@@ -917,7 +940,7 @@ abstract class Query implements Expression
      */
     public function limit(Expression|int|null $limit): static
     {
-        $this->parts['limit'] = $limit;
+        $this->parts[self::LIMIT] = $limit;
 
         return $this;
     }
@@ -943,7 +966,7 @@ abstract class Query implements Expression
      */
     public function offset(Expression|int|null $offset): static
     {
-        $this->parts['offset'] = $offset;
+        $this->parts[self::OFFSET] = $offset;
 
         return $this;
     }
@@ -990,7 +1013,7 @@ abstract class Query implements Expression
      */
     public function epilog(Expression|string|null $expression = null): static
     {
-        $this->parts['epilog'] = $expression;
+        $this->parts[self::EPILOG] = $expression;
 
         return $this;
     }
@@ -1011,7 +1034,7 @@ abstract class Query implements Expression
      */
     public function comment(?string $expression = null): static
     {
-        $this->parts['comment'] = $expression;
+        $this->parts[self::COMMENT] = $expression;
 
         return $this;
     }
@@ -1092,27 +1115,26 @@ abstract class Query implements Expression
      * can be retrieved are: delete, update, set, insert, values, select, distinct,
      * from, join, set, where, group, having, order, limit, offset and union.
      *
-     * The return value for each of those parts may vary. Some clauses use QueryExpression
-     * to internally store their state, some use arrays and others may use booleans or
-     * integers. This is summary of the return types for each clause.
+     * The return value for each of those parts may vary. Most clauses use objects to store their
+     * state, and the type may change. The most common types are listed below:
      *
-     * - update: string The name of the table to update
+     * - update: UpdateClauseExpression, null if not yet set
      * - set: QueryExpression
-     * - insert: array, will return an array containing the table + columns.
+     * - insert: InsertClauseExpression, null if not yet set
      * - values: ValuesExpression
      * - select: SelectExpression, null if not yet set
      * - from: FromExpression, null if not yet set
      * - join: JoinExpression, null if not yet set
-     * - set: array
+     * - set: QueryExpression, null if not yet set
      * - where: QueryExpression, returns null when not set
-     * - group: array
+     * - group: GroupByExpression, returns null when not set
      * - having: QueryExpression, returns null when not set
      * - order: OrderByExpression, returns null when not set
      * - limit: integer or QueryExpression, null when not set
      * - offset: integer or QueryExpression, null when not set
      * - union: UnionExpression, null if not yet set
      * - modifier: ModifierExpression, null if not yet set
-     * - comment: array
+     * - comment: string
      *
      * @param string $name name of the clause to be returned
      *

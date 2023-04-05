@@ -15,16 +15,16 @@ class DeleteQuery extends Query
      * @var array<string, mixed>
      */
     protected array $parts = [
-        'comment'  => null,
-        'with'     => null,
-        'delete'   => true,
-        'modifier' => null,
-        'from'     => null,
-        'join'     => null,
-        'where'    => null,
-        'order'    => null,
-        'limit'    => null,
-        'epilog'   => null,
+        self::COMMENT  => null,
+        self::WITH     => null,
+        self::DELETE   => true,
+        self::MODIFIER => null,
+        self::FROM     => null,
+        self::JOIN     => null,
+        self::WHERE    => null,
+        self::ORDER    => null,
+        self::LIMIT    => null,
+        self::EPILOG   => null,
     ];
 
     /**

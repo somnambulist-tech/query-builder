@@ -39,22 +39,22 @@ class SelectQuery extends Query
      * @var array<string, mixed>
      */
     protected array $parts = [
-        'comment'   => null,
-        'with'      => null,
-        'select'    => null,
-        'from'      => null,
-        'join'      => null,
-        'where'     => null,
-        'group'     => null,
-        'having'    => null,
-        'window'    => null,
-        'order'     => null,
-        'limit'     => null,
-        'offset'    => null,
-        'union'     => null,
-        'intersect' => null,
-        'except'    => null,
-        'epilog'    => null,
+        self::COMMENT   => null,
+        self::WITH      => null,
+        self::SELECT    => null,
+        self::FROM      => null,
+        self::JOIN      => null,
+        self::WHERE     => null,
+        self::GROUP     => null,
+        self::HAVING    => null,
+        self::WINDOW    => null,
+        self::ORDER     => null,
+        self::LIMIT     => null,
+        self::OFFSET    => null,
+        self::UNION     => null,
+        self::INTERSECT => null,
+        self::EXCEPT    => null,
+        self::EPILOG    => null,
     ];
 
     /**
@@ -100,7 +100,7 @@ class SelectQuery extends Query
                 $field = [$field];
             }
 
-            $select = $this->parts['select'] ??= new SelectClauseExpression();
+            $select = $this->parts[self::SELECT] ??= new SelectClauseExpression();
 
             foreach ($field as $k => $v) {
                 if (is_string($v) && str_contains(strtolower($v), ' as ')) {
@@ -146,7 +146,7 @@ class SelectQuery extends Query
      */
     public function distinct(Expression|string ...$on): static
     {
-        $select = $this->parts['select'] ??= new SelectClauseExpression();
+        $select = $this->parts[self::SELECT] ??= new SelectClauseExpression();
 
         if ($on === []) {
             $select->distinct()->row();
@@ -183,7 +183,7 @@ class SelectQuery extends Query
      */
     public function groupBy(Expression|string ...$fields): static
     {
-        $groupBy = $this->parts['group'] ??= new GroupByExpression();
+        $groupBy = $this->parts[self::GROUP] ??= new GroupByExpression();
         $groupBy->add(...$fields);
 
         return $this;
@@ -206,7 +206,7 @@ class SelectQuery extends Query
      */
     public function having(Expression|Closure|array|string|null $conditions = null, array $types = []): static
     {
-        $this->conjugate('having', $conditions, 'AND', $types);
+        $this->conjugate(self::HAVING, $conditions, 'AND', $types);
 
         return $this;
     }
@@ -228,7 +228,7 @@ class SelectQuery extends Query
      */
     public function andHaving(Expression|Closure|array|string $conditions, array $types = []): static
     {
-        $this->conjugate('having', $conditions, 'AND', $types);
+        $this->conjugate(self::HAVING, $conditions, 'AND', $types);
 
         return $this;
     }
@@ -253,7 +253,7 @@ class SelectQuery extends Query
             }
         }
 
-        $windows = $this->parts['window'] ??= new WindowClauseExpression();
+        $windows = $this->parts[self::WINDOW] ??= new WindowClauseExpression();
         $windows->add(new NamedWindowClauseExpression(new IdentifierExpression($name), $window));
 
         return $this;
@@ -284,7 +284,7 @@ class SelectQuery extends Query
             $this->limit($limit);
         }
 
-        $limit = $this->clause('limit');
+        $limit = $this->clause(self::LIMIT);
 
         if ($limit === null) {
             $limit = 25;
@@ -327,7 +327,7 @@ class SelectQuery extends Query
      */
     public function union(Query $query): static
     {
-        $unions = $this->parts['union'] ??= new UnionExpression();
+        $unions = $this->parts[self::UNION] ??= new UnionExpression();
         $unions->add(new UnionClauseExpression($query, false));
 
         return $this;
@@ -356,7 +356,7 @@ class SelectQuery extends Query
      */
     public function unionAll(Query $query): static
     {
-        $unions = $this->parts['union'] ??= new UnionExpression();
+        $unions = $this->parts[self::UNION] ??= new UnionExpression();
         $unions->add(new UnionClauseExpression($query, true));
 
         return $this;
@@ -386,7 +386,7 @@ class SelectQuery extends Query
      */
     public function except(Query $query): static
     {
-        $except = $this->parts['except'] ??= new ExceptExpression();
+        $except = $this->parts[self::EXCEPT] ??= new ExceptExpression();
         $except->add(new ExceptClauseExpression($query));
 
         return $this;
@@ -394,7 +394,7 @@ class SelectQuery extends Query
 
     public function exceptAll(Query $query): static
     {
-        $except = $this->parts['except'] ??= new ExceptExpression();
+        $except = $this->parts[self::EXCEPT] ??= new ExceptExpression();
         $except->add(new ExceptClauseExpression($query, true));
 
         return $this;
@@ -424,7 +424,7 @@ class SelectQuery extends Query
      */
     public function intersect(Query $query): static
     {
-        $intersect = $this->parts['intersect'] ??= new IntersectExpression();
+        $intersect = $this->parts[self::INTERSECT] ??= new IntersectExpression();
         $intersect->add(new IntersectClauseExpression($query));
 
         return $this;
@@ -432,7 +432,7 @@ class SelectQuery extends Query
 
     public function intersectAll(Query $query): static
     {
-        $except = $this->parts['intersect'] ??= new IntersectExpression();
+        $except = $this->parts[self::INTERSECT] ??= new IntersectExpression();
         $except->add(new IntersectClauseExpression($query, true));
 
         return $this;
@@ -440,7 +440,7 @@ class SelectQuery extends Query
 
     public function modifier(Expression|string ...$modifiers): static
     {
-        $select = $this->parts['select'] ??= new SelectClauseExpression();
+        $select = $this->parts[self::SELECT] ??= new SelectClauseExpression();
         $select->modifier()->add(...$modifiers);
 
         return $this;
@@ -450,11 +450,11 @@ class SelectQuery extends Query
     {
         foreach ($name as $k => $n) {
             if ('distinct' === $n) {
-                $this->parts['select']?->distinct()->reset();
+                $this->parts[self::SELECT]?->distinct()->reset();
                 unset($name[$k]);
             }
-            if ('modifier' === $n) {
-                $this->parts['select']?->modifier()->reset();
+            if (self::MODIFIER === $n) {
+                $this->parts[self::SELECT]?->modifier()->reset();
                 unset($name[$k]);
             }
         }

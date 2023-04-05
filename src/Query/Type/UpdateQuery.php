@@ -19,16 +19,16 @@ class UpdateQuery extends Query
      * @var array<string, mixed>
      */
     protected array $parts = [
-        'comment'  => null,
-        'with'     => null,
-        'update'   => null,
-        'join'     => null,
-        'set'      => null,
-        'from'     => null,
-        'where'    => null,
-        'order'    => null,
-        'limit'    => null,
-        'epilog'   => null,
+        self::COMMENT  => null,
+        self::WITH     => null,
+        self::UPDATE   => null,
+        self::JOIN     => null,
+        self::SET      => null,
+        self::FROM     => null,
+        self::WHERE    => null,
+        self::ORDER    => null,
+        self::LIMIT    => null,
+        self::EPILOG   => null,
     ];
 
     /**
@@ -42,7 +42,7 @@ class UpdateQuery extends Query
      */
     public function update(Expression|string $table): static
     {
-        $update = $this->parts['update'] ??= new UpdateClauseExpression();
+        $update = $this->parts[self::UPDATE] ??= new UpdateClauseExpression();
         $update->table($table);
 
         return $this;
@@ -84,7 +84,7 @@ class UpdateQuery extends Query
      */
     public function set(QueryExpression|Closure|array|string $key, mixed $value = null, array|string $types = []): static
     {
-        $set = $this->parts['set'] ??= $this->newExpr()->useConjunction(',');
+        $set = $this->parts[self::SET] ??= $this->newExpr()->useConjunction(',');
 
         if ($key instanceof Closure) {
             $exp = $this->newExpr()->useConjunction(',');
@@ -109,7 +109,7 @@ class UpdateQuery extends Query
 
     public function modifier(Expression|string ...$modifiers): static
     {
-        $update = $this->parts['update'] ??= new UpdateClauseExpression();
+        $update = $this->parts[self::UPDATE] ??= new UpdateClauseExpression();
         $update->modifier()->add(...$modifiers);
 
         return $this;
@@ -118,8 +118,8 @@ class UpdateQuery extends Query
     public function reset(string ...$name): static
     {
         foreach ($name as $k => $n) {
-            if ('modifier' === $n) {
-                $this->parts['update']?->modifier()->reset();
+            if (self::MODIFIER === $n) {
+                $this->parts[self::UPDATE]?->modifier()->reset();
                 unset($name[$k]);
             }
         }
