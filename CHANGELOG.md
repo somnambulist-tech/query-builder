@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+2023-04-10
+----------
+
+ * extract string parsing from `QueryExpression` to separate class
+
 2023-04-05
 ----------
 

@@ -6,6 +6,7 @@ use Closure;
 use Countable;
 use InvalidArgumentException;
 use Somnambulist\Components\QueryBuilder\Query\Expression;
+use Somnambulist\Components\QueryBuilder\Query\StringConditionParser;
 use Somnambulist\Components\QueryBuilder\TypeMap;
 use function strtoupper;
 
@@ -33,6 +34,7 @@ class QueryExpression implements Expression, Countable
     protected array $conditions = [];
 
     protected TypeMap $typeMap;
+    protected StringConditionParser $parser;
 
     /**
      * A new expression object can be created without any params and be built dynamically.
@@ -57,6 +59,7 @@ class QueryExpression implements Expression, Countable
     )
     {
         $this->typeMap = $types ?? new TypeMap();
+        $this->parser = new StringConditionParser($this->typeMap, $conjunction);
         $this->useConjunction($conjunction);
 
         if (!empty($conditions)) {
@@ -258,6 +261,22 @@ class QueryExpression implements Expression, Countable
     }
 
     /**
+     * Adds a new condition to the expression object in the form "field ILIKE value".
+     *
+     * @param Expression|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     *
+     * @return $this
+     */
+    public function likeCaseInsensitive(Expression|string $field, mixed $value, ?string $type = null): self
+    {
+        $type ??= $this->calculateType($field);
+
+        return $this->add(new ComparisonExpression($field, $value, $type, 'ILIKE'));
+    }
+
+    /**
      * Adds a new condition to the expression object in the form "field NOT LIKE value".
      *
      * @param Expression|string $field Database field to be compared against value
@@ -271,6 +290,22 @@ class QueryExpression implements Expression, Countable
         $type ??= $this->calculateType($field);
 
         return $this->add(new ComparisonExpression($field, $value, $type, 'NOT LIKE'));
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field NOT ILIKE value".
+     *
+     * @param Expression|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     *
+     * @return $this
+     */
+    public function notLikeCaseInsensitive(Expression|string $field, mixed $value, ?string $type = null): self
+    {
+        $type ??= $this->calculateType($field);
+
+        return $this->add(new ComparisonExpression($field, $value, $type, 'NOT ILIKE'));
     }
 
     /**
@@ -633,92 +668,35 @@ class QueryExpression implements Expression, Countable
 
     /**
      * Parses a string conditions by trying to extract the operator inside it if any
-     * and finally returning either an adequate QueryExpression object or a plain
-     * string representation of the condition. This function is responsible for
-     * generating the placeholders and replacing the values by them, while storing
-     * the value elsewhere for future binding.
      *
-     * @param string $condition The value from which the actual field and operator will
-     * be extracted.
-     * @param mixed $value The value to be bound to a placeholder for the field
+     * @param string $condition
+     * @param mixed $value
      *
      * @return Expression|string
-     * @throws InvalidArgumentException If operator is invalid or missing on NULL usage.
+     * @throws InvalidArgumentException
      */
     protected function parseCondition(string $condition, mixed $value): Expression|string
     {
-        $expression = trim($condition);
-        $operator = '=';
+        return $this->parser->parse($condition, $value);
+    }
 
-        $spaces = substr_count($expression, ' ');
-        // Handle expression values that contain multiple spaces, such as
-        // operators with a space in them like `field IS NOT` and
-        // `field NOT LIKE`, or combinations with function expressions
-        // like `CONCAT(first_name, ' ', last_name) IN`.
-        if ($spaces > 1) {
-            $parts = explode(' ', $expression);
-            if (preg_match('/(is not|not \w+)$/i', $expression)) {
-                $last = array_pop($parts);
-                $second = array_pop($parts);
-                $parts[] = "$second $last";
-            }
-            $operator = array_pop($parts);
-            $expression = implode(' ', $parts);
-        } elseif ($spaces == 1) {
-            $parts = explode(' ', $expression, 2);
-            [$expression, $operator] = $parts;
-        }
-        $operator = strtoupper(trim($operator));
+    /**
+     * Allows replacing the string parser used to deconstruct WHERE expressions of the form `field EQ :value`
+     *
+     * Note: the current type map and conjunction are passed to the parser, overriding any existing options.
+     * In most cases this should not be needed, and is included as a means to change the behaviour without
+     * requiring reflection or extension of the QueryExpression class.
+     *
+     * @param StringConditionParser $parser
+     *
+     * @return $this
+     * @internal
+     */
+    public function setParser(StringConditionParser $parser): self
+    {
+        $this->parser = $parser->setTypeMap($this->typeMap)->setConjunction($this->conjunction);
 
-        $type = $this->typeMap->type($expression);
-        $typeMultiple = (is_string($type) && str_contains($type, '[]'));
-
-        if (in_array($operator, ['IN', 'NOT IN']) || $typeMultiple) {
-            $type = $type ?: 'string';
-            if (!$typeMultiple) {
-                $type .= '[]';
-            }
-            $operator = $operator === '=' ? 'IN' : $operator;
-            $operator = $operator === '!=' ? 'NOT IN' : $operator;
-            $typeMultiple = true;
-        }
-
-        /** @psalm-suppress RedundantCondition */
-        if ($typeMultiple) {
-            $value = $value instanceof Expression ? $value : (array)$value;
-        }
-
-        if ($operator === 'IS' && $value === null) {
-            return new UnaryExpression(
-                'IS NULL',
-                new IdentifierExpression($expression),
-                UnaryExpression::POSTFIX
-            );
-        }
-
-        if ($operator === 'IS NOT' && $value === null) {
-            return new UnaryExpression(
-                'IS NOT NULL',
-                new IdentifierExpression($expression),
-                UnaryExpression::POSTFIX
-            );
-        }
-
-        if ($operator === 'IS' && $value !== null) {
-            $operator = '=';
-        }
-
-        if ($operator === 'IS NOT' && $value !== null) {
-            $operator = '!=';
-        }
-
-        if ($value === null && $this->conjunction !== ',') {
-            throw new InvalidArgumentException(
-                sprintf('Expression "%s" is missing operator (IS, IS NOT) with "null" value.', $expression)
-            );
-        }
-
-        return new ComparisonExpression($expression, $value, $type, $operator);
+        return $this;
     }
 
     /**
