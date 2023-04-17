@@ -2,10 +2,11 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type;
 
+use Somnambulist\Components\QueryBuilder\Executors\ExecutableUpdateQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\UpdateQuery;
 
 class UpdateCompiler extends AbstractQueryCompiler
 {
     protected array $order = ['comment', 'with', 'update', 'set', 'where', 'epilog'];
-    protected array $supports = [UpdateQuery::class];
+    protected array $supports = [UpdateQuery::class, ExecutableUpdateQuery::class];
 }

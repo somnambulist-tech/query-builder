@@ -8,6 +8,7 @@ use Closure;
 use Countable;
 use IteratorAggregate;
 use Traversable;
+use function array_map;
 use function str_starts_with;
 use function substr;
 
@@ -113,6 +114,26 @@ class ValueBinder implements Countable, IteratorAggregate
     public function bindings(): array
     {
         return $this->bindings;
+    }
+
+    /**
+     * Returns all bound values as an array keyed on placeholder name with the value to bind
+     *
+     * @return array<string, mixed>
+     */
+    public function values(): array
+    {
+        return array_map(fn (Value $v) => $v->value, $this->bindings);
+    }
+
+    /**
+     * Returns an array of all the associated types to the placeholders (if any)
+     *
+     * @return array<string, int|string|null>
+     */
+    public function types(): array
+    {
+        return array_map(fn (Value $v) => $v->type, $this->bindings);
     }
 
     public function reset(): void

@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+2023-04-17
+----------
+
+ * add executable queries that can self execute from a driver adapter
+ * add executable adapters for DBAL and PDO
+ * add `values()` and `types()` to `ValueBinder` to get those more easily
+ * fix identifier quoter to use a listener in configurators
+ * fix some docs issues
+
 2023-04-10
 ----------
 

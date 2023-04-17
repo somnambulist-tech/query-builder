@@ -7,12 +7,10 @@ use Somnambulist\Components\QueryBuilder\Exceptions\NoCompilerForExpression;
 use Somnambulist\Components\QueryBuilder\Query\Query;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
 use function array_key_exists;
-use function array_pop;
-use function explode;
-use function get_class;
 use function get_debug_type;
 use function is_string;
 use function sprintf;
+use function ucfirst;
 
 /**
  * Delegates query and query expression compiling to appropriate handlers
@@ -50,10 +48,9 @@ class DelegatingSqlCompiler implements DelegatingCompiler
     public function compile(mixed $expression, ValueBinder $binder): string
     {
         if ($expression instanceof Query) {
-            $event = explode('\\', get_class($expression));
-            $name = array_pop($event);
-            $preEvent = sprintf('Somnambulist\Components\QueryBuilder\Compiler\Events\Pre%sCompile', $name);
-            $postEvent = sprintf('Somnambulist\Components\QueryBuilder\Compiler\Events\Post%sCompile', $name);
+            $type = ucfirst($expression->getType());
+            $preEvent = sprintf('Somnambulist\Components\QueryBuilder\Compiler\Events\Pre%sQueryCompile', $type);
+            $postEvent = sprintf('Somnambulist\Components\QueryBuilder\Compiler\Events\Post%sQueryCompile', $type);
 
             $this->dispatcher->dispatch(new $preEvent($expression, $binder));
 

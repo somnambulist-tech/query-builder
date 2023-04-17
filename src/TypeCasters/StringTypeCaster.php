@@ -12,6 +12,8 @@ use function str_replace;
  *
  * For arrays, each value in the array will be cast to a string.
  * If the type is not set, returns the value as-is.
+ *
+ * Note: this type caster cannot handle types to expressions.
  */
 class StringTypeCaster implements TypeCaster
 {

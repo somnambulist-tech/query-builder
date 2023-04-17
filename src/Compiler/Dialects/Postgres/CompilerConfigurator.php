@@ -42,6 +42,7 @@ use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\Wh
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\WindowClauseCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\WindowCompiler;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Expressions\WithCompiler;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners\QuoteIdentifiers;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners\StripAliasesFromConditions;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners\StripAliasesFromDeleteFrom;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Listeners\WrapUnionSelectClauses;
@@ -85,7 +86,7 @@ class CompilerConfigurator
     {
         return [
             PreDeleteQueryCompile::class => [
-                $qi = [new IdentifierQuoter(), 'quote'],
+                $qi = new QuoteIdentifiers(new IdentifierQuoter()),
                 new StripAliasesFromDeleteFrom(),
                 $sa = new StripAliasesFromConditions(),
             ],

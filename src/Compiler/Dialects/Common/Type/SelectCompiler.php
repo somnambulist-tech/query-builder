@@ -2,6 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\Compiler\Dialects\Common\Type;
 
+use Somnambulist\Components\QueryBuilder\Executors\ExecutableSelectQuery;
 use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
 
 class SelectCompiler extends AbstractQueryCompiler
@@ -10,5 +11,5 @@ class SelectCompiler extends AbstractQueryCompiler
         'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
         'limit', 'offset', 'union', 'intersect', 'except', 'epilog',
     ];
-    protected array $supports = [SelectQuery::class];
+    protected array $supports = [SelectQuery::class, ExecutableSelectQuery::class];
 }

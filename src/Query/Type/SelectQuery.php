@@ -64,19 +64,22 @@ class SelectQuery extends Query
      *
      * If an array is passed, keys will be used to alias fields using the value as the
      * real field to be aliased. It is possible to alias strings, Expression objects or
-     * even other Query objects. For strings you can also just add `AS alias` to.
+     * even other Query objects. For strings you can also just add `AS alias` to the passed
+     * string field.
      *
      * If a callback is passed, the returning array of the function will
      * be used as the list of fields.
+     *
+     * Multiple arguments may be passed instead of a single array.
      *
      * ### Examples:
      *
      * ```
      * $query->select(['id', 'title']); // Produces SELECT id, title
+     * $query->select('id', 'title'); // same as above
      * $query->select(['author' => 'author_id']); // Appends author: SELECT id, title, author_id as author
      * $query->select(['author_id as author']); // same as above
      * $query->select(['author_id AS author']); // still the same same as above
-     * $query->select('id', true); // Resets the list: SELECT id
      * $query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
      * $query->select(function ($query) {
      *     return ['article_id', 'total' => $query->count('*')];

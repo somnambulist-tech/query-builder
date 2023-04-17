@@ -2,6 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\Tests;
 
+use PDO;
 use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\QueryBuilder\Value;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
@@ -21,6 +22,25 @@ class ValueBinderTest extends TestCase
             ':c0' => new Value(':c0', 'value0', null, 'c0'),
             ':c1' => new Value(':c1', 1, 'int', 'c1'),
             ':c2' => new Value(':c2', 'value2', null, 'c2'),
+        ];
+
+        $bindings = $valueBinder->bindings();
+        $this->assertEquals($expected, $bindings);
+    }
+
+    public function testBindWithType(): void
+    {
+        $valueBinder = new ValueBinder();
+        $valueBinder->bind(':c0', 'value0', PDO::PARAM_STR);
+        $valueBinder->bind(':c1', 1, 'int');
+        $valueBinder->bind(':c2', 'value2', PDO::PARAM_BOOL);
+
+        $this->assertCount(3, $valueBinder->bindings());
+
+        $expected = [
+            ':c0' => new Value(':c0', 'value0', 2, 'c0'),
+            ':c1' => new Value(':c1', 1, 'int', 'c1'),
+            ':c2' => new Value(':c2', 'value2', 5, 'c2'),
         ];
 
         $bindings = $valueBinder->bindings();
@@ -97,5 +117,45 @@ class ValueBinderTest extends TestCase
         $placeholder = $valueBinder->placeholder('param');
         $this->assertSame(':param_0', $placeholder);
         $this->assertCount(2, $valueBinder->bindings());
+    }
+
+    public function testValues(): void
+    {
+        $valueBinder = new ValueBinder();
+        $valueBinder->bind(':c0', 'value0', PDO::PARAM_STR);
+        $valueBinder->bind(':c1', 1, 'int');
+        $valueBinder->bind(':c2', 'value2', PDO::PARAM_BOOL);
+
+        $values = $valueBinder->values();
+
+        $this->assertCount(3, $values);
+
+        $expected = [
+            ':c0' =>  'value0',
+            ':c1' =>  1,
+            ':c2' =>  'value2',
+        ];
+
+        $this->assertEquals($expected, $values);
+    }
+
+    public function testTypes(): void
+    {
+        $valueBinder = new ValueBinder();
+        $valueBinder->bind(':c0', 'value0', PDO::PARAM_STR);
+        $valueBinder->bind(':c1', 1, 'int');
+        $valueBinder->bind(':c2', 'value2', PDO::PARAM_BOOL);
+
+        $values = $valueBinder->types();
+
+        $this->assertCount(3, $values);
+
+        $expected = [
+            ':c0' =>  2,
+            ':c1' =>  'int',
+            ':c2' =>  5,
+        ];
+
+        $this->assertEquals($expected, $values);
     }
 }

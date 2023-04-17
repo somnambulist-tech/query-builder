@@ -777,7 +777,7 @@ abstract class Query implements Expression
      * When using an array for defining conditions, creating constraints form each
      * array entry will use the same logic as with the `where()` function. This means
      * that each array entry will be joined to the other using the AND operator, unless
-     * you nest the conditions in the array using other operator.
+     * you nest the conditions in the array using another operator.
      *
      * ### Examples:
      *
