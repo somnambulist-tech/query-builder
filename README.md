@@ -109,6 +109,39 @@ See [query builder](docs/query_builder.md) for more details of using the query b
 Query objects must be compiled to SQL for execution. The compiler must be configured for a given database.
 See [query compiler](docs/query_compiler.md) for details and an example.
 
+### Executable Queries
+
+As an experiment, an example of making Query objects self-executing is included. This is accomplished by extending
+the separate query objects to include an `execute()` method. These are then instantiated via an adapter (both
+Doctrine DBAL and PDO are included) that injects the connection automatically. The adapter includes the connection
+and a compiler instance allowing the query object to be compiled and run via the connection.
+
+For example:
+
+```php
+use PDO;
+use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Sqlite\CompilerConfigurator;
+use Somnambulist\Components\QueryBuilder\Executors\Adapters\PdoAdapter;
+
+$adapter = new PdoAdapter(
+    $conn = new PDO('sqlite::memory:'),
+    (new CompilerConfigurator())->configure(),
+);
+
+$conn->exec('create table users (id integer, name varchar(100))');
+$conn->exec('insert into users values (1, \'bob\'), (2, \'fred\')');
+
+$results = $adapter->select('*')->from('users')->execute();
+/**
+ * $results = [
+ *     [id => 1, name => bob],
+ *     [id => 2, name => fred],
+ * ]
+ */
+```
+
+> Note: this is an experimental addition and may be removed in a future update.
+
 ## Extending
 
 Queries and the compilers can be extended easily by either replacing classes, or components, or hooking into the
