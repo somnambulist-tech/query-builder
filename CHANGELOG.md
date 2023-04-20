@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+2023-04-20
+----------
+
+ * add getter for connection in executor adapters
+ * add `experimental` comment to `QueryExecutor` interface and queries
+
 2023-04-17
 ----------
 

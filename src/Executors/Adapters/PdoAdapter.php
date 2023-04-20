@@ -49,6 +49,11 @@ class PdoAdapter implements QueryExecutor
         }
     }
 
+    public function getConnection(): PDO
+    {
+        return $this->conn;
+    }
+
     public function compile(Query $query, ValueBinder $binder): string
     {
         return $this->compiler->compile($query, $binder);
