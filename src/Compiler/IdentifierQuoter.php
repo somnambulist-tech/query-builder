@@ -39,6 +39,7 @@ class IdentifierQuoter
      * be used safely in queries without the risk of using reserved words
      *
      * @param string $identifier The identifier to quote.
+     *
      * @return string
      */
     public function quoteIdentifier(string $identifier): string
