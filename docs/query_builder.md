@@ -753,14 +753,13 @@ When using the expression objects you can use the following methods to create co
 
 - ``exists()`` Create a condition using ``EXISTS``:
   ```php
-    $subquery = select()->from('cities')
-        ->select(['id'])
+    $subquery = select(['id'])->from('cities')
         ->where(function (QueryExpression $exp, Query $q) {
             return $exp->equalFields('countries.id', 'cities.country_id');
         })
         ->andWhere(['population >' => 5000000]);
 
-    $query = $countries->find()
+    $query = select()->from('countries')
         ->where(function (QueryExpression $exp, Query $q) use ($subquery) {
             return $exp->exists($subquery);
         });
@@ -769,14 +768,13 @@ When using the expression objects you can use the following methods to create co
 
 - ``notExists()`` Create a negated condition using ``EXISTS``:
   ```php
-    $subquery = select()->from('cities')
-        ->select(['id'])
+    $subquery = select(['id'])->from('cities')
         ->where(function (QueryExpression $exp, Query $q) {
             return $exp->equalFields('countries.id', 'cities.country_id');
         })
         ->andWhere(['population >' => 5000000]);
 
-    $query = $countries->find()
+    $query = select()->from('countries')
         ->where(function (QueryExpression $exp, Query $q) use ($subquery) {
             return $exp->notExists($subquery);
         });
@@ -801,7 +799,7 @@ you can also use snippets of SQL in where clauses:
 
 ```php
 // Compare two fields to each other
-$query->where(['Categories.parent_id != Parents.id']);
+$query->where(['categories.parent_id != Parents.id']);
 ```
 
 > The field names used in expressions, and SQL snippets should **never** contain untrusted content as you will
@@ -824,9 +822,8 @@ $query = select([
 
 ### Automatically Creating IN Clauses
 
-When building queries using the ORM, you will generally not have to indicate the data types of the columns you
-are interacting with, as CakePHP can infer the types based on the schema data. If in your queries you'd like to
-automatically convert equality to ``IN`` comparisons, you'll need to indicate the column data type:
+If in your queries you'd like to automatically convert equality to ``IN`` comparisons, you'll need to indicate
+the column data type:
 
 ```php
 $query = select()->where(['id' => $ids], ['id' => 'integer[]']);
@@ -915,7 +912,7 @@ conditions can be expressed as an array of conditions when you either need to ma
 or prefer to more easily represent them:
 
 ```php
-$query = $articles->find()
+$query = select()->from('articles')
     ->join(
         'comments', 'c',
         [
@@ -1174,36 +1171,38 @@ in the query. For example if we wanted to find the date of the earliest and late
 each article we could use window functions:
 
 ```php
-$query = $articles->find();
-$query->select([
-    'Articles.id',
-    'Articles.title',
-    'Articles.user_id'
-    'oldest_comment' => $query->func()
-        ->min('Comments.created')
-        ->partition('Comments.article_id'),
-    'latest_comment' => $query->func()
-        ->max('Comments.created')
-        ->partition('Comments.article_id'),
-])
-->innerJoinWith('Comments');
+use function Somnambulist\Components\QueryBuilder\Resources\select;
+
+$qb = select([
+      'articles.id',
+      'articles.title',
+      'articles.user_id'
+      'oldest_comment' => $query->func()
+          ->min('comments.created')
+          ->partition('comments.article_id'),
+      'latest_comment' => $query->func()
+          ->max('comments.created')
+          ->partition('comments.article_id'),
+  ])
+  ->from('articles')
+  ->innerJoin('comments', on: 'comments.article_id = articles.id');
 ```
 
 The above would generate SQL similar to:
 
 ```sql
 SELECT
-    Articles.id,
-    Articles.title,
-    Articles.user_id
-    MIN(Comments.created) OVER (PARTITION BY Comments.article_id) AS oldest_comment,
-    MAX(Comments.created) OVER (PARTITION BY Comments.article_id) AS latest_comment,
-FROM articles AS Articles
-INNER JOIN comments AS Comments
+    articles.id,
+    articles.title,
+    articles.user_id
+    MIN(comments.created) OVER (PARTITION BY comments.article_id) AS oldest_comment,
+    MAX(comments.created) OVER (PARTITION BY comments.article_id) AS latest_comment,
+FROM articles
+INNER JOIN comments ON comments.article_id = articles.id
 ```
 
 Window expressions can be applied to most aggregate functions. Any aggregate function
-that cake abstracts with a wrapper in `FunctionsBuilder` will return an `AggregateExpression`
+that is abstracted with a wrapper in `FunctionsBuilder` will return an `AggregateExpression`
 which lets you attach window expressions. You can create custom aggregate functions
 through `FunctionsBuilder::aggregate()`.
 
@@ -1228,20 +1227,20 @@ $query = select()->from('articles');
 
 // Define a named window
 $query->window('related_article', function ($window, $query) {
-    $window->partition('Comments.article_id');
+    $window->partition('comments.article_id');
 
     return $window;
 });
 
 $query->select([
-    'Articles.id',
-    'Articles.title',
-    'Articles.user_id'
+    'articles.id',
+    'articles.title',
+    'articles.user_id'
     'oldest_comment' => $query->func()
-        ->min('Comments.created')
+        ->min('comments.created')
         ->over('related_article'),
     'latest_comment' => $query->func()
-        ->max('Comments.created')
+        ->max('comments.created')
         ->over('related_article'),
 ]);
 ```
@@ -1270,7 +1269,7 @@ FROM customers
 INNER JOIN orders_per_customer ON orders_per_customer.customer_id = customers.id
 ```
 
-To build that query with the ORM query builder we would use:
+To build that query with the query builder we would use:
 
 ```php
 use Somnambulist\Components\QueryBuilder\Query\Expressions\CommonTableExpression;
