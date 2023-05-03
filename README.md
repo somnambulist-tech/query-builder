@@ -1,10 +1,10 @@
 # Somnambulist Query Builder
 
-[//]: # ([![GitHub Actions Build Status]&#40;https://img.shields.io/github/actions/workflow/status/somnambulist-tech/query-builder/tests.yml?logo=github&branch=main&#41;]&#40;https://github.com/somnambulist-tech/query-builder/actions?query=workflow%3Atests&#41;)
-[//]: # ([![Issues]&#40;https://img.shields.io/github/issues/somnambulist-tech/query-builder?logo=github&#41;]&#40;https://github.com/somnambulist-tech/query-builder/issues&#41;)
-[//]: # ([![License]&#40;https://img.shields.io/github/license/somnambulist-tech/query-builder?logo=github&#41;]&#40;https://github.com/somnambulist-tech/query-builder/blob/master/LICENSE&#41;)
-[//]: # ([![PHP Version]&#40;https://img.shields.io/packagist/php-v/somnambulist/query-builder?logo=php&logoColor=white&#41;]&#40;https://packagist.org/packages/somnambulist/query-builder&#41;)
-[//]: # ([![Current Version]&#40;https://img.shields.io/packagist/v/somnambulist/query-builder?logo=packagist&logoColor=white&#41;]&#40;https://packagist.org/packages/somnambulist/query-builder&#41;)
+[![GitHub Actions Build Status](https://img.shields.io/github/actions/workflow/status/somnambulist-tech/query-builder/tests.yml?logo=github&branch=main)](https://github.com/somnambulist-tech/query-builder/actions?query=workflow%3Atests)
+[![Issues](https://img.shields.io/github/issues/somnambulist-tech/query-builder?logo=github)](https://github.com/somnambulist-tech/query-builder/issues)
+[![License](https://img.shields.io/github/license/somnambulist-tech/query-builder?logo=github)](https://github.com/somnambulist-tech/query-builder/blob/master/LICENSE)
+[![PHP Version](https://img.shields.io/packagist/php-v/somnambulist/query-builder?logo=php&logoColor=white)](https://packagist.org/packages/somnambulist/query-builder)
+[![Current Version](https://img.shields.io/packagist/v/somnambulist/query-builder?logo=packagist&logoColor=white)](https://packagist.org/packages/somnambulist/query-builder)
 
 An SQL query builder implementation for building SQL queries programmatically. Primarily focused
 on `SELECT` queries, the query builder provides a core that can be extended with custom functionality

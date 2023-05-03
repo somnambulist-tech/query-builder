@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+2023-05-03
+----------
+
+ * fix doc error on `groupBy()` method
+ * remove comments on badges
+
 2023-04-20
 ----------
 

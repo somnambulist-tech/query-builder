@@ -171,7 +171,7 @@ class SelectQuery extends Query
      *
      * ```
      * // Produces GROUP BY id, title
-     * $query->groupBy(['id', 'title']);
+     * $query->groupBy('id', 'title');
      *
      * // Produces GROUP BY title
      * $query->groupBy('title');
