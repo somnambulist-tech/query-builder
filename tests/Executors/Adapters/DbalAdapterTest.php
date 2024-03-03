@@ -4,6 +4,7 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Executors\Adapters;
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Result;
+use Doctrine\DBAL\Tools\DsnParser;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Sqlite\CompilerConfigurator;
 use Somnambulist\Components\QueryBuilder\Executors\Adapters\DbalAdapter;
 use PHPUnit\Framework\TestCase;
@@ -18,7 +19,7 @@ class DbalAdapterTest extends TestCase
     public function testDbalAdapter()
     {
         $adapter = new DbalAdapter(
-            DriverManager::getConnection(['url' => 'sqlite:///:memory:']),
+            DriverManager::getConnection((new DsnParser())->parse('sqlite3:///:memory:')),
             (new CompilerConfigurator())->configure(),
         );
 
@@ -31,7 +32,7 @@ class DbalAdapterTest extends TestCase
     public function testExecute()
     {
         $adapter = new DbalAdapter(
-            $conn = DriverManager::getConnection(['url' => 'sqlite:///:memory:']),
+            $conn = DriverManager::getConnection((new DsnParser())->parse('sqlite3:///:memory:')),
             (new CompilerConfigurator())->configure(),
         );
 
