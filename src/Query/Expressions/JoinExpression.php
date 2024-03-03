@@ -10,12 +10,12 @@ use Somnambulist\Components\QueryBuilder\Query\ExpressionSet;
  */
 class JoinExpression extends ExpressionSet
 {
-    public function add(JoinClauseExpression $join): static
+    public function add(JoinClauseExpression $expression): static
     {
         $i = $this->count();
-        $key = $join->getAs() ?: $i++;
+        $key = $expression->getAs() ?: $i++;
 
-        $this->expressions[$key] = $join;
+        $this->expressions[$key] = $expression;
 
         return $this;
     }
