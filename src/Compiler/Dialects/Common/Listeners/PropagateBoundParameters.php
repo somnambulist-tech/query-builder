@@ -16,7 +16,7 @@ class PropagateBoundParameters
             foreach ($event->query->getBinder()->bindings() as $binding) {
                 $placeholder = ':' . $binding->placeholder;
 
-                if (preg_match('/' . $placeholder . '(?:\W|$)/', $event->sql) > 0) {
+                if (preg_match('/' . $placeholder . '(?:\W|$)/', $event->getRevisedSql()) > 0) {
                     $event->binder->bind($placeholder, $binding->value, $binding->type);
                 }
             }
