@@ -24,7 +24,7 @@ use function array_keys;
  */
 function select(
     Expression|Closure|array|string|float|int $fields = [],
-    Expression|string $from = null,
+    Expression|string|null $from = null,
     array $types = []
 ): SelectQuery
 {

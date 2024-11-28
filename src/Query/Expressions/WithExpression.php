@@ -11,9 +11,9 @@ use function array_key_exists;
  */
 class WithExpression extends ExpressionSet
 {
-    public function add(CommonTableExpression $cte): self
+    public function add(CommonTableExpression $expression): self
     {
-        $this->expressions[] = $cte;
+        $this->expressions[] = $expression;
 
         return $this;
     }

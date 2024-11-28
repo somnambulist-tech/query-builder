@@ -54,7 +54,7 @@ class QueryExpression implements Expression, Countable
      */
     public function __construct(
         Expression|array|string $conditions = [],
-        TypeMap $types = null,
+        ?TypeMap $types = null,
         string $conjunction = 'AND'
     )
     {

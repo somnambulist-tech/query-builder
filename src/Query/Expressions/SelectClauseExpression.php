@@ -11,7 +11,7 @@ class SelectClauseExpression implements Expression
     private DistinctExpression $distinct;
     private ModifierExpression $modifier;
 
-    public function __construct(FieldExpression $fields = null, DistinctExpression $distinct = null, ModifierExpression $modifier = null)
+    public function __construct(?FieldExpression $fields = null, ?DistinctExpression $distinct = null, ?ModifierExpression $modifier = null)
     {
         $this->fields = $fields ?? new FieldExpression();
         $this->distinct = $distinct ?? new DistinctExpression();

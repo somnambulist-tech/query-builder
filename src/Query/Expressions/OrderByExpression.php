@@ -19,7 +19,7 @@ class OrderByExpression extends QueryExpression
      */
     public function __construct(
         Expression|array|string $conditions = [],
-        TypeMap $types = null,
+        ?TypeMap $types = null,
         string $conjunction = ''
     ) {
         parent::__construct($conditions, $types, $conjunction);

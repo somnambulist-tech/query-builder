@@ -15,16 +15,16 @@ use function is_string;
  */
 class FromExpression extends ExpressionSet
 {
-    public function add(Expression|string $table, string $as = null): self
+    public function add(Expression|string $expression, ?string $as = null): self
     {
-        if ($table instanceof Query && is_null($as)) {
+        if ($expression instanceof Query && is_null($as)) {
             throw QueryException::fromQueryRequiresAlias();
         }
-        if (is_string($table)) {
-            $table = new IdentifierExpression($table);
+        if (is_string($expression)) {
+            $expression = new IdentifierExpression($expression);
         }
 
-        $this->expressions[] = new TableClauseExpression($table, $as);
+        $this->expressions[] = new TableClauseExpression($expression, $as);
 
         return $this;
     }

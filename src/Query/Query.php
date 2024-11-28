@@ -323,7 +323,7 @@ abstract class Query implements Expression
      *
      * @return $this
      */
-    public function from(Expression|string $table, string $as = null): static
+    public function from(Expression|string $table, ?string $as = null): static
     {
         $from = $this->parts[self::FROM] ??= new FromExpression();
         $from->add($table, $as);

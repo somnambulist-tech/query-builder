@@ -11,7 +11,7 @@ class InsertClauseExpression implements Expression
     protected ModifierExpression $modifier;
     protected array $columns;
 
-    public function __construct(Expression|string $table = null, array $columns = [])
+    public function __construct(Expression|string|null $table = null, array $columns = [])
     {
         $this->table = $table ?? '';
         $this->columns = $columns;

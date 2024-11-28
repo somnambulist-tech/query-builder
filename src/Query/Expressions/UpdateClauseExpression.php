@@ -10,7 +10,7 @@ class UpdateClauseExpression implements Expression
     protected Expression|string $table;
     protected ModifierExpression $modifier;
 
-    public function __construct(Expression|string $table = null, ModifierExpression $modifier = null)
+    public function __construct(Expression|string|null $table = null, ?ModifierExpression $modifier = null)
     {
         $this->table = $table ?? '';
         $this->modifier = $modifier ?? new ModifierExpression();

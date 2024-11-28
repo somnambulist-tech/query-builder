@@ -109,7 +109,7 @@ trait QueryCompilerBuilderTrait
         return $this->buildDelegatingCompiler($this->buildEventDispatcher($events), $compilers);
     }
 
-    protected function buildDelegatingCompiler(EventDispatcherInterface $evt = null, array $compilers = []): DelegatingSqlCompiler
+    protected function buildDelegatingCompiler(?EventDispatcherInterface $evt = null, array $compilers = []): DelegatingSqlCompiler
     {
         if (empty($compilers)) {
             $compilers = [

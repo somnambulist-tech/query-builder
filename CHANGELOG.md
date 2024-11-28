@@ -1,6 +1,19 @@
 Change Log
 ==========
 
+2024-11-28
+----------
+
+ * fix PHP 8.4 deprecations
+ * fix arg names to be more consistent with the definition
+
+2024-03-03
+----------
+
+ * fix incorrect event property access
+ * fix arg names to be more consistent with the definition
+ * update to DBAL 4
+
 2023-05-03
 ----------
 
