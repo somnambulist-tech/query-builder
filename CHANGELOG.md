@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+2026-06-13
+----------
+
+ * update to PHPUnit 12.4
+ * clean up import statements
+ * convert PHPUnit docblock comments to attributes
+
 2024-11-28
 ----------
 

@@ -1,6 +1,5 @@
 {
     "name": "somnambulist/query-builder",
-    "type": "library",
     "description": "An object-oriented query builder for programmatically generating SQL queries",
     "keywords": [
         "query",
@@ -14,19 +13,20 @@
             "email": "info@somnambulist.tech"
         }
     ],
+    "type": "library",
     "require": {
-        "php": "^8.1",
+        "php": ">=8.4",
         "psr/event-dispatcher": "^1.0",
-        "psr/log": "^1.0|^2.0|^3.0"
+        "psr/log": "^1|^2|^3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.5",
+        "phpunit/phpunit": "^12.4",
         "doctrine/dbal": "^4.0",
-        "somnambulist/domain": "^6.0",
-        "symfony/event-dispatcher": "^6.4",
-        "symfony/var-dumper": "^6.4",
-        "symfony/stopwatch": "^6.4",
-        "symfony/yaml": "^6.4"
+        "somnambulist/domain": "^7.0",
+        "symfony/event-dispatcher": "^7.0|^8.0",
+        "symfony/var-dumper": "^7.0|^8.0",
+        "symfony/stopwatch": "^7.0|^8.0",
+        "symfony/yaml": "^7.0|^8.0"
     },
     "autoload": {
         "psr-4": {

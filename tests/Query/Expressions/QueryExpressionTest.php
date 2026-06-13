@@ -2,6 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\Tests\Query\Expressions;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
@@ -172,9 +173,7 @@ class QueryExpressionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider methodsProvider
-     */
+    #[DataProvider('methodsProvider')]
     public function testTypeMapUsage(string $method): void
     {
         $expr = new QueryExpression([], new TypeMap(['created' => 'date']));

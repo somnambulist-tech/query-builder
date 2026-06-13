@@ -20,7 +20,7 @@ not function if run on another. Default setups are included for SQlite, MySQL, a
 
 ## Requirements
 
- * PHP 8.1+
+ * PHP 8.4+
  * PSR compatible event dispatcher e.g. [symfony/event-dispatcher](https://github.com/symfony/event-dispatcher)
  * Database driver package and/or PDO e.g. [doctrine/dbal](https://github.com/doctrine/dbal)
 

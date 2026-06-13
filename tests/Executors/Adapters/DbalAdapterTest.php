@@ -5,14 +5,13 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Executors\Adapters;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Tools\DsnParser;
+use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\QueryBuilder\Compiler\Dialects\Sqlite\CompilerConfigurator;
 use Somnambulist\Components\QueryBuilder\Executors\Adapters\DbalAdapter;
-use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\QueryBuilder\Executors\ExecutableDeleteQuery;
 use Somnambulist\Components\QueryBuilder\Executors\ExecutableInsertQuery;
 use Somnambulist\Components\QueryBuilder\Executors\ExecutableSelectQuery;
 use Somnambulist\Components\QueryBuilder\Executors\ExecutableUpdateQuery;
-use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
 
 class DbalAdapterTest extends TestCase
 {

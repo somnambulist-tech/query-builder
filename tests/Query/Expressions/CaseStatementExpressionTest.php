@@ -5,6 +5,7 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Query\Expressions;
 use Doctrine\DBAL\Types\Type;
 use InvalidArgumentException;
 use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\Models\Types\DateTime\DateTime;
 use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
@@ -249,11 +250,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider valueTypeInferenceDataProvider
-     *
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
+    #[DataProvider('valueTypeInferenceDataProvider')]
     public function testInferValueType(mixed $value, ?string $type): void
     {
         $expression = new CaseStatementExpression();
@@ -292,11 +292,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider whenTypeInferenceDataProvider
-     *
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
+    #[DataProvider('whenTypeInferenceDataProvider')]
     public function testInferWhenType(mixed $value, ?string $type): void
     {
         $expression = (new CaseStatementExpression())
@@ -332,11 +331,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider resultTypeInferenceDataProvider
-     *
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
+    #[DataProvider('resultTypeInferenceDataProvider')]
     public function testInferResultType(mixed $value, ?string $type): void
     {
         $expression = (new CaseStatementExpression())
@@ -357,11 +355,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider resultTypeInferenceDataProvider
-     *
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
+    #[DataProvider('resultTypeInferenceDataProvider')]
     public function testInferElseType(mixed $value, ?string $type): void
     {
         $expression = new CaseStatementExpression();
@@ -1119,12 +1116,11 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider validCaseValuesDataProvider
-     *
      * @param mixed $value The case value.
      * @param string|null $sqlValue The expected SQL string value.
      * @param string|null $type The expected bound type.
      */
+    #[DataProvider('validCaseValuesDataProvider')]
     public function testValidCaseValue(mixed $value, ?string $sqlValue, ?string $type): void
     {
         $expression = (new CaseStatementExpression($value))
@@ -1245,12 +1241,11 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider validWhenValuesSimpleCaseDataProvider
-     *
      * @param mixed $value The when value.
      * @param string|null $expectedSql The expected SQL string.
      * @param array|string|null $typeOrBindings The expected bound type(s).
      */
+    #[DataProvider('validWhenValuesSimpleCaseDataProvider')]
     public function testValidWhenValueSimpleCase(mixed $value, ?string $expectedSql, mixed $typeOrBindings = null): void
     {
         $typeMap = new TypeMap([
@@ -1347,12 +1342,11 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider validWhenValuesSearchedCaseDataProvider
-     *
      * @param mixed $value The when value.
      * @param string|null $expectedSql The expected SQL string.
      * @param array|string|null $typeOrBindings The expected bound type(s).
      */
+    #[DataProvider('validWhenValuesSearchedCaseDataProvider')]
     public function testValidWhenValueSearchedCase(mixed $value, ?string $expectedSql, mixed $typeOrBindings = null): void
     {
         $typeMap = new TypeMap([
@@ -1396,12 +1390,11 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider validThenValuesDataProvider
-     *
      * @param mixed $value The then value.
      * @param string|null $sqlValue The expected SQL string value.
      * @param string|null $type The expected bound type.
      */
+    #[DataProvider('validThenValuesDataProvider')]
     public function testValidThenValue(mixed $value, ?string $sqlValue, ?string $type): void
     {
         $expression = (new CaseStatementExpression())
@@ -1449,12 +1442,11 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider validElseValuesDataProvider
-     *
      * @param mixed $value The else value.
      * @param string|null $sqlValue The expected SQL string value.
      * @param string|null $type The expected bound type.
      */
+    #[DataProvider('validElseValuesDataProvider')]
     public function testValidElseValue(mixed $value, ?string $sqlValue, ?string $type): void
     {
         $expression = (new CaseStatementExpression())
@@ -1506,11 +1498,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidCaseValuesDataProvider
-     *
      * @param mixed $value The case value.
      * @param string $typeName The expected error type name.
      */
+    #[DataProvider('invalidCaseValuesDataProvider')]
     public function testInvalidCaseValue(mixed $value, string $typeName): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -1555,11 +1546,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidThenValueDataProvider
-     *
      * @param mixed $value The then value.
      * @param string $typeName The expected error type name.
      */
+    #[DataProvider('invalidThenValueDataProvider')]
     public function testInvalidThenValue(mixed $value, string $typeName): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -1590,15 +1580,14 @@ class CaseStatementExpressionTest extends TestCase
                 function () {
                 },
             ],
-            [$res, 'resource (closed)'],
+            [$res],
         ];
     }
 
     /**
-     * @dataProvider invalidThenTypeDataProvider
-     *
      * @param mixed $type The then type.
      */
+    #[DataProvider('invalidThenTypeDataProvider')]
     public function testInvalidThenType(mixed $type): void
     {
         $this->expectException(TypeError::class);
@@ -1626,11 +1615,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidElseValueDataProvider
-     *
      * @param mixed $value The else value.
      * @param string $typeName The expected error type name.
      */
+    #[DataProvider('invalidElseValueDataProvider')]
     public function testInvalidElseValue(mixed $value, string $typeName): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -1661,17 +1649,15 @@ class CaseStatementExpressionTest extends TestCase
             [
                 function () {
                 },
-                'Closure',
             ],
-            [$res, 'resource (closed)'],
+            [$res],
         ];
     }
 
     /**
-     * @dataProvider invalidElseTypeDataProvider
-     *
      * @param mixed $type The else type.
      */
+    #[DataProvider('invalidElseTypeDataProvider')]
     public function testInvalidElseType(mixed $type): void
     {
         $this->expectException(TypeError::class);

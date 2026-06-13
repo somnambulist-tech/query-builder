@@ -3,8 +3,8 @@
 namespace Somnambulist\Components\QueryBuilder\Exceptions;
 
 use RuntimeException;
-use Somnambulist\Components\QueryBuilder\TypeCasterManager;
 use Somnambulist\Components\QueryBuilder\TypeCaster;
+use Somnambulist\Components\QueryBuilder\TypeCasterManager;
 use function sprintf;
 
 class TypeCasterException extends RuntimeException

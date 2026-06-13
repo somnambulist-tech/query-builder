@@ -13,10 +13,11 @@ use Somnambulist\Components\QueryBuilder\Query\Expressions\ModifierExpression;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\WithExpression;
 use Somnambulist\Components\QueryBuilder\Query\OrderDirection;
 use Somnambulist\Components\QueryBuilder\Query\Query;
+use Somnambulist\Components\QueryBuilder\Query\Type\DeleteQuery;
+use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
-use Somnambulist\Components\Utils\EntityAccessor;
 
 class QueryTest extends TestCase
 {
@@ -39,11 +40,7 @@ class QueryTest extends TestCase
 
     protected function newQuery(): Query
     {
-        $query = $this->getMockForAbstractClass(Query::class);
-
-        EntityAccessor::set($query, 'parts', EntityAccessor::get($query, 'defaultParts'));
-
-        return $query;
+        return new SelectQuery();
     }
 
     public function testWhereEmptyValues(): void
@@ -103,6 +100,7 @@ class QueryTest extends TestCase
 
     public function testCloneModifierExpression(): void
     {
+        $this->query = new DeleteQuery();
         $this->query->modifier($this->query->newExpr('modifier'));
 
         $clause = $this->query->clause('modifier');
@@ -231,9 +229,8 @@ class QueryTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'The "nope" clause is not defined. Valid clauses are: comment, delete, update, set, insert, values, ' .
-            'with, select, modifier, from, join, where, group, having, window, order, limit, offset, union, ' .
-            'intersect, except, epilog.'
+            'The "nope" clause is not defined. Valid clauses are: ' .
+            'comment, with, select, from, join, where, group, having, window, order, limit, offset, union, intersect, except, epilog.'
         );
 
         $this->assertEmpty($this->query->clause('where'));

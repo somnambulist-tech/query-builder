@@ -4,6 +4,8 @@ namespace Somnambulist\Components\QueryBuilder\Tests\Query\Query;
 
 use Exception;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\Models\Types\DateTime\DateTime;
 use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
@@ -804,9 +806,7 @@ class SelectQueryTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider methodProvider
-     */
+    #[DataProvider('methodProvider')]
     public function testSelectWhereOperatorMethods(string $method, string $operator, mixed $value): void
     {
         $query = new SelectQuery();
@@ -1852,9 +1852,7 @@ class SelectQueryTest extends TestCase
         $this->assertQueryContains('UNION ALL \(SELECT', $sql);
     }
 
-    /**
-     * @group FunctionExpression
-     */
+    #[Group("FunctionExpression")]
     public function testSQLFunctions(): void
     {
         $query = new SelectQuery();

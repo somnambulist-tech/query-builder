@@ -2,6 +2,7 @@
 
 namespace Somnambulist\Components\QueryBuilder\Tests\Query\QueryTests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Somnambulist\Components\QueryBuilder\Compiler\Compiler;
 use Somnambulist\Components\QueryBuilder\Query\Expressions\QueryExpression;
@@ -192,11 +193,10 @@ class CaseExpressionQueryTest extends TestCase
     }
 
     /**
-     * @dataProvider bindingValueDataProvider
-     *
      * @param string $when The `WHEN` value.
      * @param int $result The result value.
      */
+    #[DataProvider('bindingValueDataProvider')]
     public function testBindValues(string $when, int $result): void
     {
         $value = '1';

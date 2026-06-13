@@ -10,7 +10,6 @@ use Somnambulist\Components\QueryBuilder\Query\Type\SelectQuery;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryAssertsTrait;
 use Somnambulist\Components\QueryBuilder\Tests\Support\QueryCompilerBuilderTrait;
 use Somnambulist\Components\QueryBuilder\ValueBinder;
-use function dump;
 
 class PostgresTest extends TestCase
 {
